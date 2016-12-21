@@ -1,0 +1,26 @@
+{
+  "name": "premiere",
+  "description": "Easy and powerful JS ORM for Restful clients",
+  "main": "dist/premiere.js",
+  "authors": [
+    "Pedro Moreira"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "restful",
+    "api",
+    "orm",
+    "client",
+    "caching"
+  ],
+  "homepage": "https://pedsmoreira.github.io/premiere",
+  "ignore": [
+    "**/.*",
+    "build",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "package.json",
+    "tsconfig.json"
+  ]
+}
