@@ -1,7 +1,7 @@
-import Api from "./prime-rest/Api";
-import Cache from "./prime-rest/Cache"
-import Model from "./prime-rest/Model"
-import Store from "./prime-rest/Store"
+import Api from "./premiere/Api";
+import Cache from "./premiere/Cache"
+import Model from "./premiere/Model"
+import Store from "./premiere/Store"
 
 const api = new Api()
 

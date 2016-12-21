@@ -1,16 +1,16 @@
 {
-  "name": "prime-rest",
+  "name": "premiere",
   "version": "0.0.1",
   "description": "Easy and powerful JS ORM for Restful clients",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
     "prepublish": "tsc",
-    "doc": "typedoc --mode file --module commonjs --readme none --target ES6 --out docs src --ignoreCompilerErrors --name 'Prime Rest'"
+    "doc": "typedoc --mode file --module commonjs --readme none --target ES6 --out docs src --ignoreCompilerErrors --name 'Premiere'"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pedsmoreira/prime-rest"
+    "url": "https://github.com/pedsmoreira/premiere"
   },
   "keywords": [
     "restful",
@@ -22,9 +22,9 @@
   "author": "Pedro Moreira",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pedsmoreira/prime-rest/issues"
+    "url": "https://github.com/pedsmoreira/premiere/issues"
   },
-  "homepage": "https://pedsmoreira.github.io/prime-rest",
+  "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
     "axios": "^0.15.3"
   },
