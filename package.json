@@ -1,0 +1,34 @@
+{
+  "name": "prime-rest",
+  "version": "0.0.1",
+  "description": "Easy and powerful JS ORM for Restful clients",
+  "main": "build/index.js",
+  "typings": "./build/index.d.ts",
+  "scripts": {
+    "prepublish": "tsc",
+    "doc": "typedoc --mode file --module commonjs --readme none --target ES6 --out docs src --ignoreCompilerErrors --name 'Prime Rest'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedsmoreira/prime-rest"
+  },
+  "keywords": [
+    "restful",
+    "api",
+    "orm",
+    "client",
+    "caching"
+  ],
+  "author": "Pedro Moreira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pedsmoreira/prime-rest/issues"
+  },
+  "homepage": "https://pedsmoreira.github.io/prime-rest",
+  "dependencies": {
+    "axios": "^0.15.3"
+  },
+  "devDependencies": {
+    "typedoc": "^0.5.1"
+  }
+}
