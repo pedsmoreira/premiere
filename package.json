@@ -1,6 +1,6 @@
 {
   "name": "premiere",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Easy and powerful JS ORM for Restful clients",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
