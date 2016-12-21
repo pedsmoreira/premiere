@@ -1,4 +1,8 @@
 # Premiere
+
+[![npm version](https://img.shields.io/npm/v/premiere.svg)](https://www.npmjs.org/package/premiere)
+[![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
+
 Easy and powerful JS ORM for Restful clients
 
 `TODO - Add flow image`
