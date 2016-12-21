@@ -318,38 +318,4 @@ export default class Model implements IModel {
             return "_" + y.toLowerCase()
         }).replace(/^_/, "");
     }
-
-    /**
-     * Save instance to local storage
-     */
-    saveToLocalStorage() {
-        let self = this.constructor as typeof Model
-        self.saveToLocalStorage(this.persistentMap())
-    }
-
-    /**
-     * Get key to local storage object
-     */
-    static keyToLocalStorage(value: string) {
-        return `model/${this.path}/${value}`
-    }
-
-    /**
-     * Save values to local storage
-     */
-    static saveToLocalStorage(object: {[_: string]: any}) {
-        if (Array.isArray(object)) object.forEach((it) => this.saveToLocalStorage(it))
-
-        let key = this.keyToLocalStorage(object[this.keyColumn])
-        localStorage.setItem(key, JSON.stringify(object))
-    }
-
-    /**
-     * Fetch instance from local storage
-     */
-    static fromLocalStorage(value: string) {
-        let key = this.keyToLocalStorage(value)
-        let item = localStorage.getItem(key)
-        return this.make(JSON.parse(item))
-    }
 }

@@ -3,22 +3,20 @@
 [![npm version](https://img.shields.io/npm/v/premiere.svg)](https://www.npmjs.org/package/premiere)
 [![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
 
-Easy and powerful JS ORM for Restful clients
-
-`TODO - Add flow image`
+Easy and powerful _standalone_ Javascript ORM for consuming Restful APIs.
 
 ## Features
-- Works very nicely with [TypeScript](http://typescriptlang.org/)
+- Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
 - Easy configuration
 - Model normalization and denormalization
-    Working with classes is a lot easier than with simple objects
 - Caching
-    - Objects: normalized data with all fields
-    - Lists: list of objects not normalized by default.
-    
-        `It's possible to store the list elements into the objects cache`
-    - Promises: avoid making the same request to fetch data twice in a row
-- Nested resources support
+- Foreign keys
+- Header support _(frequently used with Authorization and CSRF token)_
+
+## Workflow
+![Workflow](workflow.png)
+
+** For more about how promises work, check out [Dave Atchley's article](http://www.datchley.name/es6-promises/)
 
 ## Installing
 
@@ -49,7 +47,7 @@ Using cdn:
 ## Example
 
 Creating a new Model
-
+ 
 ```js
 // TODO
 ```
@@ -72,6 +70,8 @@ Working with the cache
 // TODO
 ```
 
+Persisting the **index** result
+
 With MobX
 
 ```js
@@ -85,10 +85,13 @@ Premiere is written in Typescript and it includes [TypeScript](http://typescript
 import * as Premiere from 'premiere';
 ```
 
-## Credits
-Premiere is inspired by [MobX](http://mobxjs.github.io/) and [axios](https://github.com/mzabriskie/axios).
+## Inspiration
+Premiere is inspired by [Laravel](https://laravel.com/)
 
-Their workflow and easiness of use are an inspiration for building simple and powerful libraries.
+Their sintax and easiness of use are an inspiration for building simple and powerful libraries.
+
+## Dependencies
+Premiere uses [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests, it's a very simple and powerful library.
 
 ## License
 MIT
