@@ -6,6 +6,11 @@
   "typings": "./build/index.d.ts",
   "scripts": {
     "prepublish": "tsc",
+    "test": "echo 1",
+    "build": "echo 1",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist && git add bower.json package.json",
+    "postversion": "git push && git push --tags",
     "doc": "typedoc --mode file --module commonjs --readme none --target ES6 --out docs src --ignoreCompilerErrors --name 'Premiere'"
   },
   "repository": {
