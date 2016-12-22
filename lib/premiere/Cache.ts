@@ -1,6 +1,6 @@
-import Api from "./Api";
-import {Promise} from "axios";
-import {IModel} from "./Model";
+import Api from './Api';
+import {Promise} from 'axios';
+import {IModel} from './Model';
 
 /**
  * The cache is responsible for storing objects, lists and promises
@@ -10,25 +10,25 @@ export default class Cache {
     /**
      * The Api associated with the cache.
      */
-    api: Api
+    api: Api;
 
     /**
      * The list of objects cached.
      */
-    objects: {[_: string]: IModel} = {}
+    objects: {[_: string]: IModel} = {};
 
     /**
      * The list of lists of object cached.
      */
-    lists: {[_: string]: IModel[]} = {}
+    lists: {[_: string]: IModel[]} = {};
 
     /**
      * The list of promises cached.
      */
-    promises: {[_: string]: Promise<any>} = {}
+    promises: {[_: string]: Promise<any>} = {};
 
     constructor(api: Api) {
-        this.api = api
+        this.api = api;
     }
 
     /**
@@ -36,25 +36,24 @@ export default class Cache {
      */
     static resolveKey(value: any | IModel): string {
         if (typeof value === 'object') {
-            return (value as IModel).key()
+            return (value as IModel).key();
         }
-        return value.toString()
+        return value.toString();
     }
 
     /**
      * Check if caching is enabled
      */
     enabled() {
-        return !this.api || this.api.useCache
+        return !this.api || this.api.useCache;
     }
 
     /**
      * Get object
      */
     get(value: string): IModel {
-        let self = this.constructor as typeof Cache
         if (this.enabled()) {
-            return this.objects[self.resolveKey(value)]
+            return this.objects[value];
         }
     }
 
@@ -63,10 +62,10 @@ export default class Cache {
      */
     where(property: string, value: any): IModel {
         if (this.enabled()) {
-            let values: IModel[] = Object.keys(this.objects).map((key) => this.objects[key])
+            let values: IModel[] = Object.keys(this.objects).map((key) => this.objects[key]);
             return values.find((object: IModel) => {
-                return (<any> object)[property] === value
-            }) as IModel
+                return (<any> object)[property] === value;
+            }) as IModel;
         }
     }
 
@@ -75,14 +74,16 @@ export default class Cache {
      */
     set(value: IModel|IModel[], clearLists: boolean = true): IModel | IModel[] {
         if (Array.isArray(value)) {
-            let list = value as IModel[]
-            return list.map((it: IModel) => this.set(it, clearLists)) as IModel[]
+            let list = value as IModel[];
+            return list.map((it: IModel) => this.set(it, clearLists)) as IModel[];
         }
 
-        let object = value as IModel
+        let object = value as IModel;
         if (this.enabled()) {
-            this.objects[object.key()] = object
-            if (clearLists) this.lists = {}
+            this.objects[object.key()] = object;
+            if (clearLists) {
+                this.lists = {};
+            }
         }
         return object
     }
@@ -90,9 +91,9 @@ export default class Cache {
     /**
      * Remove object
      */
-    destroyObject(value: string | IModel) {
-        let self = this.constructor as typeof Cache
-        delete this.objects[self.resolveKey(value)]
+    destroy(value: string | IModel) {
+        let self = this.constructor as typeof Cache;
+        delete this.objects[self.resolveKey(value)];
     }
 
     /**
@@ -100,7 +101,7 @@ export default class Cache {
      */
     getList(name: string) {
         if (this.enabled()) {
-            return this.lists[name]
+            return this.lists[name];
         }
     }
 
@@ -109,9 +110,13 @@ export default class Cache {
      */
     setList(name: string, list: IModel[]): IModel[] {
         if (this.enabled()) {
-            this.lists[name] = list
+            this.lists[name] = list;
         }
-        return list
+        return list;
+    }
+
+    destroyList(name: string) {
+        delete this.lists[name];
     }
 
     /**
@@ -119,7 +124,7 @@ export default class Cache {
      */
     getPromise(name: string): Promise<any> {
         if (this.api.usePromiseCache) {
-            return this.promises[name]
+            return this.promises[name];
         }
     }
 
@@ -128,15 +133,15 @@ export default class Cache {
      */
     setPromise(name: string, promise: Promise<any>): Promise<any> {
         if (this.api.usePromiseCache) {
-            return this.promises[name] = promise
+            return this.promises[name] = promise;
         }
-        return promise
+        return promise;
     }
 
     /**
      * Destroy promise by name
      */
     destroyPromise(name: string): void {
-        delete this.promises[name]
+        delete this.promises[name];
     }
 }

@@ -1,6 +1,6 @@
-import Cache from './Cache'
-import axios from 'axios'
-import {AxiosInstance} from "axios";
+import Cache from './Cache';
+import axios from 'axios';
+import {AxiosInstance} from 'axios';
 
 /**
  * An Api instance defines the properties to consume a restful api
@@ -10,28 +10,28 @@ export default class Api {
      * The base path to your Api
      * Eg.: http://my-api.com
      */
-    static base: string = ''
+    static base: string = '';
 
     /**
      * Api headers. You can use it for Authentication for example.
      */
-    static headers: {[_: string]: string} = {}
+    static headers: {[_: string]: string} = {};
 
     /**
      * Sets whether or not caching is enabled
      */
-    useCache: boolean = true
+    useCache: boolean = true;
 
     /**
      * If set to true, the promises to fetch data will be cached,
      * so if you do the same request twice, before the results come back, the response will be the same Promise.
      */
-    usePromiseCache: boolean = true
+    usePromiseCache: boolean = true;
 
     /**
      * Cache instance attached to the Api
      */
-    cache: Cache = new Cache(this)
+    cache: Cache = new Cache(this);
 
     constructor(properties: {[_: string]: any} = {}) {
         Object.assign(this, properties)
@@ -43,7 +43,7 @@ export default class Api {
      * @return {string}
      */
     base(): string {
-        let self = this.constructor as typeof Api
+        let self = this.constructor as typeof Api;
         return self.base || Api.base
     }
 
@@ -62,7 +62,7 @@ export default class Api {
      * @return {Object}
      */
     headers(): {[_: string]: string} {
-        let self = this.constructor as typeof Api
+        let self = this.constructor as typeof Api;
         return self.headers || Api.headers
     }
 
@@ -82,11 +82,15 @@ export default class Api {
      * @returns {string}
      */
     baseUrl(): string {
-        let base = this.base()
-        if (!base.endsWith('/')) base += '/'
+        let base = this.base();
+        if (!base.endsWith('/')) {
+            base += '/';
+        }
 
-        let path = this.path()
-        if (!path.endsWith('/')) path += '/'
+        let path = this.path();
+        if (!path.endsWith('/')) {
+            path += '/';
+        }
 
         return base + path
     }
@@ -99,33 +103,48 @@ export default class Api {
             return new Promise(fn)
         }
 
-        let cached = this.cache.getPromise(name)
+        let cached = this.cache.getPromise(name);
         if (cached) {
-            return cached as Promise<any>
+            return cached as Promise<any>;
         }
 
-        let promise = new Promise(fn)
-        this.cache.setPromise(name, promise)
+        let promise = new Promise(fn);
+        this.cache.setPromise(name, promise);
 
         let destroyCallback = () => {
-            this.cache.destroyPromise(name)
-        }
-        promise.then(destroyCallback, destroyCallback)
+            this.cache.destroyPromise(name);
+        };
+        promise.then(destroyCallback, destroyCallback);
 
-        return promise
+        return promise;
     }
 
     /**
      * Add Jwt authorization header for a given token
      */
     static setJwtToken(token: string): void {
-        this.headers['Authorization'] = `Bearer ${token}`
+        this.headers['Authorization'] = `Bearer ${token}`;
     }
 
     /**
      * Remove Jwt authorization header
      */
     static removeJwtToken(): void {
-        delete this.headers['Authorization']
+        delete this.headers['Authorization'];
+    }
+
+    /**
+     * Add CSRF token to header
+     * @param token
+     */
+    static setCsrfToken(token: string): void {
+        this.headers['X-CSRF-Token'] = token;
+    }
+
+    /**
+     * Remove CSRF token from header
+     */
+    static removeCsrfToken(): void {
+        delete this.headers['X-CSRF-Token'];
     }
 }

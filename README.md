@@ -44,7 +44,7 @@ Using cdn:
 <script src="https://unpkg.com/premiere/dist/premiere.min.js"></script>
 ```
 
-## Example
+## Quick Samples
 
 Creating a new Model
  
@@ -77,6 +77,9 @@ With MobX
 ```js
 // TODO
 ```
+
+## Examples
+- [Premiere Player](https://github.com/pedsmoreira/premiere-player), https://premiere-player.herokuapp.com/ 
 
 ## Typescript
 Premiere is written in Typescript and it includes [TypeScript](http://typescriptlang.org/) definitions

@@ -5,8 +5,11 @@
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
+    "lint": "tslint -c tslint.json 'lib/**/*.ts'",
+    "pretest": "npm run lint",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "prepublish": "tsc",
-    "test": "echo 1",
     "build": "echo 1",
     "preversion": "npm test",
     "version": "npm run build && git add -A dist && git add bower.json package.json",
@@ -34,6 +37,22 @@
     "axios": "^0.15.3"
   },
   "devDependencies": {
-    "typedoc": "^0.5.1"
+    "@types/jest": "^16.0.2",
+    "jest": "^18.0.0",
+    "ts-jest": "^17.0.3",
+    "tslint": "^4.1.1",
+    "typedoc": "^0.5.1",
+    "typescript": "^2.1.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": ".*\\.spec.(ts|js)$",
+    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js"
   }
 }
