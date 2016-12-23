@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/premiere.svg)](https://www.npmjs.org/package/premiere)
 [![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
 
-Easy and powerful _standalone_ Javascript ORM for consuming Restful APIs.
+Simple and powerful _standalone_ Javascript ORM for consuming Restful APIs.
 
 ## Features
 - Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
@@ -72,6 +72,10 @@ Working with the cache
 
 Persisting the **index** result
 
+```js
+// TODO
+```
+
 With MobX
 
 ```js
@@ -80,13 +84,6 @@ With MobX
 
 ## Examples
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player), https://premiere-player.herokuapp.com/ 
-
-## Typescript
-Premiere is written in Typescript and it includes [TypeScript](http://typescriptlang.org/) definitions
-
-```typescript
-import * as Premiere from 'premiere';
-```
 
 ## Inspiration
 Premiere is inspired by [Laravel](https://laravel.com/)

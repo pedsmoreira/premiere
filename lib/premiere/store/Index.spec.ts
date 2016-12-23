@@ -1,4 +1,4 @@
-import Store from './Store';
+import Store from '../Store';
 
 describe('Store index method', () => {
     let store: Store<any>;

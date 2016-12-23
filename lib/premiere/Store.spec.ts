@@ -1,26 +1,28 @@
 import Store from './Store';
 import Model from './Model';
-import Mock = jest.Mock;
+
+class NormalizedModel extends Model {
+    property: string;
+
+    normalize() {
+        this.property = this.property + '_normalized';
+    }
+}
 
 describe('Store', () => {
-    let store: Store<Model>;
+    let store: Store<NormalizedModel>;
+    let data = {property: 'value'};
 
     beforeEach(() => {
-        store = new Store<Model>(Model);
-
-        let [get, post, put] = Array(3).fill(0).map(() => {
-            let callback = (fn: Function) => fn({data: 'data'});
-            return jest.fn().mockReturnValue({then: callback});
-        });
-        store.http = () => ({get, post, put} as any);
+        store = new Store<NormalizedModel>(NormalizedModel);
     });
 
     it('should set model on construct', () => {
-        expect(store.model).toBe(Model);
+        expect(store.model).toBe(NormalizedModel);
     });
 
     it('should set properties on construct', () => {
-        let store = new Store<any>(null, {property: 'value'});
+        let store = new Store<any>(null, data);
         expect((store as any).property).toBe('value');
     });
 
@@ -49,30 +51,16 @@ describe('Store', () => {
     });
 
     it('should get model instance with given values', () => {
-        let model = store.modelInstance({property: 'value'});
-        expect((model as any).property).toBe('value');
-        expect(model).toBeInstanceOf(Model);
+        let model = store.modelInstance(data) as NormalizedModel;
+        expect(model.property).toBe('value');
+        expect(model).toBeInstanceOf(NormalizedModel);
     });
 
     it('should get normalized model with given values', () => {
-        store.modelInstance = (values: any) => Model.make({
-            normalize() {
-                (this as any).property = values.property + '_normalized';
-            }
-        });
-
-        let normalized = store.normalizedModel({property: 'value'}) as Model;
-        expect((normalized as any).property).toBe('value_normalized');
+        expect((store.normalizedModel(data) as any).property).toBe('value_normalized');
     });
 
     it('should get normalized array of models with given array of values', () => {
-        store.modelInstance = (values: any) => Model.make(Object.assign({
-            normalize() {
-                (this as any).property = values.property + '_normalized';
-            }
-        }));
-
-        let normalized = store.normalizedModel([{property: 'value'}]) as Model[];
-        expect((normalized[0] as any).property).toBe('value_normalized');
+        expect((store.normalizedModel([data]) as any)[0].property).toBe('value_normalized');
     });
 });
