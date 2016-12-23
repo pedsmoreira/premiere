@@ -5,10 +5,10 @@
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
-    "lint": "tslint -c tslint.json 'lib/**/*.ts'",
+    "lint": "tslint 'lib/**/*.ts'",
     "pretest": "npm run lint",
-    "test": "jest",
-    "test-watch": "jest --watch",
+    "test": "jest ${1}",
+    "test-watch": "jest ${1} --watch",
     "prepublish": "tsc",
     "build": "echo 1",
     "preversion": "npm test",
