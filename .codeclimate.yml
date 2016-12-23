@@ -1,0 +1,9 @@
+---
+engines:
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "lib/**/*.ts"
+exclude_paths:
+- dist/
