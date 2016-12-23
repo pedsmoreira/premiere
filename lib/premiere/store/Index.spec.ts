@@ -1,4 +1,5 @@
 import Store from '../Store';
+import Helper from './Helper';
 
 describe('Store index method', () => {
     let store: Store<any>;
@@ -7,11 +8,7 @@ describe('Store index method', () => {
     beforeEach(() => {
         store = new Store<any>(null);
         store.normalizedModel = jest.fn().mockReturnValue('normalized model');
-        store.cache.set = jest.fn();
-
-        let then = (fn: Function) => fn({data});
-        let get = jest.fn().mockReturnValue({then});
-        store.http = () => ({get} as any);
+        store.http = Helper.http(data);
     });
 
     it('should verify access', () => {
@@ -58,12 +55,14 @@ describe('Store index method', () => {
     });
 
     it('should add model to cache', () => {
+        store.cache.set = jest.fn();
         store.setIndex = true;
         store.index();
         expect(store.cache.set).toHaveBeenCalledWith('normalized model', false);
     });
 
     it('should not add model to cache', () => {
+        store.cache.set = jest.fn();
         store.index();
         expect(store.cache.set).not.toHaveBeenCalled();
     });
