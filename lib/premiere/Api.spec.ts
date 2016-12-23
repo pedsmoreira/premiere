@@ -62,13 +62,13 @@ describe('Api', () => {
         let promise = 'cached' as any;
         api.cache.setPromise('promise', promise);
 
-        expect(api.cachePromise('promise', jest.fn())).not.toBe(promise)
+        expect(api.cachePromise('promise', jest.fn())).not.toBe(promise);
     });
 
     it('should get cached promise', () => {
         let promise = 'cached' as any;
         api.cache.setPromise('promise', promise);
-        expect(api.cachePromise('promise', jest.fn())).toBe(promise)
+        expect(api.cachePromise('promise', jest.fn())).toBe(promise);
     });
 
     it('should create new promise and add to cache', () => {
@@ -78,7 +78,7 @@ describe('Api', () => {
 
     it('should set jwt token', () => {
         Api.setJwtToken('jwt');
-        expect(api.headers()['Authorization']).toBe('Bearer jwt')
+        expect(api.headers()['Authorization']).toBe('Bearer jwt');
     });
 
     it('should remove jwt token', () => {

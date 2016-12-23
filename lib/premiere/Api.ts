@@ -1,6 +1,6 @@
 import Cache from './Cache';
-import axios from 'axios';
-import {AxiosInstance} from 'axios';
+import Hash from './Hash';
+import axios, {AxiosInstance} from 'axios';
 
 /**
  * An Api instance defines the properties to consume a restful api
@@ -15,7 +15,7 @@ export default class Api {
     /**
      * Api headers. You can use it for Authentication for example.
      */
-    static headers: {[_: string]: string} = {};
+    static headers: Hash<string> = {};
 
     /**
      * Sets whether or not caching is enabled
@@ -33,8 +33,8 @@ export default class Api {
      */
     cache: Cache = new Cache(this);
 
-    constructor(properties: {[_: string]: any} = {}) {
-        Object.assign(this, properties)
+    constructor(properties: Hash<any> = {}) {
+        Object.assign(this, properties);
     }
 
     /**
@@ -44,7 +44,7 @@ export default class Api {
      */
     base(): string {
         let self = this.constructor as typeof Api;
-        return self.base || Api.base
+        return self.base || Api.base;
     }
 
     /**{
@@ -54,16 +54,16 @@ export default class Api {
      * @type {string}
      */
     path(): string {
-        return ''
+        return '';
     }
 
     /**
      * Get request headers
      * @return {Object}
      */
-    headers(): {[_: string]: string} {
+    headers(): Hash<string> {
         let self = this.constructor as typeof Api;
-        return self.headers || Api.headers
+        return self.headers || Api.headers;
     }
 
     /**
@@ -92,7 +92,7 @@ export default class Api {
             path += '/';
         }
 
-        return base + path
+        return base + path;
     }
 
     /**
@@ -100,7 +100,7 @@ export default class Api {
      */
     cachePromise(name: string, fn: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void): Promise<any> {
         if (!this.usePromiseCache) {
-            return new Promise(fn)
+            return new Promise(fn);
         }
 
         let cached = this.cache.getPromise(name);

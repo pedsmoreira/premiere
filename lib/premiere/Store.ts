@@ -1,10 +1,12 @@
 import Api from './Api';
 import Model from './Model';
 import Cache from './Cache';
+import Hash from './Hash';
 
 export interface IStoreFetch {
     ignoreCache?: boolean;
     url?: string;
+    permit?: boolean;
 }
 
 export interface IStoreSet {
@@ -15,12 +17,14 @@ export interface IStoreBy {
     ignoreCache?: boolean;
     url?: string;
     set?: boolean;
+    permit?: boolean;
 }
 
 export interface IStoreAct {
     url?: string;
-    data?: {[_: string]: any};
+    data?: Hash<any>;
     method?: string;
+    permit?: boolean;
 }
 
 /**
@@ -48,7 +52,7 @@ export default class Store<T> extends Api {
      */
     setIndex: boolean;
 
-    constructor(model: typeof Model, properties: {[_: string]: any} = {}) {
+    constructor(model: typeof Model, properties: Hash<any> = {}) {
         super(properties);
         this.model = model;
     }
@@ -82,26 +86,18 @@ export default class Store<T> extends Api {
     }
 
     /**
-     * Shortcut for verifying method permission and caching promise
-     */
-    verifyAndCache(name: string, fn: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void): Promise<any> {
-        this.verifyPermission(name.split('/')[0]);
-        return this.cachePromise(name, fn);
-    }
-
-    /**
      * Get new model instance
      */
-    modelInstance(values: {[_: string]: string}): Model | Model[] {
+    modelInstance(values: Hash<string>): Model | Model[] {
         return this.model.make(values);
     }
 
     /**
      * Get new normalized model instance
      */
-    normalizedModel(values: {[_: string]: string}): Model | Model[] {
+    normalizedModel(values: Hash<string>[] | Hash<string>): Model | Model[] {
         if (Array.isArray(values)) {
-            return values.map(object => this.normalizedModel(object)) as Model[];
+            return values.map(hash => this.normalizedModel(hash)) as Model[];
         }
 
         let instance = this.modelInstance(values) as Model;
@@ -114,7 +110,11 @@ export default class Store<T> extends Api {
      * Get index
      */
     index(options: IStoreFetch = {}): Promise<T[]> {
-        return this.verifyAndCache('index', (resolve, reject) => {
+        if (!options.permit) {
+            this.verifyPermission('index');
+        }
+
+        return this.cachePromise('index', (resolve, reject) => {
             let list = this.cache.getList('index');
             if (!options.ignoreCache && list) {
                 if (list) {
@@ -138,10 +138,14 @@ export default class Store<T> extends Api {
     /**
      * Make http get request
      */
-    get(key: string, options: IStoreFetch = {}): Promise<T> {
+    get(key: any, options: IStoreFetch = {}): Promise<T> {
+        if (!options.permit) {
+            this.verifyPermission('get');
+        }
+
         key = Cache.resolveKey(key);
 
-        return this.verifyAndCache(`get/${key}`, (resolve, reject) => {
+        return this.cachePromise(`get/${key}`, (resolve, reject) => {
             if (!options.ignoreCache) {
                 let object = this.cache.get(key);
                 if (object) {
@@ -160,8 +164,12 @@ export default class Store<T> extends Api {
     /**
      * Make http get request to fetch by property
      */
-    where(property: string, value: any, options: IStoreFetch): Promise<T | T[]> {
-        return this.verifyAndCache(`where/${property}/${value}`, (resolve, reject) => {
+    where(property: string, value: any, options: IStoreFetch = {}): Promise<T | T[]> {
+        if (!options.permit) {
+            this.verifyPermission('where');
+        }
+
+        return this.cachePromise(`where/${property}/${value}`, (resolve, reject) => {
             if (!options.ignoreCache) {
                 let object = this.cache.where(property, value);
                 if (object) {
@@ -171,8 +179,7 @@ export default class Store<T> extends Api {
 
             let url = options.url;
             if (!options.url) {
-                let name = property.split('_').map((str) => str.substring(0, 1).toUpperCase() + str.substring(1));
-                url = `by${name}`;
+                url = `${property}/${value}`;
             }
 
             let promise = this.http().get(url);
@@ -186,7 +193,7 @@ export default class Store<T> extends Api {
     /**
      * Make http post request
      */
-    create(data: {[_: string]: any}, options: IStoreSet = {}): Promise<T> {
+    create(data: Hash<any>, options: IStoreSet = {}): Promise<T> {
         this.verifyPermission('create');
 
         let promise = this.http().post(options.url || '', data);
@@ -201,7 +208,7 @@ export default class Store<T> extends Api {
     /**
      * Make http put request
      */
-    update(data: {[_: string]: any}, options: IStoreSet): Promise<T> {
+    update(data: Hash<any>, options: IStoreSet): Promise<T> {
         this.verifyPermission('update');
 
         return new Promise((resolve, reject) => {
@@ -231,6 +238,10 @@ export default class Store<T> extends Api {
      * Make http request to fetch instances by foreign key
      */
     by(model: Model | typeof Model, value: any = undefined, options: IStoreBy = {}): Promise<T[]> {
+        if (!options.permit) {
+            this.verifyPermission('by');
+        }
+
         if (typeof model === 'object') {
             value = model.key();
             model = model.constructor as typeof Model;
@@ -262,6 +273,10 @@ export default class Store<T> extends Api {
      * Make http to act
      */
     act(key: any, action: string, options: IStoreAct = {}): Promise<any> {
+        if (!options.permit) {
+            this.verifyPermission('act');
+        }
+
         if (!options.url) {
             options.url = `${key}/${action}`;
         }

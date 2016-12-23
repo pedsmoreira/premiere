@@ -1,6 +1,7 @@
 import Api from './Api';
 import {Promise} from 'axios';
 import {IModel} from './Model';
+import Hash from './Hash';
 
 /**
  * The cache is responsible for storing objects, lists and promises
@@ -15,17 +16,17 @@ export default class Cache {
     /**
      * The list of objects cached.
      */
-    objects: {[_: string]: IModel} = {};
+    objects: Hash<IModel> = {};
 
     /**
      * The list of lists of object cached.
      */
-    lists: {[_: string]: IModel[]} = {};
+    lists: Hash<IModel[]> = {};
 
     /**
      * The list of promises cached.
      */
-    promises: {[_: string]: Promise<any>} = {};
+    promises: Hash<Promise<any>> = {};
 
     constructor(api: Api) {
         this.api = api;
@@ -85,7 +86,7 @@ export default class Cache {
                 this.lists = {};
             }
         }
-        return object
+        return object;
     }
 
     /**

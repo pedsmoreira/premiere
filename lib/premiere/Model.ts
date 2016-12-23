@@ -1,7 +1,8 @@
 import Store, {IStoreBy, IStoreFetch, IStoreSet, IStoreAct} from './Store';
+import Hash from './Hash';
 
 export interface IModel {
-    key(): string
+    key(): string;
 }
 
 /**
@@ -34,7 +35,7 @@ export default class Model implements IModel {
      * This variable is used to set the default store properties
      * If you're using a custom store, don't worry about this
      */
-    static storeProperties: {[_: string]: any} = {};
+    static storeProperties: Hash<any> = {};
 
     /**
      * Get model store
@@ -56,22 +57,22 @@ export default class Model implements IModel {
      * Get mapped properties with values of model
      * The shallow map does not contain objects (consequently, does not contain FKs)
      */
-    shallowMap(): {[_: string]: any} {
+    shallowMap(): Hash<any> {
         let map = {};
         Object.keys(this).forEach(key => {
             let value = (this as any);
             if (typeof value !== 'object') {
-                (map as any)[key] = value
+                (map as any)[key] = value;
             }
         });
 
-        return map
+        return map;
     }
 
     /**
      * Get shallow map merged with denormalized values
      */
-    persistentMap(): {[_: string]: any} {
+    persistentMap(): Hash<any> {
         return Object.assign(this.shallowMap(), this.denormalized());
     }
 
@@ -85,7 +86,7 @@ export default class Model implements IModel {
     /**
      * Set values to instance
      */
-    set(values: {[_: string]: any}): this {
+    set(values: Hash<any>): this {
         Object.keys(values).forEach(key => {
             (this as any)[key] = values[key];
         });
@@ -108,7 +109,7 @@ export default class Model implements IModel {
     /**
      * Create one or an array of model instances
      */
-    static make(values: {[_: string]: any} | {[_: string]: any}[]): Model | Model[] {
+    static make(values: Hash<any> | Hash<any>[]): Model | Model[] {
         if (Array.isArray(values)) {
             return values.map(it => this.make(it)) as Model[];
         }
@@ -156,7 +157,7 @@ export default class Model implements IModel {
     /**
      * Create and persist one or more instances
      */
-    static save(values: {[_: string]: any}, options: IStoreSet = undefined): Promise<Model> | Promise<Model>[] {
+    static save(values: Hash<any>, options: IStoreSet = undefined): Promise<Model> | Promise<Model>[] {
         if (Array.isArray(values)) {
             return values.map(it => this.save(it)) as Promise<Model>[];
         }

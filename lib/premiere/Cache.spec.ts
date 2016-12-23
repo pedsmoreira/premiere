@@ -24,7 +24,7 @@ describe('Cache', () => {
 
     it('should not be enabled with api cache disabled', () => {
         cache.api.useCache = false;
-        expect(cache.enabled()).toBeFalsy()
+        expect(cache.enabled()).toBeFalsy();
     });
 
     it('should get object with key', () => {
@@ -64,7 +64,7 @@ describe('Cache', () => {
 
     it('should set list', () => {
         cache.setList('list', list);
-        expect(cache.lists['list']).toBe(list)
+        expect(cache.lists['list']).toBe(list);
     });
 
     it('should get list', () => {
@@ -75,12 +75,12 @@ describe('Cache', () => {
     it('should destroy list', () => {
         cache.setList('list', list);
         cache.destroyList('list');
-        expect(cache.getList('list')).toBeUndefined()
+        expect(cache.getList('list')).toBeUndefined();
     });
 
     it('should set promise', () => {
         cache.setPromise('promise', promise);
-        expect(cache.promises['promise']).toBe(promise)
+        expect(cache.promises['promise']).toBe(promise);
     });
 
     it('should get promise', () => {
@@ -91,6 +91,6 @@ describe('Cache', () => {
     it('should destroy promise', () => {
         cache.setPromise('promise', promise);
         cache.destroyPromise('promise');
-        expect(cache.getPromise('promise')).toBeUndefined()
+        expect(cache.getPromise('promise')).toBeUndefined();
     });
 });
