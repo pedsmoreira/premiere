@@ -4,6 +4,9 @@ node_js:
 email:
   on_failure: change
   on_success: never
+after_success:
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < lcov.info
 addons:
   code_climate:
     repo_token: b6e7fa1a85471ad7dbbe10afb57f95a5bbd491dc68676dc4413bbf6489fa8add
