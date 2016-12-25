@@ -18,8 +18,7 @@ describe('Store where method', () => {
 
     it('should skip access verification', () => {
         store.denies = ['where'];
-        store.where('property', 'value', {permit: true});
-        expect(store.http().get).toHaveBeenCalledWith('property/value');
+        expect(() => store.where('property', 'value', {permit: true})).not.toThrow();
     });
 
     it('should fetch from http request', () => {

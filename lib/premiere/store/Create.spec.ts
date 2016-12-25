@@ -5,7 +5,7 @@ describe('Store create method', () => {
     let store: Store<any>;
     let data: any = {name: 'name'};
     let responseData: any = {id: 1, name: 'name'};
-    let instance: any = [{key: () => responseData.id}];
+    let instance: any = {key: () => responseData.id};
 
     beforeEach(() => {
         store = new Store<any>(null);

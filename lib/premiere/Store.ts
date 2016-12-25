@@ -280,10 +280,8 @@ export default class Store<T> extends Api {
             this.verifyPermission('act');
         }
 
-        if (!options.url) {
-            options.url = `${key}/${action}`;
-        }
-
-        return (<any> this.http())[options.method || 'put'](options.url, options.data);
+        let url = options.url || `${key}/${action}`;
+        let method = (<any> this.http())[options.method || 'put'];
+        return options.data ? method(url, options.data) : method(url);
     }
 }

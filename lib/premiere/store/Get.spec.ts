@@ -18,8 +18,7 @@ describe('Store get method', () => {
 
     it('should skip access verification', () => {
         store.denies = ['get'];
-        store.get(1, {permit: true});
-        expect(store.http().get).toHaveBeenCalledWith('1');
+        expect(() => store.get(1, {permit: true})).not.toThrow();
     });
 
     it('should fetch from http request', () => {

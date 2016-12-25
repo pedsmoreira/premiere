@@ -19,8 +19,7 @@ describe('Store index method', () => {
 
     it('should skip access verification', () => {
         store.denies = ['index'];
-        store.index({permit: true});
-        expect(store.http().get).toHaveBeenCalledWith('');
+        expect(() => store.index({permit: true})).not.toThrow();
     });
 
     it('should fetch from http request', () => {

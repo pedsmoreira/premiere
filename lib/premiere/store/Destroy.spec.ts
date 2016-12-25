@@ -3,9 +3,10 @@ import Store from '../Store';
 
 describe('Store destroy method', () => {
     let store: Store<any>;
+    let instance: any = {key: () => '1'};
 
     beforeEach(() => {
-        store = new Store<any>({keyColumn: 'id'} as any);
+        store = new Store<any>(null);
         store.http = Helper.http(null);
     });
 
@@ -19,14 +20,19 @@ describe('Store destroy method', () => {
         expect(store.http().delete).toHaveBeenCalledWith('1');
     });
 
+    it('should destroy by object', () => {
+        store.destroy(instance);
+        expect(store.http().delete).toHaveBeenCalledWith('1');
+    });
+
     it('should request with custom url', () => {
         store.destroy(1, {url: 'customUrl'});
         expect(store.http().delete).toHaveBeenCalledWith('customUrl');
     });
 
     it('should remove model to cache', () => {
-        store.cache.destroy = jest.fn();
+        store.cache.set(instance);
         store.destroy(1);
-        expect(store.cache.destroy).toHaveBeenCalledWith('1');
+        expect(store.cache.get(1)).toBeUndefined();
     });
 });

@@ -20,8 +20,7 @@ describe('Store foreign method', () => {
 
     it('should skip access verification', () => {
         store.denies = ['foreign'];
-        store.foreign(1, model, {permit: true});
-        expect(store.http().get).toHaveBeenCalledWith('1/path');
+        expect(() => store.foreign(1, model, {permit: true})).not.toThrow();
     });
 
     it('should fetch from http request', () => {
