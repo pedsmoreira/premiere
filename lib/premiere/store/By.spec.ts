@@ -11,7 +11,7 @@ describe('Store by method', () => {
 
     it('should call model store foreign method', () => {
         let options = {option: true};
-        store.by(model, 'value', options);
-        expect(foreign).toHaveBeenCalledWith('value', store.model, options);
+        store.by(model, 'key', options);
+        expect(foreign).toHaveBeenCalledWith(store.model, 'key', options);
     });
 });

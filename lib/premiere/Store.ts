@@ -164,7 +164,7 @@ export default class Store<T> extends Api {
     /**
      * Make http get request to fetch by property
      */
-    where(property: string, value: any, options: IStoreFetch = {}): Promise<T | T[]> {
+    where(property: string, value: any, options: IStoreFetch = {}): Promise<T> {
         if (!options.permit) {
             this.verifyPermission('where');
         }
@@ -237,14 +237,14 @@ export default class Store<T> extends Api {
     /**
      * Call foreign method of store associated with given model
      */
-    by(model: typeof Model, value: any, options: IStoreForeign = {}): Promise<T[]> {
-        return model.resolveStore().foreign(value, this.model, options) as any;
+    by(model: typeof Model, key: any, options: IStoreForeign = {}): Promise<T[]> {
+        return model.resolveStore().foreign(this.model, key, options) as any;
     }
 
     /**
      * Make http request to fetch instances by foreign key
      */
-    foreign(key: any, model: typeof Model, options: IStoreForeign = {}): Promise<T[]> {
+    foreign(model: typeof Model, key: any, options: IStoreForeign = {}): Promise<T[]> {
         if (!options.permit) {
             this.verifyPermission('foreign');
         }
@@ -280,8 +280,10 @@ export default class Store<T> extends Api {
             this.verifyPermission('act');
         }
 
+        key = Cache.resolveKey(key);
+
         let url = options.url || `${key}/${action}`;
         let method = (<any> this.http())[options.method || 'put'];
-        return options.data ? method(url, options.data) : method(url);
+        return method(url, options.data);
     }
 }

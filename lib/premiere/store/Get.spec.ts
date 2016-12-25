@@ -3,7 +3,7 @@ import Helper from './Helper';
 
 describe('Store get method', () => {
     let store: Store<any>;
-    let instance: any = {key: () => '1'};
+    let instance: any = {key: () => 1};
 
     beforeEach(() => {
         store = new Store<any>(null);

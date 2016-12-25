@@ -21,17 +21,17 @@ describe('Store act method', () => {
 
     it('should make http request', () => {
         store.act(1, 'action');
-        expect(store.http().put).toHaveBeenCalledWith('1/action');
+        expect(store.http().put).toHaveBeenCalledWith('1/action', undefined);
     });
 
     it('should request with custom url', () => {
         store.act(1, 'action', {url: 'customUrl'});
-        expect(store.http().put).toHaveBeenCalledWith('customUrl');
+        expect(store.http().put).toHaveBeenCalledWith('customUrl', undefined);
     });
 
     it('should request with given method', () => {
         store.act(1, 'action', {method: 'post'});
-        expect(store.http().post).toHaveBeenCalledWith('1/action');
+        expect(store.http().post).toHaveBeenCalledWith('1/action', undefined);
     });
 
     it('should request with data', () => {

@@ -37,7 +37,7 @@ export default class Cache {
      */
     static resolveKey(value: any | IModel): string {
         if (typeof value === 'object') {
-            return (value as IModel).key();
+            return (value as IModel).key().toString();
         }
         return value.toString();
     }
