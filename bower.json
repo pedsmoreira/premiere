@@ -17,15 +17,18 @@
   "ignore": [
     "**/.*",
     "*.yml",
+    "_layouts/",
     "bower_components",
     "build",
     "coverage",
+    "CONTRIBUTING.md",
     "docs",
     "lib",
     "node_modules",
     "package.json",
     "tsconfig.json",
     "tslint.json",
-    "webpack.config.js"
+    "webpack.config.js",
+    "workflow.png"
   ]
 }
