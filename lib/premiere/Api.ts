@@ -47,7 +47,7 @@ export default class Api {
         return self.base || Api.base;
     }
 
-    /**{
+    /**
      * Get path.
      * This is very useful if you have one Api for each model for example
      * Eg. books (base + path would look like http://my-api.com/books)

@@ -13,7 +13,7 @@ export interface IStoreSet {
     url?: string;
 }
 
-export interface IStoreBy {
+export interface IStoreForeign {
     ignoreCache?: boolean;
     url?: string;
     set?: boolean;
@@ -208,11 +208,11 @@ export default class Store<T> extends Api {
     /**
      * Make http put request
      */
-    update(data: Hash<any>, options: IStoreSet): Promise<T> {
+    update(data: Hash<any>, options: IStoreSet = {}): Promise<T> {
         this.verifyPermission('update');
 
         return new Promise((resolve, reject) => {
-            let promise = this.http().put(options.url || data[this.model.keyColumn], data);
+            let promise = this.http().put(options.url || data[this.model.keyColumn].toString(), data);
             promise.then((response) => {
                 let instance = this.normalizedModel(response.data);
                 resolve(this.cache.set(instance));
@@ -224,7 +224,7 @@ export default class Store<T> extends Api {
      * Make http request to destroy model
      */
     destroy(value: Model | any, options: IStoreSet = {}): Promise<any> {
-        this.verifyPermission('delete');
+        this.verifyPermission('destroy');
 
         let id = Cache.resolveKey(value);
         let promise = this.http().delete(options.url || id);
@@ -235,28 +235,31 @@ export default class Store<T> extends Api {
     }
 
     /**
+     * Call foreign method of store associated with given model
+     */
+    by(model: typeof Model, value: any, options: IStoreForeign = {}): Promise<T[]> {
+        return model.resolveStore().foreign(value, this.model, options) as any;
+    }
+
+    /**
      * Make http request to fetch instances by foreign key
      */
-    by(model: Model | typeof Model, value: any = undefined, options: IStoreBy = {}): Promise<T[]> {
+    foreign(key: any, model: typeof Model, options: IStoreForeign = {}): Promise<T[]> {
         if (!options.permit) {
-            this.verifyPermission('by');
+            this.verifyPermission('foreign');
         }
 
-        if (typeof model === 'object') {
-            value = model.key();
-            model = model.constructor as typeof Model;
-        }
+        key = Cache.resolveKey(key);
 
-        let url = options.url || `${value}/${this.model.path}`;
+        let url = options.url || `${key}/${model.path}`;
 
-        return this.cachePromise(`by/${url}`, ((resolve, reject) => {
+        return this.cachePromise(`foreign/${url}`, ((resolve, reject) => {
             let list = this.cache.getList(url);
             if (!options.ignoreCache && list) {
                 return resolve(list);
             }
 
-            let promise = (model as typeof Model).resolveStore().http().get(url);
-            promise.then((response: any) => {
+            this.http().get(url).then((response: any) => {
                 let list = this.normalizedModel(response.data) as Model[];
                 this.cache.setList(url, list);
 

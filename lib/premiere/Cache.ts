@@ -52,9 +52,9 @@ export default class Cache {
     /**
      * Get object
      */
-    get(value: string): IModel {
+    get(value: any): IModel {
         if (this.enabled()) {
-            return this.objects[value];
+            return this.objects[value.toString()];
         }
     }
 

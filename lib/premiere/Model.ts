@@ -1,4 +1,4 @@
-import Store, {IStoreBy, IStoreFetch, IStoreSet, IStoreAct} from './Store';
+import Store, {IStoreForeign, IStoreFetch, IStoreSet, IStoreAct} from './Store';
 import Hash from './Hash';
 
 export interface IModel {
@@ -229,23 +229,23 @@ export default class Model implements IModel {
     /**
      * Get promise to hasOne FK relation statically
      */
-    static hasOne(model: typeof Model, value: any, options: IStoreBy = undefined) {
+    static hasOne(model: typeof Model, value: any, options: IStoreForeign = undefined) {
         return this.resolveStore().by(model, value, options);
     }
 
     /**
      * Get promise to hasMany FK relation
      */
-    hasMany(model: typeof Model, options: IStoreBy = undefined) {
+    hasMany(model: typeof Model, options: IStoreForeign = undefined) {
         let self = this.constructor as typeof Model;
-        return self.hasMany(model, this, options);
+        return self.hasMany(model, this.key(), options);
     }
 
     /**
      * Get promise to hasMany FK relation statically
      */
-    static hasMany(model: typeof Model, instance: Model, options: IStoreBy = {}) {
-        return model.resolveStore().by(instance, null, options);
+    static hasMany(model: typeof Model, value: any, options: IStoreForeign = {}) {
+        return model.resolveStore().by(this, value, options);
     }
 
     /**
@@ -275,13 +275,6 @@ export default class Model implements IModel {
      */
     static all(): Promise<Model[]> {
         return this.resolveStore().index() as Promise<Model[]>;
-    }
-
-    /**
-     * Make http request to fetch instances by foreign key
-     */
-    static by(model: Model | typeof Model, value: any = undefined, options: IStoreBy = undefined) {
-        return this.resolveStore().by(model, value, options);
     }
 
     /**
