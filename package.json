@@ -1,7 +1,7 @@
 {
   "name": "premiere",
   "version": "0.0.5",
-  "description": "Easy and powerful JS ORM for Restful clients",
+  "description": "Javascript ORM for consuming Restful APIs",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {

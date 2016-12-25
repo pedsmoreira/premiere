@@ -1,6 +1,6 @@
 {
   "name": "premiere",
-  "description": "Easy and powerful JS ORM for Restful clients",
+  "description": "Javascript ORM for consuming Restful APIs",
   "main": "dist/premiere.js",
   "authors": [
     "Pedro Moreira"
