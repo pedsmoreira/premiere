@@ -5,7 +5,15 @@
 [![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
 [![Test Coverage](https://codeclimate.com/github/pedsmoreira/premiere/badges/coverage.svg)](https://codeclimate.com/github/pedsmoreira/premiere/coverage)
 
-Simple and powerful _standalone_ Javascript ORM for consuming Restful APIs.
+Javascript ORM for consuming Restful APIs.
+
+Premiere is standalone _(independent of framework)_, so you can use it with your favorite library/framework, be it
+[MobX](https://mobxjs.github.io/mobx/)
+[React](https://facebook.github.io/react/),
+[Angular](https://angularjs.org/),
+[VueJS](https://vuejs.org/),
+[jQuery](https://jquery.com/),
+[Redux](http://redux.js.org/). You name it!
 
 ## Features
 - Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
@@ -13,7 +21,8 @@ Simple and powerful _standalone_ Javascript ORM for consuming Restful APIs.
 - Model normalization and denormalization
 - Caching
 - Foreign keys
-- Header support _(frequently used with Authorization and CSRF token)_
+- HTTP Header support _(frequently used with Authorization and CSRF token)_
+- 100% Unit Tested
 
 ## Workflow
 ![Workflow](workflow.png)
@@ -89,11 +98,15 @@ With MobX
 
 ## Inspiration
 Premiere is inspired by [Laravel](https://laravel.com/)
+([Eloquent](https://laravel.com/docs/master/eloquent)) and
+[Rails](http://rubyonrails.org/)
+([Active Record](http://guides.rubyonrails.org/active_record_basics.html)).
 
-Their sintax and easiness of use are an inspiration for building simple and powerful libraries.
+Because of frameworks like this, it's much simpler to build Restful APIs.
+The goal of Premiere is to provide the same facility and power that these libraries provide on the server side.  
 
 ## Dependencies
-Premiere uses [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests, it's a very simple and powerful library.
+Premiere uses [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
 
 ## License
 MIT

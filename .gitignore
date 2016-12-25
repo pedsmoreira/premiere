@@ -1,6 +1,5 @@
 node_modules
 coverage
 build
-dist
 yarn.lock
 npm-debug.log
