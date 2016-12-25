@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "tslint 'lib/**/*.ts'",
     "pretest": "npm run lint",
-    "test": "jest ${1}",
+    "test": "jest --coverage ${1}",
     "test-watch": "jest ${1} --watch",
     "prepublish": "tsc",
     "build": "echo 1",

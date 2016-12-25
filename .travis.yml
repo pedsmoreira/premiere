@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - node
+email:
+  on_failure: change
+  on_success: never
+addons:
+  code_climate:
+    repo_token: b6e7fa1a85471ad7dbbe10afb57f95a5bbd491dc68676dc4413bbf6489fa8add
