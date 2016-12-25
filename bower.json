@@ -16,11 +16,16 @@
   "homepage": "https://pedsmoreira.github.io/premiere",
   "ignore": [
     "**/.*",
-    "build",
-    "node_modules",
+    "*.yml",
     "bower_components",
+    "build",
+    "coverage",
+    "docs",
     "lib",
+    "node_modules",
     "package.json",
-    "tsconfig.json"
+    "tsconfig.json",
+    "tslint.json",
+    "webpack.config.js"
   ]
 }

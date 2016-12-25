@@ -1,5 +1,10 @@
-node_modules
-docs
-coverage
-yarn.lock
-npm-debug.log
+**/.*
+*.yml
+bower.json
+bower_components/
+coverage/
+docs/
+examples/
+node_modules/
+tslint.json
+webpack.config.js

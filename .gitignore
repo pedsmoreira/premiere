@@ -1,5 +1,7 @@
-node_modules
-coverage
-build
+.idea
+bower.json
+bower_components/
+build/
+coverage/
+node_modules/
 yarn.lock
-npm-debug.log
