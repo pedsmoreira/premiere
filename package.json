@@ -10,9 +10,9 @@
     "test": "jest --coverage ${1}",
     "test-watch": "jest ${1} --watch",
     "prepublish": "tsc",
-    "build": "echo 1",
+    "build": "webpack",
     "preversion": "npm test",
-    "version": "npm run build && git add -A dist && git add bower.json package.json",
+    "version": "npm run build && git add bower.json package.json",
     "postversion": "git push && git push --tags",
     "docs": "typedoc --mode file --module commonjs --readme none --out docs lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
   },
@@ -42,7 +42,9 @@
     "ts-jest": "^17.0.3",
     "tslint": "^4.1.1",
     "typedoc": "^0.5.1",
-    "typescript": "^2.1.4"
+    "typescript": "^2.1.4",
+    "unminified-webpack-plugin": "^1.2.0",
+    "webpack": "^1.14.0"
   },
   "jest": {
     "moduleFileExtensions": [
