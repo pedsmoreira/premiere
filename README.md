@@ -15,6 +15,10 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 [jQuery](https://jquery.com/),
 [Redux](http://redux.js.org/). You name it!
 
+#### Quick Links
+- [Website](http://pedsmoreira.github.io/premiere)
+- [Documentation](http://pedsmoreira.github.io/premiere/docs)
+
 ## Features
 - Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
 - Easy configuration
@@ -94,7 +98,7 @@ With MobX
 ```
 
 ## Examples
-- [Premiere Player](https://github.com/pedsmoreira/premiere-player), https://premiere-player.herokuapp.com/ 
+- [Premiere Player](https://github.com/pedsmoreira/premiere-player) 
 
 ## Inspiration
 Premiere is inspired by [Laravel](https://laravel.com/)
