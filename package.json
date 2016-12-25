@@ -1,6 +1,6 @@
 {
   "name": "premiere",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Easy and powerful JS ORM for Restful clients",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
@@ -54,7 +54,7 @@
     "transform": {
       "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "lib\/.*\\.spec.(ts|js)$",
+    "testRegex": "lib/.*\\.spec.(ts|js)$",
     "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js"
   }
 }
