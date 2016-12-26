@@ -6,7 +6,7 @@ bower.json
 bower_components/
 coverage/
 CONTRIBUTING.md
-docs/
+documentation/
 examples/
 node_modules/
 tslint.json

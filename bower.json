@@ -23,7 +23,7 @@
     "build",
     "coverage",
     "CONTRIBUTING.md",
-    "docs",
+    "documentation",
     "examples/",
     "lib",
     "node_modules",

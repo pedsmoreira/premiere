@@ -18,7 +18,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 #### Quick Links
 - **[Examples](http://pedsmoreira.github.io/premiere/examples)**
 - [Website](http://pedsmoreira.github.io/premiere)
-- [Documentation](http://pedsmoreira.github.io/premiere/docs)
+- [Documentation](http://pedsmoreira.github.io/premiere/documentation)
 
 ## Features
 - Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
@@ -34,7 +34,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 
 ** For more about how promises work, check out [Dave Atchley's article](http://www.datchley.name/es6-promises/)
 
-## Installing
+## Installation
 
 Using [npm](http://npmjs.com/):
 
@@ -63,13 +63,13 @@ Using cdn:
 ## Projects
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player)
 
-## Inspiration
+## Motivation
 Premiere is inspired by [Laravel](https://laravel.com/)
 ([Eloquent](https://laravel.com/docs/master/eloquent)) and
 [Rails](http://rubyonrails.org/)
 ([Active Record](http://guides.rubyonrails.org/active_record_basics.html)).
 
-Because of frameworks like this, it's much simpler to build Restful APIs.
+Because of frameworks like these, it's much simpler to build Restful APIs.
 The goal of Premiere is to provide the same facility and power that these libraries provide on the server side.  
 
 ## Dependencies

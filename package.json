@@ -14,7 +14,7 @@
     "preversion": "npm test",
     "version": "npm run build && git add -A dist && git add bower.json package.json",
     "postversion": "git push && git push --tags",
-    "docs": "typedoc --mode file --module commonjs --readme none --out docs lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
+    "documentation": "typedoc --mode file --module commonjs --readme none --out documentation lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
   },
   "repository": {
     "type": "git",
