@@ -27,10 +27,12 @@
     "examples/",
     "lib",
     "node_modules",
+    "npm-debug.log",
     "package.json",
     "tsconfig.json",
     "tslint.json",
     "tutorials/",
-    "webpack.config.js"
+    "webpack.config.js",
+    "yarn.lock"
   ]
 }

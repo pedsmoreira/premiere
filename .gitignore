@@ -1,7 +1,16 @@
-.idea
-bower.json
+# Dependencies
 bower_components/
-build/
-coverage/
 node_modules/
+
+# Testing
+coverage/
+
+# Build
+build/
+
+# Misc
+.DS_Store
+.env
+.idea
+npm-debug.log
 yarn.lock
