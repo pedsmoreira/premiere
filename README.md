@@ -48,12 +48,6 @@ Using [yarn](https://yarnpkg.com/):
 $ yarn add premiere
 ```
 
-Using [bower](https://bower.io/):
-
-```bash
-$ bower install premiere --save
-```
-
 Using cdn:
 
 ```html

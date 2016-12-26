@@ -1,6 +1,4 @@
 # Dependencies
-bower.json
-bower_components/
 node_modules/
 yarn.lock
 

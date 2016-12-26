@@ -12,7 +12,7 @@
     "prepublish": "tsc",
     "build": "webpack",
     "preversion": "npm test",
-    "version": "npm run build && git add -A dist && git add bower.json package.json",
+    "version": "npm run build && git add -A git add package.json",
     "postversion": "git push && git push --tags",
     "documentation": "typedoc --mode file --module commonjs --readme none --out documentation lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
   },

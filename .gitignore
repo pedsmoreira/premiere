@@ -1,5 +1,4 @@
 # Dependencies
-bower_components/
 node_modules/
 
 # Testing
@@ -7,6 +6,7 @@ coverage/
 
 # Build
 build/
+dist/
 
 # Misc
 .DS_Store
