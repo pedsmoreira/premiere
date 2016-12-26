@@ -29,7 +29,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 - 100% Unit Tested
 
 ## Workflow
-![Workflow](workflow.png)
+![Workflow](assets/workflow.png)
 
 ** For more about how promises work, check out [Dave Atchley's article](http://www.datchley.name/es6-promises/)
 

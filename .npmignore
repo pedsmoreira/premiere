@@ -1,6 +1,7 @@
 **/.*
 *.yml
 _layouts/
+assets/
 bower.json
 bower_components/
 coverage/
@@ -10,4 +11,3 @@ examples/
 node_modules/
 tslint.json
 webpack.config.js
-workflow.png
