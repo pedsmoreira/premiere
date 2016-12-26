@@ -16,7 +16,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 [Redux](http://redux.js.org/). You name it!
 
 #### Quick Links
-- **[Examples](http://pedsmoreira.github.io/premiere/examples)**
+- **[Tutorials](http://pedsmoreira.github.io/premiere/tutorials)**
 - [Website](http://pedsmoreira.github.io/premiere)
 - [Documentation](http://pedsmoreira.github.io/premiere/documentation)
 
@@ -59,6 +59,11 @@ Using cdn:
 ```html
 <script src="https://unpkg.com/premiere/dist/premiere.min.js"></script>
 ```
+
+## Examples
+- Todo List _(ES6)_
+- Holidays _(Typescript)_
+- Github API _(React + MobX)_
 
 ## Projects
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player)

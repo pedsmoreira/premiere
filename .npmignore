@@ -10,4 +10,5 @@ documentation/
 examples/
 node_modules/
 tslint.json
+tutorials/
 webpack.config.js

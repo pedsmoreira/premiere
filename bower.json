@@ -30,7 +30,7 @@
     "package.json",
     "tsconfig.json",
     "tslint.json",
-    "webpack.config.js",
-    "workflow.png"
+    "tutorials/",
+    "webpack.config.js"
   ]
 }
