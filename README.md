@@ -16,6 +16,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 [Redux](http://redux.js.org/). You name it!
 
 #### Quick Links
+- **[Examples](http://pedsmoreira.github.io/premiere/examples)**
 - [Website](http://pedsmoreira.github.io/premiere)
 - [Documentation](http://pedsmoreira.github.io/premiere/docs)
 
@@ -59,46 +60,8 @@ Using cdn:
 <script src="https://unpkg.com/premiere/dist/premiere.min.js"></script>
 ```
 
-## Quick Samples
-
-Creating a new Model
- 
-```js
-// TODO
-```
-
-Creating a custom Store
-
-```js
-// TODO
-```
-
-Creating an API
-
-```js
-// TODO
-```
-
-Working with the cache
-
-```js
-// TODO
-```
-
-Persisting the **index** result
-
-```js
-// TODO
-```
-
-With MobX
-
-```js
-// TODO
-```
-
-## Examples
-- [Premiere Player](https://github.com/pedsmoreira/premiere-player) 
+## Projects
+- [Premiere Player](https://github.com/pedsmoreira/premiere-player)
 
 ## Inspiration
 Premiere is inspired by [Laravel](https://laravel.com/)
