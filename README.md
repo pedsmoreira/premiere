@@ -61,12 +61,8 @@ Using cdn:
 ```
 
 ## Examples
-- Todo List _(ES6)_
-- Holidays _(Typescript)_
-- Github API _(React + MobX)_
-
-## Projects
-- [Premiere Player](https://github.com/pedsmoreira/premiere-player)
+- [Todo List]
+- [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(React + MobX)_
 
 ## Motivation
 Premiere is inspired by [Laravel](https://laravel.com/)
