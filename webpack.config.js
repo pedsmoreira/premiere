@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: 'dist',
     filename: 'premiere.min.js',
-    library: 'premiere',
+    library: 'Premiere',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

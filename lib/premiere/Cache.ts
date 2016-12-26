@@ -95,6 +95,7 @@ export default class Cache {
     destroy(value: string | IModel) {
         let self = this.constructor as typeof Cache;
         delete this.objects[self.resolveKey(value)];
+        this.lists = {};
     }
 
     /**

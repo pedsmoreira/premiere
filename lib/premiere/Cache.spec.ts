@@ -62,6 +62,13 @@ describe('Cache', () => {
         expect(cache.get('id')).toBeUndefined();
     });
 
+    it('should clear lists after destroying', () => {
+        cache.lists = 'lists' as any;
+        cache.set(model);
+        cache.destroy(model);
+        expect(cache.lists).toEqual({});
+    });
+
     it('should set list', () => {
         cache.setList('list', list);
         expect(cache.lists['list']).toBe(list);

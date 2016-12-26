@@ -32,7 +32,7 @@ Stores are the soul of your API client. They define how to communicate with the 
 - [Permissions](./store/permissions)
 
 ## Api
-`Store` extend `Api` to have access to caching and request control _(header and path)_.
+`Store` extends `Api` to have access to caching and request control _(header and path)_.
 
 - [Cache](./api/cache)
 - [Promise Cache](./api/promise-cache)
