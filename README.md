@@ -70,7 +70,8 @@ Premiere is inspired by [Laravel](https://laravel.com/)
 ([Active Record](http://guides.rubyonrails.org/active_record_basics.html)).
 
 Because of frameworks like these, it's much simpler to build Restful APIs.
-The goal of Premiere is to provide the same facility and power that these libraries provide on the server side.  
+
+The goal of Premiere is to provide the same facility and power that these libraries provide, on the client side.  
 
 ## Dependencies
 Premiere uses [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
