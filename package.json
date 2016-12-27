@@ -9,10 +9,9 @@
     "pretest": "npm run lint",
     "test": "jest --coverage ${1}",
     "test-watch": "jest ${1} --watch",
-    "prepublish": "tsc",
-    "build": "webpack",
+    "build": "tsc && webpack",
     "preversion": "npm test",
-    "version": "npm run build && git add -A git add package.json",
+    "version": "npm run build && git add package.json",
     "postversion": "git push && git push --tags",
     "documentation": "typedoc --mode file --module commonjs --readme none --out documentation lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
   },
