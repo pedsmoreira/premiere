@@ -55,7 +55,11 @@ Using cdn:
 ```
 
 ## Examples
-- [Todo List]
+- [Book List](http://jsfiddle.net/pedsmoreira/Lt2ehe5w/) _(ES5 - JSFiddle)_
+- [Book List](http://jsfiddle.net/pedsmoreira/fqLuvjr1/) _(ES6 - JSFiddle)_
+- [Todo List](examples/todo) _(Typescript)_
+
+## Projects
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(React + MobX)_
 
 ## Motivation
