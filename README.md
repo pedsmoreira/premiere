@@ -21,7 +21,7 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 - [Documentation](http://pedsmoreira.github.io/premiere/documentation)
 
 ## Features
-- Works very nicely with [TypeScript](http://typescriptlang.org/) and ES6
+- Works with [TypeScript](http://typescriptlang.org/) and ES6
 - Easy configuration
 - Model normalization and denormalization
 - Caching
@@ -55,7 +55,6 @@ Using cdn:
 ```
 
 ## Examples
-- [Book List](http://jsfiddle.net/pedsmoreira/Lt2ehe5w/) _(ES5 - JSFiddle)_
 - [Book List](http://jsfiddle.net/pedsmoreira/fqLuvjr1/) _(ES6 - JSFiddle)_
 - [Todo List](examples/todo) _(Typescript)_
 
