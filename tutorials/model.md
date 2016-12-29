@@ -36,7 +36,7 @@ Todo.all().then((todo) => {
 Fetching todo
 
 ```typescript
-// GET todos/1
+// GET todos/:id
 Todo.find(1).then((todo) => {
   console.log(todo); // Todo
 })
@@ -71,7 +71,7 @@ Todo.save({name: 'My own todo'}).then((todo) => {
 Updating a todo
 
 ```typescript
-// PUT todos/1
+// PUT todos/:id
 todo.name = 'New name';
 todo.save().then((todo) => {
     console.log(todo); // Todo
@@ -81,7 +81,7 @@ todo.save().then((todo) => {
 Deleting a todo
 
 ```typescript
-// DELETE todos/1
+// DELETE todos/:id
 todo.destroy(() => {
     console.log('Todo destroyed');
 });
@@ -90,7 +90,7 @@ todo.destroy(() => {
 Reloading a todo
 
 ```typescript
-// GET todos/1
+// GET todos/:id
 todo.name = 'new name';
 todo.reload((todo) => {
     console.log(todo); // Todo with name 'My own todo'
@@ -104,13 +104,4 @@ Custom action
 Todo.act('deleteAll', {method: 'post'})
 ```
 
-## Working with Foreign Keys
-
-belongsTo - 
-belongsToMany - 
-hasOne -
-hasMany -
-
-## Check out more
-
-Now that you know how to work with models, look how to [Customize Stores](./model)
+Next: [Working with Foreign Keys](./model-fk)

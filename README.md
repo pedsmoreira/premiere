@@ -15,19 +15,17 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 [jQuery](https://jquery.com/),
 [Redux](http://redux.js.org/). You name it!
 
-#### Quick Links
-- **[Tutorials](http://pedsmoreira.github.io/premiere/tutorials)**
-- [Website](http://pedsmoreira.github.io/premiere)
-- [Documentation](http://pedsmoreira.github.io/premiere/documentation)
+## Website
+For a better experience, please checkout the [Website](http://pedsmoreira.github.io/premiere)
 
 ## Features
-- Works with [TypeScript](http://typescriptlang.org/) and ES6
 - Easy configuration
 - Model normalization and denormalization
 - Caching
 - Foreign keys
 - HTTP Header support _(frequently used with Authorization and CSRF token)_
 - 100% Unit Tested
+- Works nicely with [TypeScript](http://typescriptlang.org/) and ES6
 
 ## Workflow
 ![Workflow](assets/workflow.png)
@@ -42,17 +40,23 @@ Using [npm](http://npmjs.com/):
 $ npm install premiere --save
 ```
 
-Using [yarn](https://yarnpkg.com/):
-
-```bash
-$ yarn add premiere
-```
-
 Using cdn:
 
 ```html
 <script src="https://unpkg.com/premiere/dist/premiere.min.js"></script>
 ```
+
+**Note:** You'll need a ES6 [polyfill](https://babeljs.io/docs/usage/polyfill/) on your build pipeline.
+
+## Tutorials
+- [Working with Models](./tutorials/model)
+- [Working with Foreign Keys](./tutorials/model-fk)
+- [Customizing Stores](./tutorials/store)
+- [Working with Cache](./tutorials/cache)
+- [APIs without Models](./tutorials/api)
+
+## Documentation
+Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documentation).
 
 ## Examples
 - [Book List](http://jsfiddle.net/pedsmoreira/fqLuvjr1/) _(ES6 - JSFiddle)_
@@ -67,12 +71,12 @@ Premiere is inspired by [Laravel](https://laravel.com/)
 [Rails](http://rubyonrails.org/)
 ([Active Record](http://guides.rubyonrails.org/active_record_basics.html)).
 
-Because of frameworks like these, it's much simpler to build Restful APIs.
+Because of frameworks like these, building Restful APIs is a much smoother path.
 
-The goal of Premiere is to provide the same facility and power that these libraries provide, on the client side.  
+The goal of Premiere is to provide the same facility and power that these libraries provide, just this time on the client side.  
 
 ## Dependencies
-Premiere uses [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
+- [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
 
 ## License
 MIT
