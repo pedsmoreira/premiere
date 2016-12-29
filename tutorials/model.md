@@ -104,4 +104,6 @@ Custom action
 Todo.act('deleteAll', {method: 'post'})
 ```
 
-Next: [Working with Foreign Keys](./model-fk)
+| Next |
+| -----------:|
+| **[Working with Foreign Keys](./model-fk)** |

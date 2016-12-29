@@ -56,4 +56,6 @@ export default class List extends Model {
 }
 ```
 
-Next: [Customizing Stores](./store)
+| Previous | Next |
+| -------- | -----------:|
+| [Working with Models](./model) | **[Customizing Stores](./store)** |
