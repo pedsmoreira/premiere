@@ -24,7 +24,7 @@ describe('Store foreign method', () => {
     let model: SpecModel;
     let spyModel: SpyModel;
 
-    let store: any = SpecModel.resolveStore();
+    let store: Store<SpecModel> = SpecModel.resolveStore();
     ['index', 'get', 'where', 'create', 'update', 'by', 'foreign', 'destroy', 'act'].forEach((key) => {
         store[key] = jest.fn().mockReturnValue({then: jest.fn()});
     });
@@ -182,6 +182,10 @@ describe('Store foreign method', () => {
     it('should destroy statically', () => {
         SpecModel.destroy(1, 'options');
         expect(model.store().destroy).toHaveBeenCalledWith(1, 'options');
+    });
+
+    it('should destroy array statically', () => {
+        expect(Array.isArray(SpecModel.destroy([1, 1], 'options'))).toBeTruthy();
     });
 
     it('should belong to', () => {

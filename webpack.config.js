@@ -3,7 +3,7 @@ var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 let UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 module.exports = {
-  entry: ['babel-polyfill', './build/index.js'],
+  entry: './build/index.js',
   output: {
     path: 'dist',
     filename: 'premiere.min.js',
