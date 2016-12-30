@@ -80,7 +80,7 @@ export default class Store<T> extends Api {
      */
     verifyPermission(method: string): void {
         if (!this.isMethodAllowed(method)) {
-            let message = `Method '${method}' is not allowed in '${this.model.path}' store`;
+            let message = `Method '${method}' is not allowed in '${this.path()}' store`;
             throw new Error(message);
         }
     }
@@ -88,22 +88,8 @@ export default class Store<T> extends Api {
     /**
      * Get new model instance
      */
-    modelInstance(values: Hash<string>): Model | Model[] {
-        return this.model.make(values);
-    }
-
-    /**
-     * Get new normalized model instance
-     */
-    normalizedModel(values: Hash<string>[] | Hash<string>): Model | Model[] {
-        if (Array.isArray(values)) {
-            return values.map(hash => this.normalizedModel(hash)) as Model[];
-        }
-
-        let instance = this.modelInstance(values) as Model;
-        instance.normalize();
-
-        return instance;
+    make(values: Hash<string>, normalize: boolean = true): Model | Model[] {
+        return this.model.make(values, normalize);
     }
 
     /**
@@ -124,7 +110,7 @@ export default class Store<T> extends Api {
 
             let promise = this.http().get(options.url || '');
             promise.then(response => {
-                let list = this.normalizedModel(response.data) as Model[];
+                let list = this.make(response.data) as Model[];
                 this.cache.setList('index', list);
                 if (this.setIndex) {
                     this.cache.set(list, false);
@@ -155,7 +141,7 @@ export default class Store<T> extends Api {
 
             let promise = this.http().get(options.url || key.toString());
             promise.then(response => {
-                let instance = this.normalizedModel(response.data);
+                let instance = this.make(response.data);
                 resolve(this.cache.set(instance, false));
             }, reject);
         });
@@ -184,7 +170,7 @@ export default class Store<T> extends Api {
 
             let promise = this.http().get(url);
             promise.then(response => {
-                let instance = this.normalizedModel(response.data);
+                let instance = this.make(response.data);
                 resolve(this.cache.set(instance, false));
             }, reject);
         });
@@ -199,7 +185,7 @@ export default class Store<T> extends Api {
         let promise = this.http().post(options.url || '', data);
         return new Promise((resolve, reject) => {
             promise.then((response) => {
-                let instance = this.normalizedModel(response.data);
+                let instance = this.make(response.data);
                 resolve(this.cache.set(instance));
             }, reject);
         });
@@ -214,7 +200,7 @@ export default class Store<T> extends Api {
         return new Promise((resolve, reject) => {
             let promise = this.http().put(options.url || data[this.model.keyColumn].toString(), data);
             promise.then((response) => {
-                let instance = this.normalizedModel(response.data);
+                let instance = this.make(response.data);
                 resolve(this.cache.set(instance));
             }, reject);
         });
@@ -260,7 +246,7 @@ export default class Store<T> extends Api {
             }
 
             this.http().get(url).then((response: any) => {
-                let list = this.normalizedModel(response.data) as Model[];
+                let list = this.make(response.data) as Model[];
                 this.cache.setList(url, list);
 
                 if (options.set || (!Array.isArray(list) && options.set !== false)) {

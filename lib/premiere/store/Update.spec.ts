@@ -9,7 +9,7 @@ describe('Store update method', () => {
 
     beforeEach(() => {
         store = new Store<any>({keyColumn: 'id'} as any);
-        store.normalizedModel = jest.fn().mockReturnValue(instance);
+        store.make = jest.fn().mockReturnValue(instance);
         store.http = Helper.http(responseData);
     });
 
@@ -30,7 +30,7 @@ describe('Store update method', () => {
 
     it('should convert result to model instance', () => {
         store.update(data);
-        expect(store.normalizedModel).toHaveBeenCalledWith(responseData);
+        expect(store.make).toHaveBeenCalledWith(responseData);
     });
 
     it('should add model to cache', () => {

@@ -48,8 +48,15 @@ export default class Model implements IModel {
     /**
      * Get an instance of store
      */
-    static resolveStore(properties = this.storeProperties, modelClass = this): Store<Model> {
-        return this.store = this.store || new Store<Model>(modelClass, properties);
+    static resolveStore(properties: Hash<any> = undefined): Store<Model> {
+        return this.store = this.store || this.createStore(properties);
+    }
+
+    /**
+     * Create new instance of store
+     */
+    static createStore(properties: Hash<any> = this.storeProperties): Store<Model> {
+        return new Store<Model>(this, properties);
     }
 
     /**
@@ -64,23 +71,22 @@ export default class Model implements IModel {
      * Get mapped properties with values of model
      * The shallow map does not contain objects (consequently, does not contain FKs)
      */
-    shallowMap(): Hash<any> {
+    map(denormalize: boolean = true): Hash<any> {
+        let self = this.constructor as typeof Model;
+
         let map: any = {};
         Object.keys(this).forEach(key => {
             let value = (this as any)[key];
+            if (denormalize) {
+                value = self.denormalize(key, value);
+            }
+
             if (typeof value !== 'object') {
                 map[key] = value;
             }
         });
 
         return map;
-    }
-
-    /**
-     * Get shallow map merged with denormalized values
-     */
-    persistentMap(): Hash<any> {
-        return Object.assign(this.shallowMap(), this.denormalized());
     }
 
     /**
@@ -98,11 +104,46 @@ export default class Model implements IModel {
     }
 
     /**
+     * Resolve normalizing function
+     */
+    static resolveTransformer(key: string, type: string = 'normalize'): string {
+        let underscored = `${type}_${key}`;
+        if ((this as any)[underscored]) {
+            return underscored;
+        }
+
+        let camelized = key.split(new RegExp('[_|-]')).map(
+            (part) => part.substring(0, 1).toUpperCase() + part.substring(1));
+        let camel = `${type}${camelized.join('')}`;
+        if ((this as any)[camel]) {
+            return camel;
+        }
+    }
+
+    /**
+     * Normalize property
+     */
+    static normalize(key: string, value: any): any {
+        let method: string = this.resolveTransformer(key);
+        return method ? (this as any)[method](value) : value;
+    }
+
+    /**
+     * Denormalize property
+     */
+    static denormalize(key: string, value: any): any {
+        let method: string = this.resolveTransformer(key, 'denormalize');
+        return method ? (this as any)[method](value) : value;
+    }
+
+    /**
      * Set values to instance
      */
-    set(values: Hash<any>): this {
+    set(values: Hash<any>, normalize: boolean = false): this {
+        let self = this.constructor as typeof Model;
         Object.keys(values).forEach(key => {
-            (this as any)[key] = values[key];
+            let value = values[key];
+            (this as any)[key] = normalize ? self.normalize(key, value) : value;
         });
 
         return this;
@@ -114,7 +155,7 @@ export default class Model implements IModel {
     duplicate(): this {
         let self = this.constructor as typeof Model;
 
-        let map = this.shallowMap();
+        let map = this.map(false);
         delete map[self.keyColumn];
 
         return self.make(map) as this;
@@ -123,26 +164,11 @@ export default class Model implements IModel {
     /**
      * Create one or an array of model instances
      */
-    static make(values: Hash<any> | Hash<any>[]): Model | Model[] {
+    static make(values: Hash<any> | Hash<any>[], normalize: boolean = false): Model | Model[] {
         if (Array.isArray(values)) {
             return values.map(it => this.make(it)) as Model[];
         }
-        return new this().set(values);
-    }
-
-    /**
-     * Normalize model
-     * This method should filled by model extensions
-     */
-    normalize(): void {
-    }
-
-    /**
-     * Get array with denormalized properties
-     * This method should be filled by model exteions
-     */
-    denormalized(): Hash<any> {
-        return {};
+        return new this().set(values, normalize);
     }
 
     /**
@@ -165,7 +191,7 @@ export default class Model implements IModel {
      */
     save(options: IStoreSet = undefined): Promise<this> {
         let self = this.constructor as typeof Model;
-        return self.save(this.persistentMap(), options) as Promise<Model>;
+        return self.save(this.map(), options) as Promise<Model>;
     }
 
     /**
@@ -205,15 +231,7 @@ export default class Model implements IModel {
      * Get promise to belongsTo FK relation
      */
     belongsTo(model: typeof Model, options: IStoreFetch = undefined): Promise<Model> {
-        let self = this.constructor as typeof Model;
-        return self.belongsTo(model, this.foreignKey(model), options);
-    }
-
-    /**
-     * Get promise to belongsTo FK relation
-     */
-    static belongsTo(model: typeof Model, value: any, options: IStoreFetch = undefined): Promise<Model> {
-        return model.find(value, options);
+        return model.find(this.foreignKey(model), options);
     }
 
     /**

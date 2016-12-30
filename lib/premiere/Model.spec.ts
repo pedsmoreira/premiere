@@ -7,72 +7,111 @@ class SpecModel extends Model {
     id: number = 1;
     property: string = 'value';
 
-    normalize() {
-        this.property = 'normalized value';
+    static normalize_property(value: any) {
+        return 'normalized ' + value;
     }
 
-    denormalized() {
-        return {property: 'denormalized value'};
+    static denormalize_property(value: any) {
+        return 'denormalized ' + value;
     }
 }
 
 class SpyModel extends Model {
     id: string = 'spy';
-    spec_id: string = 'fk';
 }
 
 describe('Store foreign method', () => {
     let model: SpecModel;
     let spyModel: SpyModel;
 
+    let store: any = SpecModel.resolveStore();
+    ['index', 'get', 'where', 'create', 'update', 'by', 'foreign', 'destroy', 'act'].forEach((key) => {
+        store[key] = jest.fn().mockReturnValue({then: jest.fn()});
+    });
+
     beforeEach(() => {
         model = new SpecModel();
         spyModel = new SpyModel();
 
-        let store: any = model.store() as any;
-        ['index', 'get', 'where', 'create', 'update', 'by', 'foreign', 'destroy', 'act'].forEach((key) => {
-            store[key] = jest.fn().mockReturnValue({then: jest.fn()});
-        });
-
-        ['find', 'save', 'destroy', 'belongsTo', 'belongsToMany', 'hasOne', 'hasMany', 'act'].forEach((key) => (SpyModel as any)[key] = jest.fn());
+        ['find', 'save', 'destroy', 'belongsToMany', 'hasOne', 'hasMany', 'act'].forEach((key) => (SpyModel as any)[key] = jest.fn());
     });
 
     it('should get store', () => {
         expect(model.store()).toBeInstanceOf(Store);
     });
 
-    it('should resolve existing store', () => {
+    it('should resolve creating store', () => {
         SpyModel.store = 'store' as any;
         expect(SpyModel.resolveStore()).toBe('store');
     });
 
     it('should resolve new store', () => {
         SpyModel.store = null;
-        expect(SpyModel.resolveStore()).toBeInstanceOf(Store);
+        SpyModel.createStore = jest.fn();
+
+        SpyModel.resolveStore('properties' as any);
+        expect(SpyModel.createStore).toHaveBeenCalledWith('properties');
+    });
+
+    it('should create store', () => {
+        expect(SpecModel.createStore()).toBeInstanceOf(Store);
+    });
+
+    it('should create store with properties', () => {
+        let store = SpecModel.createStore({property: 'value'});
+        expect((store as any).property).toBe('value');
     });
 
     it('should get key', () => {
         expect(model.key()).toBe(1);
     });
 
-    it('should get shallow map', () => {
-        expect(model.shallowMap()).toEqual({id: 1, property: 'value'});
-    });
-
-    it('should get persistent map', () => {
-        expect(model.persistentMap()).toEqual({id: 1, property: 'denormalized value'});
+    it('should map', () => {
+        expect(model.map()).toEqual({id: 1, property: 'denormalized value'});
     });
 
     it('should get foreign key', () => {
-        expect(spyModel.foreignKey(SpecModel)).toBe('fk');
+        SpyModel.singular = 'spy';
+        (model as any).spy_id = 'fk';
+        expect(model.foreignKey(SpyModel)).toBe('fk');
     });
 
     it('should get foreign key name', () => {
         expect(SpecModel.foreignKey()).toBe('spec_id');
     });
 
+    it('should resolve normalizer', () => {
+        expect(SpecModel.resolveTransformer('property')).toBe('normalize_property');
+    });
+
+    it('should resolve denormalizer', () => {
+        expect(SpecModel.resolveTransformer('property', 'denormalize')).toBe('denormalize_property');
+    });
+
+    it('should resolve camelCase normalizer', () => {
+        (SpyModel as any).normalize_my_property = null;
+        (SpyModel as any).normalizeMyProperty = jest.fn();
+        expect(SpyModel.resolveTransformer('my_property')).toBe('normalizeMyProperty');
+    });
+
+    it('should normalize', () => {
+        expect(SpecModel.normalize('property', 'value')).toBe('normalized value');
+    });
+
+    it('should denormalize', () => {
+        expect(SpecModel.denormalize('property', 'value')).toBe('denormalized value');
+    });
+
     it('should set', () => {
+        SpyModel.normalize = jest.fn();
         expect(model.set({property: 'set value'}).property).toBe('set value');
+        expect(SpyModel.normalize).not.toHaveBeenCalled();
+    });
+
+    it('should set and normalize', () => {
+        SpyModel.normalize = jest.fn();
+        spyModel.set({property: 'value'}, true);
+        expect(SpyModel.normalize).toHaveBeenCalledWith('property', 'value');
     });
 
     it('should duplicate', () => {
@@ -84,9 +123,10 @@ describe('Store foreign method', () => {
         expect(model.property).toBe('made value');
     });
 
-    it('should normalize', () => {
-        model.normalize();
-        expect(model.property).toBe('normalized value');
+    it('should make and normalize', () => {
+        SpyModel.normalize = jest.fn();
+        SpyModel.make({property: 'value'}, true);
+        expect(SpyModel.normalize).toHaveBeenCalledWith('property', 'value');
     });
 
     it('should reload', () => {
@@ -100,7 +140,7 @@ describe('Store foreign method', () => {
     });
 
     it('should save', () => {
-        spyModel.persistentMap = () => 'map' as any;
+        spyModel.map = () => 'map' as any;
 
         spyModel.save('options');
         expect(SpyModel.save).toHaveBeenCalledWith('map', 'options');
@@ -118,7 +158,19 @@ describe('Store foreign method', () => {
         expect(model.store().update).toHaveBeenCalledWith(data, 'options');
     });
 
-    it('should save array', () => {
+    it('should create statically', () => {
+        let properties = {property: 'values'};
+        SpecModel.save(properties, 'options');
+        expect(store.create).toHaveBeenCalledWith(properties, 'options');
+    });
+
+    it('should update statically', () => {
+        let properties = {id: 'id', property: 'values'};
+        SpecModel.save(properties, 'options');
+        expect(store.update).toHaveBeenCalledWith(properties, 'options');
+    });
+
+    it('should save array statically', () => {
         expect(Array.isArray(SpecModel.save([1, 2]))).toBeTruthy();
     });
 
@@ -133,13 +185,11 @@ describe('Store foreign method', () => {
     });
 
     it('should belong to', () => {
-        spyModel.belongsTo(SpecModel, 'options');
-        expect(SpyModel.belongsTo).toHaveBeenCalledWith(SpecModel, 'fk', 'options');
-    });
+        SpyModel.singular = 'spy';
+        (model as any).spy_id = 'fk';
 
-    it('should belong to statically', () => {
-        SpecModel.belongsTo(SpyModel, 'value', 'options');
-        expect(SpyModel.find).toHaveBeenCalledWith('value', 'options');
+        model.belongsTo(SpyModel, 'options');
+        expect(SpyModel.find).toHaveBeenCalledWith('fk', 'options');
     });
 
     it('should belong to many', () => {
@@ -197,6 +247,7 @@ describe('Store foreign method', () => {
     });
 
     it('should guess singular path', () => {
+        SpyModel.singular = null;
         SpyModel.path = 'plurals';
         expect(SpyModel.singularized()).toBe('plural');
     });

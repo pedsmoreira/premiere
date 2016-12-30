@@ -11,38 +11,112 @@ describe('Api', () => {
     });
 
     it('should assign properties on construct', () => {
-        let cacheless = new Api({useCache: false, usePromiseCache: false});
-        expect(api.usePromiseCache).toBeTruthy();
+        let cacheless = new Api({usePromiseCache: false});
+        expect(Api.usePromiseCache).toBeTruthy();
         expect(cacheless.usePromiseCache).toBeFalsy();
     });
 
-    it('should get class static base', () => {
+    it('should resolve instance base', () => {
+        api.base = 'instance base';
+        expect(api.resolveBase()).toBe('instance base');
+    });
+
+    it('should return empty path by default', () => {
+        expect(api.path()).toBe('');
+    });
+
+    it('should resolve class static base', () => {
         ApiChild.base = 'child';
-        expect(api.base()).toBe('child');
+        expect(api.resolveBase()).toBe('child');
     });
 
-    it('should fallback to Api static base', () => {
-        Api.base = 'base';
+    it('should resolve Api static base', () => {
+        Api.base = 'api';
         ApiChild.base = null;
-        expect(api.base()).toBe('base');
+        expect(api.resolveBase()).toBe('api');
     });
 
-    it('should get class static headers', () => {
-        let headers = {key: 'value'};
-        ApiChild.headers = headers;
-        expect(api.headers()).toBe(headers);
+    it('should resolve instance headers', () => {
+        api.headers = 'headers' as any;
+        expect(api.resolveHeaders()).toBe('headers');
     });
 
-    it('should fallback to Api static headers', () => {
-        let headers = {key: 'api'};
-        Api.headers = headers;
+    it('should resolve class static headers', () => {
+        ApiChild.headers = 'child' as any;
+        expect(api.resolveHeaders()).toBe('child');
+    });
+
+    it('should resolve Api static headers', () => {
+        Api.headers = 'api' as any;
         ApiChild.headers = null;
-        expect(api.headers()).toBe(headers);
+        expect(api.resolveHeaders()).toBe('api');
+    });
+
+    it('should get base url', () => {
+        api.resolveBase = () => 'base';
+        api.path = () => 'path';
+        expect(api.baseUrl()).toBe('base/path/');
+    });
+
+    it('should not be using cache', () => {
+        api.useCache = false;
+        ApiChild.useCache = false;
+        Api.useCache = false;
+        expect(api.isUsingCache()).toBeFalsy();
+    });
+
+    it('should be using instance cache', () => {
+        api.useCache = true;
+        ApiChild.useCache = false;
+        Api.useCache = false;
+        expect(api.isUsingCache()).toBeTruthy();
+    });
+
+    it('should be using class static cache', () => {
+        api.useCache = false;
+        ApiChild.useCache = true;
+        Api.useCache = false;
+        expect(api.isUsingCache()).toBeTruthy();
+    });
+
+    it('should be using Api static cache', () => {
+        api.useCache = false;
+        ApiChild.useCache = false;
+        Api.useCache = true;
+        expect(api.isUsingCache()).toBeTruthy();
+    });
+
+    it('should not be using promise cache', () => {
+        api.usePromiseCache = false;
+        ApiChild.usePromiseCache = false;
+        Api.usePromiseCache = false;
+        expect(api.isUsingPromiseCache()).toBeFalsy();
+    });
+
+    it('should be using promise instance cache', () => {
+        api.usePromiseCache = true;
+        ApiChild.usePromiseCache = false;
+        Api.usePromiseCache = false;
+        expect(api.isUsingPromiseCache()).toBeTruthy();
+    });
+
+    it('should be using class static promise cache', () => {
+        api.usePromiseCache = false;
+        ApiChild.usePromiseCache = true;
+        Api.usePromiseCache = false;
+        expect(api.isUsingPromiseCache()).toBeTruthy();
+    });
+
+    it('should be using Api static promise cache', () => {
+        api.usePromiseCache = false;
+        ApiChild.usePromiseCache = false;
+        Api.usePromiseCache = true;
+        expect(api.isUsingPromiseCache()).toBeTruthy();
     });
 
     it('should get http instance with baseUrl and headers', () => {
         api.baseUrl = () => 'baseUrl';
-        api.headers = () => ({'customHeader': 'value'});
+        api.resolveHeaders = () => ({'customHeader': 'value'});
 
         let http = api.http();
 
@@ -50,14 +124,8 @@ describe('Api', () => {
         expect(http.defaults.baseURL).toBe(api.baseUrl());
     });
 
-    it('should get base url', () => {
-        api.base = () => 'base';
-        api.path = () => 'path';
-        expect(api.baseUrl()).toBe('base/path/');
-    });
-
     it('should not check cache with usePromiseCache set to false', () => {
-        api.usePromiseCache = false;
+        api.isUsingPromiseCache = () => false;
 
         let promise = 'cached' as any;
         api.cache.setPromise('promise', promise);
@@ -66,9 +134,8 @@ describe('Api', () => {
     });
 
     it('should get cached promise', () => {
-        let promise = 'cached' as any;
-        api.cache.setPromise('promise', promise);
-        expect(api.cachePromise('promise', jest.fn())).toBe(promise);
+        api.cache.setPromise('promise', 'cached' as any);
+        expect(api.cachePromise('promise', jest.fn())).toBe('cached');
     });
 
     it('should create new promise and add to cache', () => {
@@ -77,24 +144,28 @@ describe('Api', () => {
     });
 
     it('should set jwt token', () => {
+        Api.headers = {};
         Api.setJwtToken('jwt');
-        expect(api.headers()['Authorization']).toBe('Bearer jwt');
+        expect(api.resolveHeaders()['Authorization']).toBe('Bearer jwt');
     });
 
     it('should remove jwt token', () => {
+        Api.headers = {};
         Api.setJwtToken('jwt');
         Api.removeJwtToken();
-        expect(api.headers()['Authorization']).toBeUndefined();
+        expect(api.resolveHeaders()['Authorization']).toBeUndefined();
     });
 
     it('should set csrf token', () => {
+        Api.headers = {};
         Api.setCsrfToken('csrf');
-        expect(api.headers()['X-CSRF-Token']).toBe('csrf');
+        expect(api.resolveHeaders()['X-CSRF-Token']).toBe('csrf');
     });
 
     it('should remove csrf token', () => {
+        Api.headers = {};
         Api.setCsrfToken('csrf');
         Api.removeCsrfToken();
-        expect(api.headers()['X-CSRF-Token']).toBeUndefined();
+        expect(api.resolveHeaders()['X-CSRF-Token']).toBeUndefined();
     });
 });

@@ -15,22 +15,22 @@ Premiere is standalone _(independent of framework)_, so you can use it with your
 [jQuery](https://jquery.com/),
 [Redux](http://redux.js.org/). You name it!
 
+We recommend the use with [TypeScript](http://typescriptlang.org/) or ECMAScript 6 (ES6).
+
 ## Website
 For a better experience, please checkout the [Website](http://pedsmoreira.github.io/premiere)
-
-## Features
-- Easy configuration
-- Model normalization and denormalization
-- Caching
-- Foreign keys
-- HTTP Header support _(frequently used with Authorization and CSRF token)_
-- 100% Unit Tested
-- Works nicely with [TypeScript](http://typescriptlang.org/) and ES6
 
 ## Workflow
 ![Workflow](assets/workflow.png)
 
 ** For more about how promises work, check out [Dave Atchley's article](http://www.datchley.name/es6-promises/)
+
+## Features
+- 100% Unit Tested
+- Normalization
+- Smart Caching
+- Support to Foreign keys
+- HTTP Header support _(frequently used with Authorization and CSRF token)_
 
 ## Installation
 
@@ -49,11 +49,11 @@ Using cdn:
 **Note:** You'll need a ES6 [polyfill](https://babeljs.io/docs/usage/polyfill/) on your build pipeline.
 
 ## Tutorials
-- [Working with Models](./tutorials/model)
-- [Working with Foreign Keys](./tutorials/model-fk)
-- [Customizing Stores](./tutorials/store)
-- [Working with Cache](./tutorials/cache)
-- [APIs without Models](./tutorials/api)
+- [Working with Models](/tutorials/model.md)
+- [Working with Foreign Keys](./tutorials/model-fk.md)
+- [Customizing Stores](./tutorials/store.md)
+- [Working with Cache](./tutorials/cache.md)
+- [APIs without Models](./tutorials/api.md)
 
 ## Documentation
 Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documentation).

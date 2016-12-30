@@ -22,9 +22,34 @@ describe('Cache', () => {
         expect(Cache.resolveKey(1)).toBe('1');
     });
 
+    it('should be enabled without api', () => {
+        cache.api = null;
+        expect(cache.enabled()).toBeTruthy();
+    });
+
+    it('should be enabled with api cache enabled', () => {
+        cache.api.isUsingCache = () => true;
+        expect(cache.enabled()).toBeTruthy();
+    });
+
     it('should not be enabled with api cache disabled', () => {
-        cache.api.useCache = false;
+        cache.api.isUsingCache = () => false;
         expect(cache.enabled()).toBeFalsy();
+    });
+
+    it('should have promise enabled without api', () => {
+        cache.api = null;
+        expect(cache.promiseEnabled()).toBeTruthy();
+    });
+
+    it('should have promise enabled with api promise cache enabled', () => {
+        cache.api.isUsingPromiseCache = () => true;
+        expect(cache.promiseEnabled()).toBeTruthy();
+    });
+
+    it('should not have promise enabled with api promise cache disabled', () => {
+        cache.api.isUsingPromiseCache = () => false;
+        expect(cache.promiseEnabled()).toBeFalsy();
     });
 
     it('should get object with key', () => {

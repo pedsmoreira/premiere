@@ -7,8 +7,8 @@ describe('Store where method', () => {
 
     beforeEach(() => {
         store = new Store<any>(null);
-        store.normalizedModel = jest.fn().mockReturnValue(instance);
-        store.http = Helper.http(instance);
+        store.make = jest.fn().mockReturnValue(instance);
+        store.http = Helper.http('data');
     });
 
     it('should verify access', () => {
@@ -50,7 +50,7 @@ describe('Store where method', () => {
 
     it('should convert result to model instance', () => {
         store.where('property', 'value');
-        expect(store.normalizedModel).toHaveBeenCalledWith(instance);
+        expect(store.make).toHaveBeenCalledWith('data');
     });
 
     it('should add to cache', () => {

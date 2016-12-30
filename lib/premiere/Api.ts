@@ -7,26 +7,46 @@ import axios, {AxiosInstance} from 'axios';
  */
 export default class Api {
     /**
+     * Default base path
+     */
+    static base: string;
+
+    /**
      * The base path to your Api
      * Eg.: http://my-api.com
      */
-    static base: string = '';
+    base: string;
 
     /**
-     * Api headers. You can use it for Authentication for example.
+     * Default headers
      */
     static headers: Hash<string> = {};
 
     /**
+     * Api headers. You can use it for Authentication for example.
+     */
+    headers: Hash<string>;
+
+    /**
+     * Default use cache value
+     */
+    static useCache: boolean = true;
+
+    /**
      * Sets whether or not caching is enabled
      */
-    useCache: boolean = true;
+    useCache: boolean;
+
+    /**
+     * Default use promise cache value
+     */
+    static usePromiseCache = true;
 
     /**
      * If set to true, the promises to fetch data will be cached,
      * so if you do the same request twice, before the results come back, the response will be the same Promise.
      */
-    usePromiseCache: boolean = true;
+    usePromiseCache: boolean;
 
     /**
      * Cache instance attached to the Api
@@ -35,16 +55,6 @@ export default class Api {
 
     constructor(properties: Hash<any> = {}) {
         Object.assign(this, properties);
-    }
-
-    /**
-     * Get base path.
-     * Eg.: http://my-api.com
-     * @return {string}
-     */
-    base(): string {
-        let self = this.constructor as typeof Api;
-        return self.base || Api.base;
     }
 
     /**
@@ -58,23 +68,21 @@ export default class Api {
     }
 
     /**
-     * Get request headers
-     * @return {Object}
+     * Get api base
+     * @return {string}
      */
-    headers(): Hash<string> {
+    resolveBase(): string {
         let self = this.constructor as typeof Api;
-        return self.headers || Api.headers;
+        return this.base || self.base || Api.base;
     }
 
     /**
-     * Get http requester
-     * @return {AxiosInstance}
+     * Get api headers
+     * @return {Hash<string>}
      */
-    http(): AxiosInstance {
-        return axios.create({
-            baseURL: this.baseUrl(),
-            headers: this.headers()
-        });
+    resolveHeaders(): Hash<string> {
+        let self = this.constructor as typeof Api;
+        return this.headers || self.headers || Api.headers;
     }
 
     /**
@@ -82,7 +90,7 @@ export default class Api {
      * @returns {string}
      */
     baseUrl(): string {
-        let base = this.base();
+        let base = this.resolveBase();
         if (!base.endsWith('/')) {
             base += '/';
         }
@@ -96,10 +104,35 @@ export default class Api {
     }
 
     /**
+     * Check if instance is using cache
+     */
+    isUsingCache(): boolean {
+        return this.useCache || (this.constructor as typeof Api).useCache || Api.useCache;
+    }
+
+    /**
+     * Check if instance is using promise cache
+     */
+    isUsingPromiseCache(): boolean {
+        return this.usePromiseCache || (this.constructor as typeof Api).usePromiseCache || Api.usePromiseCache;
+    }
+
+    /**
+     * Get http requester
+     * @return {AxiosInstance}
+     */
+    http(): AxiosInstance {
+        return axios.create({
+            baseURL: this.baseUrl(),
+            headers: this.resolveHeaders()
+        });
+    }
+
+    /**
      * Cache promise by name, so it doesn't get executed again before the result comes back
      */
     cachePromise(name: string, fn: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void): Promise<any> {
-        if (!this.usePromiseCache) {
+        if (!this.isUsingPromiseCache()) {
             return new Promise(fn);
         }
 

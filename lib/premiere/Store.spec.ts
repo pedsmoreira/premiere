@@ -1,24 +1,16 @@
 import Store from './Store';
 import Model from './Model';
 
-class NormalizedModel extends Model {
-    property: string;
-
-    normalize() {
-        this.property = this.property + '_normalized';
-    }
-}
-
 describe('Store', () => {
-    let store: Store<NormalizedModel>;
+    let store: Store<Model>;
     let data = {property: 'value'};
 
     beforeEach(() => {
-        store = new Store<NormalizedModel>(NormalizedModel);
+        store = new Store<Model>(Model);
     });
 
     it('should set model on construct', () => {
-        expect(store.model).toBe(NormalizedModel);
+        expect(store.model).toBe(Model);
     });
 
     it('should set properties on construct', () => {
@@ -37,12 +29,17 @@ describe('Store', () => {
 
     it('should not be allowed to call denied method', () => {
         store.denies = ['method'];
-        expect(store.isMethodAllowed('method'));
+        expect(store.isMethodAllowed('method')).toBeFalsy();
     });
 
     it('should not be allowed to call method not in allowed list', () => {
         store.allows = ['method'];
-        expect(store.isMethodAllowed('anotherMethod'));
+        expect(store.isMethodAllowed('anotherMethod')).toBeFalsy();
+    });
+
+    it('should not throw exception verifying allowed method', () => {
+        store.allows = ['method'];
+        expect(() => store.verifyPermission('method')).not.toThrow();
     });
 
     it('should throw exception verifying forbidden method', () => {
@@ -50,17 +47,9 @@ describe('Store', () => {
         expect(() => store.verifyPermission('method')).toThrowError();
     });
 
-    it('should get model instance with given values', () => {
-        let model = store.modelInstance(data) as NormalizedModel;
-        expect(model.property).toBe('value');
-        expect(model).toBeInstanceOf(NormalizedModel);
-    });
-
-    it('should get normalized model with given values', () => {
-        expect((store.normalizedModel(data) as any).property).toBe('value_normalized');
-    });
-
-    it('should get normalized array of models with given array of values', () => {
-        expect((store.normalizedModel([data]) as any)[0].property).toBe('value_normalized');
+    it('should make model with given values', () => {
+        Model.make = jest.fn();
+        store.make(data, 'normalize' as any);
+        expect(Model.make).toHaveBeenCalledWith(data, 'normalize');
     });
 });

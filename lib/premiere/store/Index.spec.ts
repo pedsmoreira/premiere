@@ -8,7 +8,7 @@ describe('Store index method', () => {
 
     beforeEach(() => {
         store = new Store<any>(null);
-        store.normalizedModel = jest.fn().mockReturnValue(instances);
+        store.make = jest.fn().mockReturnValue(instances);
         store.http = Helper.http(data);
     });
 
@@ -51,7 +51,7 @@ describe('Store index method', () => {
 
     it('should convert result to list of model instances', () => {
         store.index();
-        expect(store.normalizedModel).toHaveBeenCalledWith(data);
+        expect(store.make).toHaveBeenCalledWith(data);
     });
 
     it('should add list to cache', () => {

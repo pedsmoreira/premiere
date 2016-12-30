@@ -46,7 +46,14 @@ export default class Cache {
      * Check if caching is enabled
      */
     enabled() {
-        return !this.api || this.api.useCache;
+        return !this.api || this.api.isUsingCache();
+    }
+
+    /**
+     * Check if promise caching is enabled
+     */
+    promiseEnabled() {
+        return !this.api || this.api.isUsingPromiseCache();
     }
 
     /**
@@ -125,7 +132,7 @@ export default class Cache {
      * Get promise by name
      */
     getPromise(name: string): Promise<any> {
-        if (this.api.usePromiseCache) {
+        if (this.promiseEnabled()) {
             return this.promises[name];
         }
     }
@@ -134,7 +141,7 @@ export default class Cache {
      * Set promise by name
      */
     setPromise(name: string, promise: Promise<any>): Promise<any> {
-        if (this.api.usePromiseCache) {
+        if (this.promiseEnabled()) {
             return this.promises[name] = promise;
         }
         return promise;
