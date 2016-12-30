@@ -56,6 +56,6 @@ export default class List extends Model {
 }
 ```
 
-| Previous | Next |
-| -------- | -----------:|
-| [Working with Models](./model) | **[Customizing Stores](./store)** |
+<div style="text-align: right; font-weight: bold;">
+    <a href="./store">Next: Customizing Stores</a>
+</div>
