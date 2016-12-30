@@ -104,19 +104,24 @@ export default class Model implements IModel {
     }
 
     /**
+     * Camelize transformer name
+     */
+    private static camelizeTransformer(value: string): string {
+        return value.split(new RegExp('[_|-]')).map((part: string) =>
+            part.substring(0, 1).toUpperCase() + part.substring(1)
+        ).join('');
+    }
+
+    /**
      * Resolve normalizing function
      */
     static resolveTransformer(key: string, type: string = 'normalize'): string {
-        let underscored = `${type}_${key}`;
+        let underscored: string = `${type}_${key}`;
         if ((this as any)[underscored]) {
             return underscored;
         }
 
-        let camelized = key.split(new RegExp('[_|-]')).map((part) => {
-            return part.substring(0, 1).toUpperCase() + part.substring(1);
-        });
-
-        let camel = `${type}${camelized.join('')}`;
+        let camel: string = type + this.camelizeTransformer(key);
         if ((this as any)[camel]) {
             return camel;
         }
@@ -168,7 +173,7 @@ export default class Model implements IModel {
      */
     static make(values: Hash<any> | Hash<any>[], normalize: boolean = false): Model | Model[] {
         if (Array.isArray(values)) {
-            return values.map(it => this.make(it)) as Model[];
+            return values.map((it: Hash<any>) => this.make(it)) as Model[];
         }
         return new this().set(values, normalize);
     }

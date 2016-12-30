@@ -26,7 +26,7 @@ describe('Store foreign method', () => {
 
     let store: Store<SpecModel> = SpecModel.resolveStore();
     ['index', 'get', 'where', 'create', 'update', 'by', 'foreign', 'destroy', 'act'].forEach((key) => {
-        store[key] = jest.fn().mockReturnValue({then: jest.fn()});
+        (store as any)[key] = jest.fn().mockReturnValue({then: jest.fn()});
     });
 
     beforeEach(() => {
