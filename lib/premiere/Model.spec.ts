@@ -123,6 +123,10 @@ describe('Store foreign method', () => {
         expect(model.property).toBe('made value');
     });
 
+    it('should make array', () => {
+        expect(Array.isArray(SpecModel.make([1, 2]))).toBeTruthy();
+    });
+
     it('should make and normalize', () => {
         SpyModel.normalize = jest.fn();
         SpyModel.make({property: 'value'}, true);
@@ -211,8 +215,21 @@ describe('Store foreign method', () => {
         expect(SpyModel.hasOne).toHaveBeenCalledWith(SpecModel, 'spy', 'options');
     });
 
+    it('should resolve first', () => {
+        return (SpecModel as any).resolveFirst(Promise.resolve(['value', 'second'])).then((data: any) => {
+            expect(data).toBe('value');
+        });
+    });
+
+    it('should resolve null', () => {
+        return (SpecModel as any).resolveFirst(Promise.resolve([])).then((data: any) => {
+            expect(data).toBeNull();
+        });
+    });
+
     it('should have one statically', () => {
-        SpecModel.hasOne(SpyModel, 'value', 'options');
+        (SpecModel as any).resolveFirst = jest.fn().mockReturnValue('resolve first');
+        expect(SpecModel.hasOne(SpyModel, 'value', 'options')).toBe('resolve first');
         expect(model.store().foreign).toHaveBeenCalledWith(SpyModel, 'value', 'options');
     });
 

@@ -265,14 +265,22 @@ export default class Model implements IModel {
     }
 
     /**
-     * Get promise to hasOne FK relation statically
+     * Resolve first promise result or null
      */
-    static hasOne(model: typeof Model, key: any, options: IStoreForeign = undefined): Promise<Model> {
+    protected static resolveFirst(promise: Promise<Model[]>): Promise<Model> {
         return new Promise((resolve, reject) => {
-            this.hasMany(model, key, options).then((objects) => {
+            promise.then((objects: Model[]) => {
                 resolve(objects.length ? objects[0] : null);
             }, reject);
         });
+    }
+
+    /**
+     * Get promise to hasOne FK relation statically
+     */
+    static hasOne(model: typeof Model, key: any, options: IStoreForeign = undefined): Promise<Model> {
+        let promise = this.hasMany(model, key, options);
+        return this.resolveFirst(promise);
     }
 
     /**
