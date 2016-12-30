@@ -112,8 +112,10 @@ export default class Model implements IModel {
             return underscored;
         }
 
-        let camelized = key.split(new RegExp('[_|-]')).map(
-            (part) => part.substring(0, 1).toUpperCase() + part.substring(1));
+        let camelized = key.split(new RegExp('[_|-]')).map((part) => {
+            return part.substring(0, 1).toUpperCase() + part.substring(1);
+        });
+
         let camel = `${type}${camelized.join('')}`;
         if ((this as any)[camel]) {
             return camel;
