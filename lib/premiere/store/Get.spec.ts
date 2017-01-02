@@ -31,6 +31,16 @@ describe('Store get method', () => {
         expect(store.get(1)).toBe('promise');
     });
 
+    it('should not return cached promise', () => {
+        store.cache.setPromise('get/1', 'promise' as any);
+        expect(store.get(1, {url: 'customUrl'})).not.toBe('promise');
+    });
+
+    it('should return cached promise with custom url', () => {
+        store.cache.setPromise('get/customUrl', 'promise' as any);
+        expect(store.get(1, {url: 'customUrl'})).toBe('promise');
+    });
+
     it('should fetch from cache', () => {
         store.cache.set(instance);
         store.get(1).then((result) => expect(result).toBe(instance));

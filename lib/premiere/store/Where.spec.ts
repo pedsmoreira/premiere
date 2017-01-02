@@ -31,6 +31,16 @@ describe('Store where method', () => {
         expect(store.where('property', 'value')).toBe('promise');
     });
 
+    it('should not return cached promise', () => {
+        store.cache.setPromise('where/property/value', 'promise' as any);
+        expect(store.where('property', 'value', {url: 'customUrl'})).not.toBe('promise');
+    });
+
+    it('should return cached promise with custom url', () => {
+        store.cache.setPromise('where/customUrl', 'promise' as any);
+        expect(store.where('property', 'value', {url: 'customUrl'})).toBe('promise');
+    });
+
     it('should fetch from cache', () => {
         store.cache.set(instance);
         store.where('property', 'value').then((result) => expect(result).toBe(instance));

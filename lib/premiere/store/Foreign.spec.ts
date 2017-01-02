@@ -33,6 +33,16 @@ describe('Store foreign method', () => {
         expect(store.foreign(model, 1)).toBe('promise');
     });
 
+    it('should not return cached promise', () => {
+        store.cache.setPromise('foreign/key/path', 'promise' as any);
+        expect(store.foreign(model, 'key', {url: 'customUrl'})).not.toBe('promise');
+    });
+
+    it('should return cached promise with custom url', () => {
+        store.cache.setPromise('foreign/customUrl', 'promise' as any);
+        expect(store.foreign(model, 'key', {url: 'customUrl'})).toBe('promise');
+    });
+
     it('should fetch from cache', () => {
         store.cache.setList('1/path', instances);
         store.foreign(model, 1).then((result: any) => expect(result).toBe(instances));

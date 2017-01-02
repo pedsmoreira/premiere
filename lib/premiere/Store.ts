@@ -100,18 +100,19 @@ export default class Store<T> extends Api {
             this.verifyPermission('index');
         }
 
-        return this.cachePromise('index', (resolve, reject) => {
-            let list = this.cache.getList('index');
+        let url = options.url || '';
+        return this.cachePromise(`index/${url}`, (resolve, reject) => {
+            let list = this.cache.getList(`index/${url}`);
             if (!options.ignoreCache && list) {
                 if (list) {
                     return resolve(list);
                 }
             }
 
-            let promise = this.http().get(options.url || '');
+            let promise = this.http().get(url);
             promise.then(response => {
                 let list = this.make(response.data) as Model[];
-                this.cache.setList('index', list);
+                this.cache.setList(`index/${url}`, list);
                 if (this.setIndex) {
                     this.cache.set(list, false);
                 }
@@ -130,8 +131,9 @@ export default class Store<T> extends Api {
         }
 
         key = Cache.resolveKey(key);
+        let url = options.url || key.toString();
 
-        return this.cachePromise(`get/${key}`, (resolve, reject) => {
+        return this.cachePromise(`get/${url}`, (resolve, reject) => {
             if (!options.ignoreCache) {
                 let object = this.cache.get(key);
                 if (object) {
@@ -139,7 +141,7 @@ export default class Store<T> extends Api {
                 }
             }
 
-            let promise = this.http().get(options.url || key.toString());
+            let promise = this.http().get(url);
             promise.then(response => {
                 let instance = this.make(response.data);
                 resolve(this.cache.set(instance, false));
@@ -155,17 +157,17 @@ export default class Store<T> extends Api {
             this.verifyPermission('where');
         }
 
-        return this.cachePromise(`where/${property}/${value}`, (resolve, reject) => {
+        let url = options.url;
+        if (!options.url) {
+            url = `${property}/${value}`;
+        }
+
+        return this.cachePromise(`where/${url}`, (resolve, reject) => {
             if (!options.ignoreCache) {
                 let object = this.cache.where(property, value);
                 if (object) {
                     return resolve(object);
                 }
-            }
-
-            let url = options.url;
-            if (!options.url) {
-                url = `${property}/${value}`;
             }
 
             let promise = this.http().get(url);
@@ -236,7 +238,6 @@ export default class Store<T> extends Api {
         }
 
         key = Cache.resolveKey(key);
-
         let url = options.url || `${key}/${model.path}`;
 
         return this.cachePromise(`foreign/${url}`, ((resolve, reject) => {

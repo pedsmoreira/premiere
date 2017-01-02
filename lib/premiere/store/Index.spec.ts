@@ -28,18 +28,28 @@ describe('Store index method', () => {
     });
 
     it('should return cached promise', () => {
-        store.cache.setPromise('index', 'promise' as any);
+        store.cache.setPromise('index/', 'promise' as any);
         expect(store.index()).toBe('promise');
     });
 
+    it('should not return cached promise', () => {
+        store.cache.setPromise('index/', 'promise' as any);
+        expect(store.index({url: 'customUrl'})).not.toBe('promise');
+    });
+
+    it('should return cached promise with custom url', () => {
+        store.cache.setPromise('index/customUrl', 'promise' as any);
+        expect(store.index({url: 'customUrl'})).toBe('promise');
+    });
+
     it('should fetch from cache', () => {
-        store.cache.setList('index', instances);
+        store.cache.setList('index/', instances);
         store.index().then((result) => expect(result).toBe(instances));
         expect(store.http().get).not.toHaveBeenCalled();
     });
 
     it('should ignore cache', () => {
-        store.cache.setList('index', instances);
+        store.cache.setList('index/', instances);
         store.index({ignoreCache: true});
         expect(store.http().get).toHaveBeenCalledWith('');
     });
@@ -56,7 +66,7 @@ describe('Store index method', () => {
 
     it('should add list to cache', () => {
         store.index();
-        expect(store.cache.getList('index')).toBeTruthy();
+        expect(store.cache.getList('index/')).toBeTruthy();
     });
 
     it('should add model to cache', () => {

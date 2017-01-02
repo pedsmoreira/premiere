@@ -48,6 +48,14 @@ Using cdn:
 
 **Note:** You'll need a ES6 [polyfill](https://babeljs.io/docs/usage/polyfill/) on your build pipeline.
 
+## Setup
+
+```typescript
+import {Api} from 'premiere';
+
+Api.base = 'http://my-api.com';
+``` 
+
 ## Tutorials
 - [Working with Models](/tutorials/model.md)
 - [Working with Foreign Keys](./tutorials/model-fk.md)
@@ -66,7 +74,8 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(React + MobX)_
 
 ## Motivation
-Premiere is inspired by [Laravel](https://laravel.com/)
+Premiere is inspired by
+[Laravel](https://laravel.com/)
 ([Eloquent](https://laravel.com/docs/master/eloquent)) and
 [Rails](http://rubyonrails.org/)
 ([Active Record](http://guides.rubyonrails.org/active_record_basics.html)).
