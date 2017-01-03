@@ -245,13 +245,14 @@ export default class Store<T> extends Api {
         let url = options.url || `${key}/${model.path}`;
 
         return this.cachePromise(`foreign/${url}`, ((resolve, reject) => {
-            let list = this.cache.getList(url);
+            let store = model.resolveStore();
+            let list = store.cache.getList(url);
             if (!options.ignoreCache && list) {
                 return resolve(list);
             }
 
             this.http().get(url).then((response: any) => {
-                resolve(model.resolveStore().resolveForeign(response.data, Object.assign(options, {url})));
+                resolve(store.resolveForeign(response.data, Object.assign(options, {url})));
             }, reject);
         }));
     }

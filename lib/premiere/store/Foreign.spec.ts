@@ -4,7 +4,8 @@ import Helper from './Helper';
 describe('Store foreign method', () => {
     let store: Store<any>;
     let resolveForeign: Function = jest.fn();
-    let model: any = {path: 'path', resolveStore: () => ({resolveForeign})};
+    let cache: any;
+    let model: any;
     let data: any = [{id: 1}];
     let instances: any = [{key: () => data[0].id}];
 
@@ -12,6 +13,9 @@ describe('Store foreign method', () => {
         store = new Store<any>(null);
         store.make = jest.fn().mockReturnValue(instances);
         store.http = Helper.http(data);
+
+        cache = {getList: jest.fn().mockReturnValue(null)};
+        model = {path: 'path', resolveStore: () => ({resolveForeign, cache})};
     });
 
     it('should verify access', () => {
@@ -45,13 +49,13 @@ describe('Store foreign method', () => {
     });
 
     it('should fetch from cache', () => {
-        store.cache.setList('1/path', instances);
-        store.foreign(model, 1).then((result: any) => expect(result).toBe(instances));
-        expect(store.http().get).not.toHaveBeenCalled();
+        cache.getList = jest.fn().mockReturnValue(instances);
+        expect(store.http().get).not.toBeCalled();
+        return store.foreign(model, 1).then((result: any) => expect(result).toBe(instances));
     });
 
     it('should ignore cache', () => {
-        store.cache.setList('foreign', instances);
+        cache.getList = jest.fn().mockReturnValue(instances);
         store.foreign(model, 1, {ignoreCache: true});
         expect(store.http().get).toHaveBeenCalledWith('1/path');
     });
