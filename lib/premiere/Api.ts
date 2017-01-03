@@ -153,31 +153,59 @@ export default class Api {
     }
 
     /**
-     * Add Jwt authorization header for a given token
+     * Add JWT authorization header for a given token
      */
-    static setJwtToken(token: string): void {
-        this.headers['Authorization'] = `Bearer ${token}`;
+    static setJwtToken(token: string, target: Hash<any> = this.headers): void {
+        target['Authorization'] = `Bearer ${token}`;
     }
 
     /**
-     * Remove Jwt authorization header
+     * Add JWT authorization header for a given token
      */
-    static removeJwtToken(): void {
-        delete this.headers['Authorization'];
+    setJwtToken(token: string): void {
+        let self = this.constructor as typeof Api;
+        self.setJwtToken(token, this.headers);
     }
 
     /**
-     * Add CSRF token to header
-     * @param token
+     * Remove JWT authorization header
      */
-    static setCsrfToken(token: string): void {
-        this.headers['X-CSRF-Token'] = token;
+    static removeJwtToken(target: Hash<any> = this.headers): void {
+        delete target['Authorization'];
+    }
+
+    /**
+     * Remove JWT authorization header
+     */
+    removeJwtToken(): void {
+        let self = this.constructor as typeof Api;
+        self.removeJwtToken(this.headers);
+    }
+
+    /**
+     * Add CSRF token to static header
+     */
+    static setCsrfToken(token: string, target: Hash<any> = this.headers): void {
+        target['X-CSRF-Token'] = token;
+    }
+
+    setCsrfToken(token: string): void {
+        let self = this.constructor as typeof Api;
+        self.setCsrfToken(token, this.headers);
+    }
+
+    /**
+     * Remove CSRF token from static header
+     */
+    static removeCsrfToken(target: Hash<any> = this.headers): void {
+        delete target['X-CSRF-Token'];
     }
 
     /**
      * Remove CSRF token from header
      */
-    static removeCsrfToken(): void {
-        delete this.headers['X-CSRF-Token'];
+    removeCsrfToken(): void {
+        let self = this.constructor as typeof Api;
+        self.removeCsrfToken(this.headers);
     }
 }

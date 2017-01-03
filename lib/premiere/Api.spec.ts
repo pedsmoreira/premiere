@@ -143,29 +143,55 @@ describe('Api', () => {
         expect(api.cachePromise('promise', jest.fn)).toBe(promise);
     });
 
-    it('should set jwt token', () => {
+    it('should set jwt token statically', () => {
         Api.headers = {};
         Api.setJwtToken('jwt');
-        expect(api.resolveHeaders()['Authorization']).toBe('Bearer jwt');
+        expect(Api.headers['Authorization']).toBe('Bearer jwt');
     });
 
-    it('should remove jwt token', () => {
+    it('should set jwt token', () => {
+        api.headers = {};
+        api.setJwtToken('jwt');
+        expect(api.headers['Authorization']).toBe('Bearer jwt');
+    });
+
+    it('should remove jwt token statically', () => {
         Api.headers = {};
         Api.setJwtToken('jwt');
         Api.removeJwtToken();
-        expect(api.resolveHeaders()['Authorization']).toBeUndefined();
+        expect(Api.headers['Authorization']).toBeUndefined();
+    });
+
+    it('should remove jwt token', () => {
+        api.headers = {};
+        api.setJwtToken('jwt');
+        api.removeJwtToken();
+        expect(api.headers['Authorization']).toBeUndefined();
+    });
+
+    it('should set csrf token statically', () => {
+        Api.headers = {};
+        Api.setCsrfToken('csrf');
+        expect(Api.headers['X-CSRF-Token']).toBe('csrf');
     });
 
     it('should set csrf token', () => {
-        Api.headers = {};
-        Api.setCsrfToken('csrf');
-        expect(api.resolveHeaders()['X-CSRF-Token']).toBe('csrf');
+        api.headers = {};
+        api.setCsrfToken('csrf');
+        expect(api.headers['X-CSRF-Token']).toBe('csrf');
     });
 
-    it('should remove csrf token', () => {
+    it('should remove csrf token statically', () => {
         Api.headers = {};
         Api.setCsrfToken('csrf');
         Api.removeCsrfToken();
-        expect(api.resolveHeaders()['X-CSRF-Token']).toBeUndefined();
+        expect(Api.headers['X-CSRF-Token']).toBeUndefined();
+    });
+
+    it('should remove csrf token', () => {
+        api.headers = {};
+        api.setCsrfToken('csrf');
+        api.removeCsrfToken();
+        expect(api.headers['X-CSRF-Token']).toBeUndefined();
     });
 });

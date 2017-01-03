@@ -55,6 +55,10 @@ export default class Store<T> extends Api {
     constructor(model: typeof Model, properties: Hash<any> = {}) {
         super(properties);
         this.model = model;
+
+        if (model && !model.store) {
+            model.store = this as any;
+        }
     }
 
     /**

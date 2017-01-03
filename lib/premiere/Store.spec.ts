@@ -18,6 +18,18 @@ describe('Store', () => {
         expect((store as any).property).toBe('value');
     });
 
+    it('should set model store on construct', () => {
+        Model.store = null;
+        let store = new Store<Model>(Model, data);
+        expect(Model.store).toBe(store);
+    });
+
+    it('should not set model store on construct', () => {
+        Model.store = 'old store' as any;
+        let store = new Store<Model>(Model, data);
+        expect(Model.store).toBe('old store');
+    });
+
     it('should get path from model', () => {
         store.model.path = 'path';
         expect(store.path()).toBe('path');

@@ -1,4 +1,4 @@
-## Working with models
+# Working with models
 
 Lets take for example a Todo Model. It's gonna have three fields, `name`, `checked` and `date`.
 
