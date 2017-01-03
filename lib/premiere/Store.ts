@@ -92,7 +92,7 @@ export default class Store<T> extends Api {
     /**
      * Get new model instance
      */
-    make(values: Hash<string>, normalize: boolean = true): Model | Model[] {
+    make(values: Hash<any> | Hash<any>[], normalize: boolean = true): Model | Model[] {
         return this.model.make(values, normalize);
     }
 
@@ -236,7 +236,7 @@ export default class Store<T> extends Api {
     /**
      * Make http request to fetch instances by foreign key
      */
-    foreign(model: typeof Model, key: any, options: IStoreForeign = {}): Promise<T[]> {
+    foreign(model: typeof Model, key: any, options: IStoreForeign = {}): Promise<Model[]> {
         if (!options.permit) {
             this.verifyPermission('foreign');
         }
@@ -251,16 +251,27 @@ export default class Store<T> extends Api {
             }
 
             this.http().get(url).then((response: any) => {
-                let list = this.make(response.data) as Model[];
-                this.cache.setList(url, list);
-
-                if (options.set || (!Array.isArray(list) && options.set !== false)) {
-                    this.cache.set(list, false);
-                }
-
-                resolve(list);
+                resolve(model.resolveStore().resolveForeign(response.data, Object.assign(options, {url})));
             }, reject);
         }));
+    }
+
+    /**
+     * Resolve result from foreign method
+     */
+    protected resolveForeign(data: Hash<any> | Hash<any>[], options: IStoreForeign): Model[] {
+        if (!Array.isArray(data)) {
+            data = [data];
+        }
+
+        let result = this.make(data) as Model[];
+
+        this.cache.setList(options.url, result as Model[]);
+        if (options.set) {
+            this.cache.set(result, false);
+        }
+
+        return result;
     }
 
     /**

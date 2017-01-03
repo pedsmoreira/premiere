@@ -3,7 +3,8 @@ import Helper from './Helper';
 
 describe('Store foreign method', () => {
     let store: Store<any>;
-    let model: any = {path: 'path'};
+    let resolveForeign: Function = jest.fn();
+    let model: any = {path: 'path', resolveStore: () => ({resolveForeign})};
     let data: any = [{id: 1}];
     let instances: any = [{key: () => data[0].id}];
 
@@ -60,31 +61,13 @@ describe('Store foreign method', () => {
         expect(store.http().get).toHaveBeenCalledWith('customUrl');
     });
 
-    it('should convert result to list of model instances', () => {
-        store.foreign(model, 1);
-        expect(store.make).toHaveBeenCalledWith(data);
+    it('should resolve foreign', () => {
+        store.foreign(model, 1, {ignoreCache: true});
+        expect(resolveForeign).toHaveBeenCalledWith(data, {url: '1/path', ignoreCache: true});
     });
 
-    it('should add list to cache', () => {
-        store.foreign(model, 1);
-        expect(store.cache.getList('1/path')).toBeTruthy();
-    });
-
-    it('should add model to cache', () => {
-        store.cache.set = jest.fn();
-        store.foreign(model, 1, {set: true});
-        expect(store.cache.set).toHaveBeenCalledWith(instances, false);
-    });
-
-    it('should not add model to cache', () => {
-        store.cache.set = jest.fn();
-        store.foreign(model, 1);
-        expect(store.cache.set).not.toHaveBeenCalled();
-    });
-
-    it('should resolve model instances', () => {
-        store.foreign(model, 1).then((result: any) => {
-            expect(result).toBe(instances);
-        });
+    it('should resolve foreign with custom url', () => {
+        store.foreign(model, 1, {url: 'customUrl'});
+        expect(resolveForeign).toHaveBeenCalledWith(data, {url: 'customUrl'});
     });
 });

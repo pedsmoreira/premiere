@@ -30,6 +30,10 @@ describe('Store', () => {
         expect(Model.store).toBe('old store');
     });
 
+    it('should not throw exception on construct with null', () => {
+        expect(() => new Store<any>(null, data)).not.toThrow();
+    });
+
     it('should get path from model', () => {
         store.model.path = 'path';
         expect(store.path()).toBe('path');

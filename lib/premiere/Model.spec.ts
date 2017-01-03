@@ -133,6 +133,18 @@ describe('Store foreign method', () => {
         expect(SpyModel.normalize).toHaveBeenCalledWith('property', 'value');
     });
 
+    it('should resolve first', () => {
+        return (SpecModel as any).resolveFirst(Promise.resolve(['value', 'second'])).then((data: any) => {
+            expect(data).toBe('value');
+        });
+    });
+
+    it('should resolve null', () => {
+        return (SpecModel as any).resolveFirst(Promise.resolve([])).then((data: any) => {
+            expect(data).toBeNull();
+        });
+    });
+
     it('should reload', () => {
         spyModel.reload();
         expect(SpyModel.find).toHaveBeenCalledWith('spy');
@@ -201,30 +213,19 @@ describe('Store foreign method', () => {
     });
 
     it('should belong to many', () => {
-        spyModel.belongsToMany(SpecModel, 'options');
-        expect(SpyModel.belongsToMany).toHaveBeenCalledWith(SpecModel, 'spy', 'options');
+        (model as any).spy_id = 'fk';
+        model.belongsToMany(SpyModel, 'options');
+        expect(SpyModel.hasMany).toHaveBeenCalledWith(SpecModel, 'fk', 'options');
     });
 
     it('should belong to many statically', () => {
         SpecModel.belongsToMany(SpyModel, 'value', 'options');
-        expect(model.store().foreign).toHaveBeenCalledWith(SpyModel, 'value', 'options');
+        expect(SpyModel.hasMany).toHaveBeenCalledWith(SpecModel, 'value', 'options');
     });
 
     it('should have one', () => {
         spyModel.hasOne(SpecModel, 'options');
         expect(SpyModel.hasOne).toHaveBeenCalledWith(SpecModel, 'spy', 'options');
-    });
-
-    it('should resolve first', () => {
-        return (SpecModel as any).resolveFirst(Promise.resolve(['value', 'second'])).then((data: any) => {
-            expect(data).toBe('value');
-        });
-    });
-
-    it('should resolve null', () => {
-        return (SpecModel as any).resolveFirst(Promise.resolve([])).then((data: any) => {
-            expect(data).toBeNull();
-        });
     });
 
     it('should have one statically', () => {

@@ -179,6 +179,17 @@ export default class Model implements IModel {
     }
 
     /**
+     * Resolve first promise result or null
+     */
+    protected static resolveFirst(promise: Promise<Model[]>): Promise<Model> {
+        return new Promise((resolve, reject) => {
+            promise.then((objects: Model[]) => {
+                resolve(objects.length ? objects[0] : null);
+            }, reject);
+        });
+    }
+
+    /**
      * Reload model instance
      */
     reload(): Promise<this> {
@@ -244,16 +255,16 @@ export default class Model implements IModel {
     /**
      * Get promise to belongsToMany FK relation
      */
-    belongsToMany(model: typeof Model, options: IStoreForeign = undefined): Promise<this[]> {
+    belongsToMany(model: typeof Model, options: IStoreForeign = undefined): Promise<Model[]> {
         let self = this.constructor as typeof Model;
-        return self.belongsToMany(model, this.key(), options);
+        return self.belongsToMany(model, this.foreignKey(model), options);
     }
 
     /**
      * Get promise to belongsToMany FK relation
      */
     static belongsToMany(model: typeof Model, value: any, options: IStoreForeign = undefined): Promise<Model[]> {
-        return this.hasMany(model, value, options);
+        return model.hasMany(this, value, options);
     }
 
     /**
@@ -262,17 +273,6 @@ export default class Model implements IModel {
     hasOne(model: typeof Model, options: IStoreForeign = undefined): Promise<Model> {
         let self = this.constructor as typeof Model;
         return self.hasOne(model, this.key(), options);
-    }
-
-    /**
-     * Resolve first promise result or null
-     */
-    protected static resolveFirst(promise: Promise<Model[]>): Promise<Model> {
-        return new Promise((resolve, reject) => {
-            promise.then((objects: Model[]) => {
-                resolve(objects.length ? objects[0] : null);
-            }, reject);
-        });
     }
 
     /**
