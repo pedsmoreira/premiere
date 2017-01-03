@@ -68,10 +68,9 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 
 ## Examples
 - [Book List](http://jsfiddle.net/pedsmoreira/fqLuvjr1/) _(ES6 - JSFiddle)_
-- [Todo List](examples/todo) _(Typescript)_
 
 ## Projects
-- [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(React + MobX)_
+- [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(ES6 + React + MobX)_
 
 ## Motivation
 Premiere is inspired by
