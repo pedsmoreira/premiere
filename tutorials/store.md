@@ -15,7 +15,11 @@ class TodoStore extends Store {
     }
     
     search(query: string): Promise<Todo[]> {
-        return this.index()({url: `search?q=${query}`});
+        return new Promise((resolve, reject) => {
+            this.http().get({url: `search?q=${query}`}).then((todos: TodoModel[]) => {
+                resolve(todos);
+            }, reject);
+        });
     }
 }
 

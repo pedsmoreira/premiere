@@ -50,20 +50,48 @@ Using cdn:
 
 ## Setup
 
-```typescript
-import {Api} from 'premiere';
+This code is written in [TypeScript](http://typescriptlang.org/).
 
-Api.base = 'http://my-api.com';
+```typescript
+import {Api, api, Model} from 'premiere';
+
+Api.base = 'http://rest.learncode.academy/api/YOUR_NAME_HERE/';
+
+/*
+ * Using API directly
+ */
+
+api.http().get('albums'); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
+api.http().post('albums'); // POST http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
+
+/*
+ * Using Models
+ */
+
+class Album extends Model {
+    static path = 'albums';
+    
+    id: number;
+    name: string;
+}
+
+Album.all(); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
+Album.find(1); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums/1
+Album.save({name: 'new album'});// POST http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
 ``` 
 
 ## Tutorials
-- [Working with Models](/tutorials/model.md)
+
+The tutorials are written in [TypeScript](http://typescriptlang.org/). 
+
+- [Working with Models](./tutorials/model.md)
 - [Working with Foreign Keys](./tutorials/model-fk.md)
 - [Customizing Stores](./tutorials/store.md)
 - [Working with Cache](./tutorials/cache.md)
 - [APIs without Models](./tutorials/api.md)
 
 ## Documentation
+
 Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documentation).
 
 ## Examples
@@ -72,7 +100,17 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 ## Projects
 - [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(ES6 + React + MobX)_
 
+## Dependencies
+
+- [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
+
+## Resources
+
+- [Contributing Guide](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+
 ## Motivation
+
 Premiere is inspired by
 [Laravel](https://laravel.com/)
 ([Eloquent](https://laravel.com/docs/master/eloquent)) and
@@ -81,10 +119,8 @@ Premiere is inspired by
 
 Because of frameworks like these, building Restful APIs is a much smoother path.
 
-The goal of Premiere is to provide the same facility and power that these libraries provide, just this time on the client side.  
-
-## Dependencies
-- [axios](https://github.com/mzabriskie/axios) for handling HTTP Requests.
+The goal of Premiere is to provide the same facility and power that these libraries provide, just this time on the client side.
 
 ## License
-MIT
+
+[MIT](./LICENSE.md)

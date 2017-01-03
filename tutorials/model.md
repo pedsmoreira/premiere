@@ -28,7 +28,7 @@ Fetching todos
 
 ```typescript
 // GET todos/
-Todo.all().then((todo) => {
+Todo.all().then((todos: Todo[]) => {
   console.log(todos); // [Todo, Todo]
 })
 ```
@@ -37,7 +37,7 @@ Fetching todo
 
 ```typescript
 // GET todos/:id
-Todo.find(1).then((todo) => {
+Todo.find(1).then((todo: Todo) => {
   console.log(todo); // Todo
 })
 ```
@@ -46,7 +46,7 @@ Fetching a todo by parameter
 
 ```typescript
 // GET todos/name/Item
-Todo.where('name', 'Item').then((todo) => {
+Todo.where('name', 'Item').then((todo: Todo) => {
   console.log(todo); // Todo
 })
 ```
@@ -57,13 +57,13 @@ Creating a new todo
 // POST todos/
 let todo = new Todo();
 todo.name = 'My own todo';
-todo.save().then((todo) => {
+todo.save().then((todo: Todo) => {
     console.log(todo); // Todo
 );
 
 // OR
 
-Todo.save({name: 'My own todo'}).then((todo) => {
+Todo.save({name: 'My own todo'}).then((todo: Todo) => {
     console.log(todo); // Todo
 );
 ```
@@ -73,7 +73,7 @@ Updating a todo
 ```typescript
 // PUT todos/:id
 todo.name = 'New name';
-todo.save().then((todo) => {
+todo.save().then((todo: Todo) => {
     console.log(todo); // Todo
 );
 ```
@@ -92,7 +92,7 @@ Reloading a todo
 ```typescript
 // GET todos/:id
 todo.name = 'new name';
-todo.reload((todo) => {
+todo.reload((todo: Todo) => {
     console.log(todo); // Todo with name 'My own todo'
 });
 ```
