@@ -76,6 +76,6 @@ class TodoStore extends Store {
 }
 ```
 
-<div style="text-align: right; font-weight: bold;">
-    <a href="./cache.md">Next: Working with Cache</a>
-</div>
+* * *
+
+#### [Next: Working with Cache](./cache.md)

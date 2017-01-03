@@ -31,6 +31,6 @@ class TodoModel extends Model {
 }
 ```
 
-<div style="text-align: right; font-weight: bold;">
-    <a href="./api.md">Next: APIs without Models</a>
-</div>
+* * *
+
+#### [Next: APIs without Models](./api.md)
