@@ -1,6 +1,6 @@
 {
   "name": "premiere",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "Javascript ORM for consuming Restful APIs",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
