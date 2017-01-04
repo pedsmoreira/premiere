@@ -109,6 +109,9 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 - [Contributing Guide](./CONTRIBUTING.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 
+### Articles
+- https://medium.com/@pedsmoreira/consuming-restful-apis-with-premiere-ae712d1bc935#.ki5e8biu3
+
 ## Motivation
 
 Premiere is inspired by
