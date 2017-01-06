@@ -1,17 +1,20 @@
 import Cache from './Cache';
-import Api from './Api';
-import {IModel} from './Model';
 
 describe('Cache', () => {
     let cache: Cache;
-    let model: IModel;
-    let list: IModel[];
+    let model: any;
+    let list: any[];
     let promise: any = 'promise instance';
 
     beforeEach(() => {
-        cache = new Cache(new Api());
+        cache = new Cache(null);
         model = {key: jest.fn().mockReturnValue('id')};
         list = [model];
+    });
+
+    it('should set api on construct', () => {
+        cache = new Cache('api' as any);
+        expect(cache.api).toBe('api');
     });
 
     it('should resolve key from object', () => {
@@ -28,12 +31,12 @@ describe('Cache', () => {
     });
 
     it('should be enabled with api cache enabled', () => {
-        cache.api.isUsingCache = () => true;
+        cache.api = {isUsingCache: () => true} as any;
         expect(cache.enabled()).toBeTruthy();
     });
 
     it('should not be enabled with api cache disabled', () => {
-        cache.api.isUsingCache = () => false;
+        cache.api = {isUsingCache: () => false} as any;
         expect(cache.enabled()).toBeFalsy();
     });
 
@@ -43,12 +46,12 @@ describe('Cache', () => {
     });
 
     it('should have promise enabled with api promise cache enabled', () => {
-        cache.api.isUsingPromiseCache = () => true;
+        cache.api = {isUsingPromiseCache: () => true} as any;
         expect(cache.promiseEnabled()).toBeTruthy();
     });
 
     it('should not have promise enabled with api promise cache disabled', () => {
-        cache.api.isUsingPromiseCache = () => false;
+        cache.api = {isUsingPromiseCache: () => false} as any;
         expect(cache.promiseEnabled()).toBeFalsy();
     });
 
