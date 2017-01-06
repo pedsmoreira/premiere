@@ -111,6 +111,7 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 
 ### Articles
 - https://medium.com/@pedsmoreira/consuming-restful-apis-with-premiere-ae712d1bc935#.ki5e8biu3
+- https://medium.com/@pedsmoreira/from-0-to-100-coverage-real-quick-d71dda7069e5#.sceucnhmf
 
 ## Motivation
 
