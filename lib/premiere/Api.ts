@@ -69,11 +69,18 @@ export default class Api {
 
     /**
      * Get api base
+     * @throws Error
      * @return {string}
      */
     resolveBase(): string {
         let self = this.constructor as typeof Api;
-        return this.base || self.base || Api.base;
+        let base = this.base || self.base || Api.base;
+
+        if (!base) {
+            throw new Error('Unable to resolve Api base path');
+        }
+
+        return base;
     }
 
     /**

@@ -36,6 +36,12 @@ describe('Api', () => {
         expect(api.resolveBase()).toBe('api');
     });
 
+    it('should throw error on failing to resolve base', () => {
+        Api.base = null;
+        ApiChild.base = null;
+        expect(() => api.resolveBase()).toThrow();
+    });
+
     it('should resolve instance headers', () => {
         api.headers = 'headers' as any;
         expect(api.resolveHeaders()).toBe('headers');
