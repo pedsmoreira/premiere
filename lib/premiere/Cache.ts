@@ -45,14 +45,14 @@ export default class Cache {
     /**
      * Check if caching is enabled
      */
-    enabled() {
+    enabled(): boolean {
         return !this.api || this.api.isUsingCache();
     }
 
     /**
      * Check if promise caching is enabled
      */
-    promiseEnabled() {
+    promiseEnabled(): boolean {
         return !this.api || this.api.isUsingPromiseCache();
     }
 
@@ -99,7 +99,7 @@ export default class Cache {
     /**
      * Remove object
      */
-    destroy(value: string | IModel) {
+    destroy(value: string | IModel): void {
         let self = this.constructor as typeof Cache;
         delete this.objects[self.resolveKey(value)];
         this.lists = {};
@@ -107,8 +107,9 @@ export default class Cache {
 
     /**
      * Get list by name
+     * @return {IModel[]}
      */
-    getList(name: string) {
+    getList(name: string): IModel[] {
         if (this.enabled()) {
             return this.lists[name];
         }
@@ -124,7 +125,7 @@ export default class Cache {
         return list;
     }
 
-    destroyList(name: string) {
+    destroyList(name: string): void {
         delete this.lists[name];
     }
 
