@@ -70,6 +70,10 @@ describe('Store foreign method', () => {
         expect(model.map()).toEqual({id: 1, property: 'denormalized value'});
     });
 
+    it('should map without denormalizing', () => {
+        expect(model.map(false)).toEqual({id: 1, property: 'value'});
+    });
+
     it('should get foreign key', () => {
         SpyModel.singular = 'spy';
         (model as any).spy_id = 'fk';
