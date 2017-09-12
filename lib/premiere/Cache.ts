@@ -34,8 +34,14 @@ export default class Cache {
 
     /**
      * Get key from value
+     *
+     * @return {string}
      */
     static resolveKey(value: any | IModel): string {
+        if (value === null || typeof value === 'undefined') {
+            throw new Error('Unable to resolve key `' + value + '`');
+        }
+
         if (typeof value === 'object') {
             return (value as IModel).key().toString();
         }
@@ -80,7 +86,7 @@ export default class Cache {
     /**
      * Set object
      */
-    set(value: IModel|IModel[], clearLists: boolean = true): IModel | IModel[] {
+    set(value: IModel | IModel[], clearLists: boolean = true): IModel | IModel[] {
         if (Array.isArray(value)) {
             let list = value as IModel[];
             return list.map((it: IModel) => this.set(it, clearLists)) as IModel[];

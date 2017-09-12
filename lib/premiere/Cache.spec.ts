@@ -25,6 +25,10 @@ describe('Cache', () => {
         expect(Cache.resolveKey(1)).toBe('1');
     });
 
+    it('should throw error with null key given', () => {
+        expect(() => Cache.resolveKey(null)).toThrow();
+    });
+
     it('should be enabled without api', () => {
         cache.api = null;
         expect(cache.enabled()).toBeTruthy();
