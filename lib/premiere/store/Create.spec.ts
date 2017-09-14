@@ -13,11 +13,6 @@ describe('Store create method', () => {
         store.http = Helper.http(responseData);
     });
 
-    it('should verify access', () => {
-        store.denies = ['create'];
-        expect(() => store.create(data)).toThrowError();
-    });
-
     it('should make http request', () => {
         store.create(data);
         expect(store.http().post).toHaveBeenCalledWith('', data);

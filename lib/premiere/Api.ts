@@ -73,8 +73,8 @@ export default class Api {
      * @return {string}
      */
     resolveBase(): string {
-        let self = this.constructor as typeof Api;
-        let base = this.base || self.base || Api.base;
+        const self = this.constructor as typeof Api;
+        const base = this.base || self.base || Api.base;
 
         if (!base) {
             throw new Error('Unable to resolve Api base path');
@@ -88,7 +88,7 @@ export default class Api {
      * @return {Hash<string>}
      */
     resolveHeaders(): Hash<string> {
-        let self = this.constructor as typeof Api;
+        const self = this.constructor as typeof Api;
         return this.headers || self.headers || Api.headers;
     }
 
@@ -143,15 +143,15 @@ export default class Api {
             return new Promise(fn);
         }
 
-        let cached = this.cache.getPromise(name);
+        const cached = this.cache.getPromise(name);
         if (cached) {
             return cached as Promise<any>;
         }
 
-        let promise = new Promise(fn);
+        const promise = new Promise(fn);
         this.cache.setPromise(name, promise);
 
-        let destroyCallback = () => {
+        const destroyCallback = () => {
             this.cache.destroyPromise(name);
         };
         promise.then(destroyCallback, destroyCallback);
@@ -170,7 +170,7 @@ export default class Api {
      * Add JWT authorization header for a given token
      */
     setJwtToken(token: string): void {
-        let self = this.constructor as typeof Api;
+        const self = this.constructor as typeof Api;
         self.setJwtToken(token, this.headers);
     }
 
@@ -185,7 +185,7 @@ export default class Api {
      * Remove JWT authorization header
      */
     removeJwtToken(): void {
-        let self = this.constructor as typeof Api;
+        const self = this.constructor as typeof Api;
         self.removeJwtToken(this.headers);
     }
 
@@ -197,7 +197,7 @@ export default class Api {
     }
 
     setCsrfToken(token: string): void {
-        let self = this.constructor as typeof Api;
+        const self = this.constructor as typeof Api;
         self.setCsrfToken(token, this.headers);
     }
 
@@ -212,7 +212,7 @@ export default class Api {
      * Remove CSRF token from header
      */
     removeCsrfToken(): void {
-        let self = this.constructor as typeof Api;
+        const self = this.constructor as typeof Api;
         self.removeCsrfToken(this.headers);
     }
 }

@@ -11,16 +11,6 @@ describe('Store where method', () => {
         store.http = Helper.http('data');
     });
 
-    it('should verify access', () => {
-        store.denies = ['where'];
-        expect(() => store.where('property', 'value')).toThrowError();
-    });
-
-    it('should skip access verification', () => {
-        store.denies = ['where'];
-        expect(() => store.where('property', 'value', {permit: true})).not.toThrow();
-    });
-
     it('should fetch from http request', () => {
         store.where('property', 'value');
         expect(store.http().get).toHaveBeenCalledWith('property/value');
@@ -43,7 +33,7 @@ describe('Store where method', () => {
 
     it('should fetch from cache', () => {
         store.cache.set(instance);
-        store.where('property', 'value').then((result) => expect(result).toBe(instance));
+        expect(store.where('property', 'value')).resolves.toBe(instance);
         expect(store.http().get).not.toHaveBeenCalled();
     });
 
@@ -69,8 +59,6 @@ describe('Store where method', () => {
     });
 
     it('should resolve model instance', () => {
-        store.where('property', 'value').then((result: any) => {
-            expect(result).toBe(instance);
-        });
+        expect(store.where('property', 'value')).resolves.toBe(instance);
     });
 });

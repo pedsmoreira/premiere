@@ -13,11 +13,6 @@ describe('Store update method', () => {
         store.http = Helper.http(responseData);
     });
 
-    it('should verify access', () => {
-        store.denies = ['update'];
-        expect(() => store.update(data)).toThrowError();
-    });
-
     it('should make http request', () => {
         store.update(data);
         expect(store.http().put).toHaveBeenCalledWith('1', data);

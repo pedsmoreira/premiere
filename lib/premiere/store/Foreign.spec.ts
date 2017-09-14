@@ -18,16 +18,6 @@ describe('Store foreign method', () => {
         model = {path: 'path', resolveStore: () => ({resolveForeign, cache})};
     });
 
-    it('should verify access', () => {
-        store.denies = ['foreign'];
-        expect(() => store.foreign(model, 1)).toThrowError();
-    });
-
-    it('should skip access verification', () => {
-        store.denies = ['foreign'];
-        expect(() => store.foreign(model, 1, {permit: true})).not.toThrow();
-    });
-
     it('should fetch from http request', () => {
         store.foreign(model, 1);
         expect(store.http().get).toHaveBeenCalledWith('1/path');

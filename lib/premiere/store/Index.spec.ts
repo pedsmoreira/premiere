@@ -12,16 +12,6 @@ describe('Store index method', () => {
         store.http = Helper.http(data);
     });
 
-    it('should verify access', () => {
-        store.denies = ['index'];
-        expect(() => store.index()).toThrowError();
-    });
-
-    it('should skip access verification', () => {
-        store.denies = ['index'];
-        expect(() => store.index({permit: true})).not.toThrow();
-    });
-
     it('should fetch from http request', () => {
         store.index();
         expect(store.http().get).toHaveBeenCalledWith('');

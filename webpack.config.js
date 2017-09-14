@@ -5,7 +5,7 @@ let UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 module.exports = {
   entry: './build/index.js',
   output: {
-    path: 'dist',
+    path: __dirname + '/dist',
     filename: 'premiere.min.js',
     library: 'Premiere',
     libraryTarget: 'umd',

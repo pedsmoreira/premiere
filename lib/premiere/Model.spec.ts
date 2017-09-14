@@ -24,7 +24,7 @@ describe('Store foreign method', () => {
     let model: SpecModel;
     let spyModel: SpyModel;
 
-    let store: Store<SpecModel> = SpecModel.resolveStore();
+    const store: Store<SpecModel> = SpecModel.resolveStore() as Store<SpecModel>;
     ['index', 'get', 'where', 'create', 'update', 'by', 'foreign', 'destroy', 'act'].forEach((key) => {
         (store as any)[key] = jest.fn().mockReturnValue({then: jest.fn()});
     });
@@ -108,7 +108,8 @@ describe('Store foreign method', () => {
 
     it('should set', () => {
         SpyModel.normalize = jest.fn();
-        expect(model.set({property: 'set value'}).property).toBe('set value');
+        model.set({property: 'set value'});
+        expect(model.property).toBe('set value');
         expect(SpyModel.normalize).not.toHaveBeenCalled();
     });
 

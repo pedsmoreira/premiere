@@ -7,8 +7,7 @@
   "scripts": {
     "lint": "tslint 'lib/**/*.ts'",
     "pretest": "npm run lint",
-    "test": "jest --coverage --no-cache ${1}",
-    "test-watch": "jest ${1} --watch",
+    "test": "jest",
     "build": "tsc && webpack",
     "preversion": "npm test",
     "version": "npm run build && npm run documentation && git add -A documentation && git add package.json",
@@ -38,16 +37,17 @@
     "axios": "^0.15.3"
   },
   "devDependencies": {
-    "@types/jest": "^16.0.2",
-    "jest": "^18.0.0",
-    "ts-jest": "^18.0.0",
-    "tslint": "^4.1.1",
-    "typedoc": "^0.5.1",
-    "typescript": "^2.1.4",
+    "@types/jest": "^20.0.8",
+    "jest": "^21.0.2",
+    "ts-jest": "^21.0.0",
+    "tslint": "^5.7.0",
+    "typedoc": "^0.8.0",
+    "typescript": "^2.5.2",
     "unminified-webpack-plugin": "^1.2.0",
-    "webpack": "^1.14.0"
+    "webpack": "^3.5.6"
   },
   "jest": {
+    "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -55,14 +55,6 @@
     "transform": {
       "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "lib/.*\\.spec.(ts|js)$",
-    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
-    "globals": {
-      "__TS_CONFIG__": {
-        "target": "es6",
-        "module": "commonjs",
-        "moduleResolution": "node"
-      }
-    }
+    "testRegex": "lib/.*\\.spec.(ts|js)$"
   }
 }

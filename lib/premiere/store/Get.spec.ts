@@ -11,16 +11,6 @@ describe('Store get method', () => {
         store.http = Helper.http('data');
     });
 
-    it('should verify access', () => {
-        store.denies = ['get'];
-        expect(() => store.get(1)).toThrowError();
-    });
-
-    it('should skip access verification', () => {
-        store.denies = ['get'];
-        expect(() => store.get(1, {permit: true})).not.toThrow();
-    });
-
     it('should fetch from http request', () => {
         store.get(1);
         expect(store.http().get).toHaveBeenCalledWith('1');
@@ -43,7 +33,7 @@ describe('Store get method', () => {
 
     it('should fetch from cache', () => {
         store.cache.set(instance);
-        store.get(1).then((result) => expect(result).toBe(instance));
+        expect(store.get(1)).resolves.toBe(instance);
         expect(store.http().get).not.toHaveBeenCalled();
     });
 
@@ -69,8 +59,6 @@ describe('Store get method', () => {
     });
 
     it('should resolve model instance', () => {
-        store.get(1).then((result: any) => {
-            expect(result).toBe(instance);
-        });
+        expect(store.get(1)).resolves.toBe(instance);
     });
 });

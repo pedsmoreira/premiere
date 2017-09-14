@@ -41,8 +41,8 @@ export default class Model implements IModel {
      * Get model store
      */
     store(): Store<this> {
-        let self = this.constructor as typeof Model;
-        return self.resolveStore();
+        const self = this.constructor as typeof Model;
+        return self.resolveStore() as Store<this>;
     }
 
     /**
@@ -63,7 +63,7 @@ export default class Model implements IModel {
      * Get value of primary key
      */
     key(): any {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return (this as any)[self.keyColumn];
     }
 
@@ -72,9 +72,9 @@ export default class Model implements IModel {
      * The shallow map does not contain objects (consequently, does not contain FKs)
      */
     map(denormalize: boolean = true): Hash<any> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
 
-        let map: any = {};
+        const map: any = {};
         Object.keys(this).forEach(key => {
             let value = (this as any)[key];
             if (denormalize) {
@@ -116,12 +116,12 @@ export default class Model implements IModel {
      * Resolve normalizing function
      */
     static resolveTransformer(key: string, type: string = 'normalize'): string {
-        let underscored: string = `${type}_${key}`;
+        const underscored: string = `${type}_${key}`;
         if ((this as any)[underscored]) {
             return underscored;
         }
 
-        let camel: string = type + this.camelizeTransformer(key);
+        const camel: string = type + this.camelizeTransformer(key);
         if ((this as any)[camel]) {
             return camel;
         }
@@ -131,7 +131,7 @@ export default class Model implements IModel {
      * Normalize property
      */
     static normalize(key: string, value: any): any {
-        let method: string = this.resolveTransformer(key);
+        const method: string = this.resolveTransformer(key);
         return method ? (this as any)[method](value) : value;
     }
 
@@ -139,30 +139,28 @@ export default class Model implements IModel {
      * Denormalize property
      */
     static denormalize(key: string, value: any): any {
-        let method: string = this.resolveTransformer(key, 'denormalize');
+        const method: string = this.resolveTransformer(key, 'denormalize');
         return method ? (this as any)[method](value) : value;
     }
 
     /**
      * Set values to instance
      */
-    set(values: Hash<any>, normalize: boolean = false): this {
-        let self = this.constructor as typeof Model;
+    set(values: Hash<any>, normalize: boolean = false): void {
+        const self = this.constructor as typeof Model;
         Object.keys(values).forEach(key => {
-            let value = values[key];
+            const value = values[key];
             (this as any)[key] = normalize ? self.normalize(key, value) : value;
         });
-
-        return this;
     }
 
     /**
      * Duplicate model
      */
     duplicate(): this {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
 
-        let map = this.map(false);
+        const map = this.map(false);
         delete map[self.keyColumn];
 
         return self.make(map) as this;
@@ -175,7 +173,10 @@ export default class Model implements IModel {
         if (Array.isArray(values)) {
             return values.map((it: Hash<any>) => this.make(it)) as Model[];
         }
-        return new this().set(values, normalize);
+
+        const instance: Model = new this();
+        instance.set(values, normalize);
+        return instance;
     }
 
     /**
@@ -194,7 +195,7 @@ export default class Model implements IModel {
      */
     reload(): Promise<this> {
         let self = this.constructor as typeof Model;
-        return self.find(this.key());
+        return self.find(this.key()) as Promise<this>;
     }
 
     /**
@@ -208,8 +209,8 @@ export default class Model implements IModel {
      * Persist model
      */
     save(options: IStoreSet = undefined): Promise<this> {
-        let self = this.constructor as typeof Model;
-        return self.save(this.map(), options) as Promise<Model>;
+        const self = this.constructor as typeof Model;
+        return self.save(this.map(), options) as Promise<this>;
     }
 
     /**
@@ -231,7 +232,7 @@ export default class Model implements IModel {
      * Destroy model
      */
     destroy(options: IStoreSet = undefined): Promise<any> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return self.destroy(this.key(), options) as Promise<any>;
     }
 
@@ -256,7 +257,7 @@ export default class Model implements IModel {
      * Get promise to belongsToMany FK relation
      */
     belongsToMany(model: typeof Model, options: IStoreForeign = undefined): Promise<Model[]> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return self.belongsToMany(model, this.foreignKey(model), options);
     }
 
@@ -271,7 +272,7 @@ export default class Model implements IModel {
      * Get promise to hasOne FK relation
      */
     hasOne(model: typeof Model, options: IStoreForeign = undefined): Promise<Model> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return self.hasOne(model, this.key(), options);
     }
 
@@ -279,7 +280,7 @@ export default class Model implements IModel {
      * Get promise to hasOne FK relation statically
      */
     static hasOne(model: typeof Model, key: any, options: IStoreForeign = undefined): Promise<Model> {
-        let promise = this.hasMany(model, key, options);
+        const promise = this.hasMany(model, key, options);
         return this.resolveFirst(promise);
     }
 
@@ -287,7 +288,7 @@ export default class Model implements IModel {
      * Get promise to hasMany FK relation
      */
     hasMany(model: typeof Model, options: IStoreForeign = undefined): Promise<Model[]> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return self.hasMany(model, this.key(), options);
     }
 
@@ -302,7 +303,7 @@ export default class Model implements IModel {
      * Call action for model
      */
     act(action: string, options: IStoreAct = undefined): Promise<any> {
-        let self = this.constructor as typeof Model;
+        const self = this.constructor as typeof Model;
         return self.act(this.key(), action, options);
     }
 

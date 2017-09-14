@@ -76,7 +76,7 @@ export default class Cache {
      */
     where(property: string, value: any): IModel {
         if (this.enabled()) {
-            let values: IModel[] = Object.keys(this.objects).map((key) => this.objects[key]);
+            const values: IModel[] = Object.keys(this.objects).map((key) => this.objects[key]);
             return values.find((object: IModel) => {
                 return (<any> object)[property] === value;
             }) as IModel;
@@ -86,27 +86,26 @@ export default class Cache {
     /**
      * Set object
      */
-    set(value: IModel | IModel[], clearLists: boolean = true): IModel | IModel[] {
+    set(value: IModel | IModel[], clearLists: boolean = true): void {
         if (Array.isArray(value)) {
-            let list = value as IModel[];
-            return list.map((it: IModel) => this.set(it, clearLists)) as IModel[];
-        }
-
-        let object = value as IModel;
-        if (this.enabled()) {
-            this.objects[object.key()] = object;
-            if (clearLists) {
-                this.lists = {};
+            const list = value as IModel[];
+            list.forEach((it: IModel) => this.set(it, clearLists));
+        } else {
+            const object = value as IModel;
+            if (this.enabled()) {
+                this.objects[object.key()] = object;
+                if (clearLists) {
+                    this.lists = {};
+                }
             }
         }
-        return object;
     }
 
     /**
      * Remove object
      */
     destroy(value: string | IModel): void {
-        let self = this.constructor as typeof Cache;
+        const self = this.constructor as typeof Cache;
         delete this.objects[self.resolveKey(value)];
         this.lists = {};
     }
