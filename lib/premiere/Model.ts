@@ -1,338 +1,242 @@
-import Store, {IStoreForeign, IStoreFetch, IStoreSet, IStoreAct} from './Store';
+import Store, {FetchOptions, FetchListOptions, Options, ActOptions} from './Store';
 import Hash from './Hash';
+import {camelize} from './helpers/StringHelper';
 
 export interface IModel {
-    key(): string;
+    key: string;
 }
 
-/**
- * A Model is usually relative to a table in the database.
- */
 export default class Model implements IModel {
-    /**
-     * The path associated with the model
-     */
-    static path: string;
+    keyColumn: string = 'id';
+    path: string;
+    private _singular: string;
 
-    /**
-     * The singular name associated with the model
-     * This is used for finding variable names when working with FKs
-     */
-    static singular: string;
+    private static _store: Store<Model>;
+    private static _reflector: Model;
 
-    /**
-     * The Store associated with the model
-     * If none is given and a request is made, a new store is auto generated with the given `storeProperties`
-     */
-    static store: Store<Model>;
-
-    /**
-     * The name of the primary key column
-     */
-    static keyColumn: string = 'id';
-
-    /**
-     * This variable is used to set the default store properties
-     * If you're using a custom store, don't worry about this
-     */
     static storeProperties: Hash<any> = {};
 
-    /**
-     * Get model store
-     */
-    store(): Store<this> {
-        const self = this.constructor as typeof Model;
-        return self.resolveStore() as Store<this>;
+    get self(): typeof Model {
+        return this.constructor as typeof Model;
     }
 
-    /**
-     * Get an instance of store
-     */
-    static resolveStore(properties: Hash<any> = undefined): Store<Model> {
-        return this.store = this.store || this.createStore(properties);
+    static get reflector(): Model {
+        const reflector = this._reflector;
+        if (reflector && reflector instanceof this) {
+            return reflector;
+        }
+
+        return this._reflector = new this();
     }
 
-    /**
-     * Create new instance of store
-     */
-    static createStore(properties: Hash<any> = this.storeProperties): Store<Model> {
-        return new Store<Model>(this, properties);
+    get store(): Store<this> {
+        return (this.constructor as typeof Model).store as Store<this>;
     }
 
-    /**
-     * Get value of primary key
-     */
-    key(): any {
-        const self = this.constructor as typeof Model;
-        return (this as any)[self.keyColumn];
+    static get hasStore(): boolean {
+        return !!this._store;
     }
 
-    /**
-     * Get mapped properties with values of model
-     * The shallow map does not contain objects (consequently, does not contain FKs)
-     */
-    map(denormalize: boolean = true): Hash<any> {
-        const self = this.constructor as typeof Model;
+    static get store(): Store<Model> {
+        return this._store = this._store || new Store<Model>(this, this.storeProperties);
+    }
 
-        const map: any = {};
-        Object.keys(this).forEach(key => {
-            let value = (this as any)[key];
-            if (denormalize) {
-                value = self.denormalize(key, value);
-            }
+    static set store(value: Store<Model>) {
+        this._store = value;
+    }
 
-            if (typeof value !== 'object') {
-                map[key] = value;
+    get key(): any {
+        return (this as any)[this.keyColumn];
+    }
+
+    set key(value: any) {
+        (this as any)[this.keyColumn] = value;
+    }
+
+    static key(value: any | IModel): string {
+        if (value === null || typeof value === 'undefined') {
+            throw new Error('Unable to resolve key `' + value + '`');
+        }
+
+        if (typeof value === 'object') {
+            return (value as IModel).key;
+        }
+
+        return value;
+    }
+
+    get singular(): string {
+        return this._singular || this.path.substring(0, this.path.length - 1);
+    }
+
+    set singular(value: string) {
+        this._singular = value;
+    }
+
+    get foreignName(): string {
+        return `${this.singular}_${this.keyColumn}`;
+    }
+
+    foreignKey(foreignModel: typeof Model): any {
+        return (this as any)[foreignModel.reflector.foreignName];
+    }
+
+    get map(): Hash<any> {
+        const result: Hash<any> = {};
+
+        Object.keys(this).forEach((attribute) => {
+            const mapping = this.mappingFor(attribute);
+            if (mapping !== null) {
+                result[attribute] = mapping;
             }
         });
 
-        return map;
+        return result;
     }
 
-    /**
-     * Get foreign key value for a given model
-     */
-    foreignKey(model: typeof Model): any {
-        return (this as any)[model.foreignKey()];
+    private mappingFor(attribute: string): any {
+        let value = (this as any)[attribute];
+        if (typeof value === 'object' || typeof value === 'function' || this.self.reflector.hasOwnProperty(attribute)) {
+            return null;
+        }
+
+        return this.denormalized(attribute, value);
     }
 
-    /**
-     * Get foreign key name for a given model
-     */
-    static foreignKey(): string {
-        return `${this.singularized()}_${this.keyColumn}`;
-    }
-
-    /**
-     * Camelize transformer name
-     */
-    private static camelizeTransformer(value: string): string {
-        return value.split(new RegExp('[_|-]')).map((part: string) =>
-            part.substring(0, 1).toUpperCase() + part.substring(1)
-        ).join('');
-    }
-
-    /**
-     * Resolve normalizing function
-     */
-    static resolveTransformer(key: string, type: string = 'normalize'): string {
-        const underscored: string = `${type}_${key}`;
+    private transformer(attribute: string, type: string): string | null {
+        const underscored: string = `${type}_${attribute}`;
         if ((this as any)[underscored]) {
             return underscored;
         }
 
-        const camel: string = type + this.camelizeTransformer(key);
+        const camel: string = type + camelize(attribute);
         if ((this as any)[camel]) {
             return camel;
         }
     }
 
-    /**
-     * Normalize property
-     */
-    static normalize(key: string, value: any): any {
-        const method: string = this.resolveTransformer(key);
-        return method ? (this as any)[method](value) : value;
+    private transform(attribute: string, value: any, type: string): string {
+        const transformer = this.transformer(attribute, type);
+        return transformer ? (this as any)[transformer](value) : value;
     }
 
-    /**
-     * Denormalize property
-     */
-    static denormalize(key: string, value: any): any {
-        const method: string = this.resolveTransformer(key, 'denormalize');
-        return method ? (this as any)[method](value) : value;
+    normalized(attribute: string, value: any): any {
+        return this.transform(attribute, value, 'normalize');
     }
 
-    /**
-     * Set values to instance
-     */
-    set(values: Hash<any>, normalize: boolean = false): void {
-        const self = this.constructor as typeof Model;
+    denormalized(attribute: string, value: any): any {
+        return this.transform(attribute, value, 'denormalize');
+    }
+
+    set(values: Hash<any>): this {
         Object.keys(values).forEach(key => {
-            const value = values[key];
-            (this as any)[key] = normalize ? self.normalize(key, value) : value;
+            (this as any)[key] = this.normalized(key, values[key]);
         });
+        return this;
     }
 
-    /**
-     * Duplicate model
-     */
     duplicate(): this {
-        const self = this.constructor as typeof Model;
+        const result: any = Object.assign(new this.self(), this);
+        delete result[this.keyColumn];
 
-        const map = this.map(false);
-        delete map[self.keyColumn];
-
-        return self.make(map) as this;
+        return result;
     }
 
-    /**
-     * Create one or an array of model instances
-     */
-    static make(values: Hash<any> | Hash<any>[], normalize: boolean = false): Model | Model[] {
-        if (Array.isArray(values)) {
-            return values.map((it: Hash<any>) => this.make(it)) as Model[];
-        }
-
-        const instance: Model = new this();
-        instance.set(values, normalize);
-        return instance;
+    static make(values: Hash<any>): Model {
+        return new this().set(values);
     }
 
-    /**
-     * Resolve first promise result or null
-     */
-    protected static resolveFirst(promise: Promise<Model[]>): Promise<Model> {
-        return new Promise((resolve, reject) => {
-            promise.then((objects: Model[]) => {
-                resolve(objects.length ? objects[0] : null);
-            }, reject);
-        });
+    static makeArray(valuesArray: Hash<any>[]): Model[] {
+        return valuesArray.map((values: Hash<any>) => this.make(values)) as Model[];
     }
 
-    /**
-     * Reload model instance
-     */
     reload(): Promise<this> {
-        let self = this.constructor as typeof Model;
-        return self.find(this.key()) as Promise<this>;
+        return this.self.find(this.key);
     }
 
-    /**
-     * Find model object by id
-     */
-    static find(key: any, options: IStoreFetch = undefined): Promise<Model> {
-        return this.resolveStore().get(key, options);
+    static find(key: any, options?: FetchOptions): Promise<Model> {
+        return this.store.get(key, options);
     }
 
-    /**
-     * Persist model
-     */
-    save(options: IStoreSet = undefined): Promise<this> {
-        const self = this.constructor as typeof Model;
-        return self.save(this.map(), options) as Promise<this>;
+    static all(options?: FetchOptions): Promise<Model[]> {
+        return this.store.index(options);
     }
 
-    /**
-     * Create and persist one or more instances
-     */
-    static save(values: Hash<any>, options: IStoreSet = undefined): Promise<Model> | Promise<Model>[] {
-        if (Array.isArray(values)) {
-            return values.map(it => this.save(it)) as Promise<Model>[];
+    create(options?: Options): Promise<this> {
+        return this.self.create(this.map, options) as Promise<this>;
+    }
+
+    static create(values: Hash<any>, options?: Options): Promise<Model> {
+        return this.store.create(values, options);
+    }
+
+    update(options?: Options): Promise<this> {
+        return this.self.update(this.key, this.map, options) as Promise<this>;
+    }
+
+    static update(key: any, values: Hash<any>, options?: Options): Promise<Model> {
+        return this.store.update(key, values, options);
+    }
+
+    save(options?: Options): Promise<this> {
+        return this.self.save(this.map, options) as Promise<this>;
+    }
+
+    static save(values: Hash<any>, options?: Options): Promise<Model> {
+        if (values[this.reflector.keyColumn]) {
+            return this.update(values[this.reflector.keyColumn], values, options);
         }
 
-        if (values[this.keyColumn]) {
-            return this.resolveStore().update(values, options);
+        return this.create(values, options);
+    }
+
+    destroy(options?: Options): Promise<any> {
+        return this.self.destroy(this.key, options) as Promise<any>;
+    }
+
+    static destroy(key: any, options?: Options): Promise<any> {
+        return this.store.destroy(key, options) as Promise<any>;
+    }
+
+    belongsTo(foreignModel: typeof Model, options?: FetchOptions): Promise<Model> {
+        return foreignModel.find(this.foreignKey(foreignModel), options);
+    }
+
+    belongsToMany(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model[]> {
+        return this.self.belongsToMany(foreignModel, this.foreignKey(foreignModel), options);
+    }
+
+    static belongsToMany(foreignModel: typeof Model, value: any, options?: FetchListOptions): Promise<Model[]> {
+        return foreignModel.hasMany(this, value, options);
+    }
+
+    hasOne(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model> {
+        return this.self.hasOne(foreignModel, this.key, options);
+    }
+
+    static async hasOne(foreignModel: typeof Model, key: any, options?: FetchListOptions): Promise<Model | null> {
+        const items = await this.hasMany(foreignModel, key, options);
+        return items.length ? items[0] : null;
+    }
+
+    hasMany(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model[]> {
+        return this.self.hasMany(foreignModel, this.key, options);
+    }
+
+    static hasMany(foreignModel: typeof Model, key: any, options?: FetchListOptions): Promise<Model[]> {
+        return this.store.foreign(foreignModel, key, options);
+    }
+
+    act(options?: ActOptions): Promise<any> {
+        if (!options) {
+            options = {};
         }
 
-        return this.resolveStore().create(values, options);
+        options.url = options.url || this.key;
+        return this.self.act(options);
     }
 
-    /**
-     * Destroy model
-     */
-    destroy(options: IStoreSet = undefined): Promise<any> {
-        const self = this.constructor as typeof Model;
-        return self.destroy(this.key(), options) as Promise<any>;
-    }
-
-    /**
-     * Destroy
-     */
-    static destroy(key: any, options: IStoreSet = undefined): Promise<any> | Promise<any>[] {
-        if (Array.isArray(key)) {
-            return key.map(it => this.destroy(it)) as Promise<any>[];
-        }
-        return this.resolveStore().destroy(key, options) as Promise<any>;
-    }
-
-    /**
-     * Get promise to belongsTo FK relation
-     */
-    belongsTo(model: typeof Model, options: IStoreFetch = undefined): Promise<Model> {
-        return model.find(this.foreignKey(model), options);
-    }
-
-    /**
-     * Get promise to belongsToMany FK relation
-     */
-    belongsToMany(model: typeof Model, options: IStoreForeign = undefined): Promise<Model[]> {
-        const self = this.constructor as typeof Model;
-        return self.belongsToMany(model, this.foreignKey(model), options);
-    }
-
-    /**
-     * Get promise to belongsToMany FK relation
-     */
-    static belongsToMany(model: typeof Model, value: any, options: IStoreForeign = undefined): Promise<Model[]> {
-        return model.hasMany(this, value, options);
-    }
-
-    /**
-     * Get promise to hasOne FK relation
-     */
-    hasOne(model: typeof Model, options: IStoreForeign = undefined): Promise<Model> {
-        const self = this.constructor as typeof Model;
-        return self.hasOne(model, this.key(), options);
-    }
-
-    /**
-     * Get promise to hasOne FK relation statically
-     */
-    static hasOne(model: typeof Model, key: any, options: IStoreForeign = undefined): Promise<Model> {
-        const promise = this.hasMany(model, key, options);
-        return this.resolveFirst(promise);
-    }
-
-    /**
-     * Get promise to hasMany FK relation
-     */
-    hasMany(model: typeof Model, options: IStoreForeign = undefined): Promise<Model[]> {
-        const self = this.constructor as typeof Model;
-        return self.hasMany(model, this.key(), options);
-    }
-
-    /**
-     * Get promise to hasMany FK relation statically
-     */
-    static hasMany(model: typeof Model, key: any, options: IStoreForeign = undefined): Promise<Model[]> {
-        return this.resolveStore().foreign(model, key, options);
-    }
-
-    /**
-     * Call action for model
-     */
-    act(action: string, options: IStoreAct = undefined): Promise<any> {
-        const self = this.constructor as typeof Model;
-        return self.act(this.key(), action, options);
-    }
-
-    /**
-     * Call action
-     */
-    static act(key: any, action: string, options: IStoreAct = undefined): Promise<any> {
-        return this.resolveStore().act(key, action, options);
-    }
-
-    /**
-     * Find model object by property value
-     */
-    static where(property: string, key: any, options: IStoreAct = undefined): Promise<Model> {
-        return this.resolveStore().where(property, key, options);
-    }
-
-    /**
-     * Get list of stores
-     */
-    static all(options: IStoreFetch = undefined): Promise<Model[]> {
-        return this.resolveStore().index(options) as Promise<Model[]>;
-    }
-
-    /**
-     * Get singularized path
-     * If the `singular` variable is not defined, guess it from the `path`
-     */
-    static singularized(): string {
-        return this.singular || this.path.substring(0, this.path.length - 1);
+    static act(options?: ActOptions): Promise<any> {
+        return this.store.act(options);
     }
 }

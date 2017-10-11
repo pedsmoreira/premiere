@@ -1,218 +1,58 @@
-import Cache from './Cache';
 import Hash from './Hash';
 import axios, {AxiosInstance} from 'axios';
+import {trailUrl} from './helpers/UrlHelper';
 
-/**
- * An Api instance defines the properties to consume a restful api
- */
-export default class Api {
-    /**
-     * Default base path
-     */
-    static base: string;
+export class Api {
+    private _base: string;
 
-    /**
-     * The base path to your Api
-     * Eg.: http://my-api.com
-     */
-    base: string;
+    headers: Hash<string> = {};
 
-    /**
-     * Default headers
-     */
-    static headers: Hash<string> = {};
-
-    /**
-     * Api headers. You can use it for Authentication for example.
-     */
-    headers: Hash<string>;
-
-    /**
-     * Default use cache value
-     */
-    static useCache: boolean = true;
-
-    /**
-     * Sets whether or not caching is enabled
-     */
-    useCache: boolean;
-
-    /**
-     * Default use promise cache value
-     */
-    static usePromiseCache = true;
-
-    /**
-     * If set to true, the promises to fetch data will be cached,
-     * so if you do the same request twice, before the results come back, the response will be the same Promise.
-     */
-    usePromiseCache: boolean;
-
-    /**
-     * Cache instance attached to the Api
-     */
-    cache: Cache = new Cache(this);
+    get path(): string {
+        return '';
+    }
 
     constructor(properties: Hash<any> = {}) {
         Object.assign(this, properties);
     }
 
-    /**
-     * Get path.
-     * This is very useful if you have one Api for each model for example
-     * Eg. books (base + path would look like http://my-api.com/books)
-     * @type {string}
-     */
-    path(): string {
-        return '';
+    get base(): string {
+        return this._base || api._base || '/';
     }
 
-    /**
-     * Get api base
-     * @throws Error
-     * @return {string}
-     */
-    resolveBase(): string {
-        const self = this.constructor as typeof Api;
-        const base = this.base || self.base || Api.base;
-
-        if (!base) {
-            throw new Error('Unable to resolve Api base path');
-        }
-
-        return base;
+    set base(value: string) {
+        this._base = value;
     }
 
-    /**
-     * Get api headers
-     * @return {Hash<string>}
-     */
-    resolveHeaders(): Hash<string> {
-        const self = this.constructor as typeof Api;
-        return this.headers || self.headers || Api.headers;
+    get mixedHeaders(): Hash<string> {
+        return Object.assign({}, api.headers, this.headers);
     }
 
-    /**
-     * Get base url (base + path)
-     * @returns {string}
-     */
-    baseUrl(): string {
-        let base = this.resolveBase();
-        if (!base.endsWith('/')) {
-            base += '/';
-        }
-
-        let path = this.path();
-        if (!path.endsWith('/')) {
-            path += '/';
-        }
-
-        return base + path;
+    get baseUrl(): string {
+        const path = this.path.length ? trailUrl(this.path) : '';
+        return trailUrl(this.base) + path;
     }
 
-    /**
-     * Check if instance is using cache
-     */
-    isUsingCache(): boolean {
-        return this.useCache || (this.constructor as typeof Api).useCache || Api.useCache;
+    get jwtToken(): string | null {
+        return this.mixedHeaders.Authorization;
     }
 
-    /**
-     * Check if instance is using promise cache
-     */
-    isUsingPromiseCache(): boolean {
-        return this.usePromiseCache || (this.constructor as typeof Api).usePromiseCache || Api.usePromiseCache;
+    set jwtToken(token: string) {
+        this.headers.Authorization = `Bearer ${token}`;
     }
 
-    /**
-     * Get http requester
-     * @return {AxiosInstance}
-     */
-    http(): AxiosInstance {
-        return axios.create({
-            baseURL: this.baseUrl(),
-            headers: this.resolveHeaders()
-        });
+    get csrfToken(): string {
+        return this.mixedHeaders['X-CSRF-Token'];
     }
 
-    /**
-     * Cache promise by name, so it doesn't get executed again before the result comes back
-     */
-    cachePromise(name: string, fn: (resolve: (value?: any) => void, reject: (reason?: any) => void) => void): Promise<any> {
-        if (!this.isUsingPromiseCache()) {
-            return new Promise(fn);
-        }
-
-        const cached = this.cache.getPromise(name);
-        if (cached) {
-            return cached as Promise<any>;
-        }
-
-        const promise = new Promise(fn);
-        this.cache.setPromise(name, promise);
-
-        const destroyCallback = () => {
-            this.cache.destroyPromise(name);
-        };
-        promise.then(destroyCallback, destroyCallback);
-
-        return promise;
+    set csrfToken(token: string | null) {
+        this.headers['X-CSRF-Token'] = token;
     }
 
-    /**
-     * Add JWT authorization header for a given token
-     */
-    static setJwtToken(token: string, target: Hash<any> = this.headers): void {
-        target['Authorization'] = `Bearer ${token}`;
-    }
-
-    /**
-     * Add JWT authorization header for a given token
-     */
-    setJwtToken(token: string): void {
-        const self = this.constructor as typeof Api;
-        self.setJwtToken(token, this.headers);
-    }
-
-    /**
-     * Remove JWT authorization header
-     */
-    static removeJwtToken(target: Hash<any> = this.headers): void {
-        delete target['Authorization'];
-    }
-
-    /**
-     * Remove JWT authorization header
-     */
-    removeJwtToken(): void {
-        const self = this.constructor as typeof Api;
-        self.removeJwtToken(this.headers);
-    }
-
-    /**
-     * Add CSRF token to static header
-     */
-    static setCsrfToken(token: string, target: Hash<any> = this.headers): void {
-        target['X-CSRF-Token'] = token;
-    }
-
-    setCsrfToken(token: string): void {
-        const self = this.constructor as typeof Api;
-        self.setCsrfToken(token, this.headers);
-    }
-
-    /**
-     * Remove CSRF token from static header
-     */
-    static removeCsrfToken(target: Hash<any> = this.headers): void {
-        delete target['X-CSRF-Token'];
-    }
-
-    /**
-     * Remove CSRF token from header
-     */
-    removeCsrfToken(): void {
-        const self = this.constructor as typeof Api;
-        self.removeCsrfToken(this.headers);
+    get http(): AxiosInstance {
+        return axios.create({baseURL: this.baseUrl, headers: this.mixedHeaders});
     }
 }
+
+const api = new Api();
+export default api;
+

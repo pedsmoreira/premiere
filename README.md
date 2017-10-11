@@ -37,7 +37,7 @@ For a better experience, please checkout the [Website](http://pedsmoreira.github
 Using [npm](http://npmjs.com/):
 
 ```bash
-$ npm install premiere --save
+npm install premiere --save
 ```
 
 Using cdn:
@@ -127,4 +127,4 @@ The goal of Premiere is to provide the same facility and power that these librar
 
 ## License
 
-[MIT](./LICENSE.md)
+[MIT](./LICENSE)

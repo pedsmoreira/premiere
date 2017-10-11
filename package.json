@@ -1,18 +1,18 @@
 {
   "name": "premiere",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Javascript ORM for consuming Restful APIs",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
     "lint": "tslint 'lib/**/*.ts'",
     "pretest": "npm run lint",
-    "test": "jest",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
     "build": "tsc && webpack",
     "preversion": "npm test",
     "version": "npm run build && npm run documentation && git add -A documentation && git add package.json",
-    "postversion": "git push && git push --tags",
-    "documentation": "typedoc --mode file --module commonjs --readme none --out documentation lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -34,14 +34,16 @@
   },
   "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
-    "axios": "^0.15.3"
+    "axios": "^0.15.3",
+    "promise-cascade": "^0.1.2"
   },
   "devDependencies": {
     "@types/jest": "^20.0.8",
+    "@types/moxios": "^0.4.5",
+    "axios-mock-adapter": "^1.9.0",
     "jest": "^21.0.2",
+    "jest-plugin-context": "^2.2.3",
     "ts-jest": "^21.0.0",
-    "tslint": "^5.7.0",
-    "typedoc": "^0.8.0",
     "typescript": "^2.5.2",
     "unminified-webpack-plugin": "^1.2.0",
     "webpack": "^3.5.6"
@@ -55,6 +57,9 @@
     "transform": {
       "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "lib/.*\\.spec.(ts|js)$"
+    "testRegex": "test/specs/.*\\.spec.(ts|js)$",
+    "setupFiles": [
+      "jest-plugin-context/setup"
+    ]
   }
 }
