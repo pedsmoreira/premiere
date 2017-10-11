@@ -1,2 +1,1 @@
-describe('StoreFetch', () => {
-});
+describe("StoreFetch", () => {});

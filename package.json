@@ -5,13 +5,13 @@
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
-    "lint": "tslint 'lib/**/*.ts'",
-    "pretest": "npm run lint",
+    "prettier": "prettier --write \"{src,test}/**/*.{js,ts}\"",
+    "pretest": "npm run prettier",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "build": "tsc && webpack",
     "preversion": "npm test",
-    "version": "npm run build && npm run documentation && git add -A documentation && git add package.json",
+    "version": "npm run build && git add -A documentation && git add package.json",
     "postversion": "git push && git push --tags"
   },
   "repository": {
@@ -35,6 +35,7 @@
   "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
     "axios": "^0.15.3",
+    "prettier": "^1.7.4",
     "promise-cascade": "^0.1.2"
   },
   "devDependencies": {
