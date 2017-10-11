@@ -1,16 +1,12 @@
-# Dependencies
-node_modules/
+**/*.log
 
-# Testing
 coverage/
-
-# Build
-build/
 dist/
+node_modules/
+test/
+typings/
 
-# Misc
+tsconfig.json
+
 .DS_Store
-.env
 .idea
-npm-debug.log
-yarn.lock
