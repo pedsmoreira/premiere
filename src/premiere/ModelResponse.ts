@@ -9,15 +9,11 @@ export interface CallbackResponse {
 export type Callback = (response: AxiosResponse) => CallbackResponse;
 
 export default class ModelResponse<T extends Model> {
-  private model: typeof Model;
-  private response: AxiosResponse;
-  private callback: Callback;
+  model: typeof Model;
+  response: AxiosResponse;
+  callback: Callback;
 
-  constructor(
-    model: typeof Model,
-    response: AxiosResponse,
-    callback?: Callback
-  ) {
+  constructor(model: typeof Model, response: AxiosResponse, callback?: Callback) {
     this.model = model;
     this.response = response;
     this.callback = callback;

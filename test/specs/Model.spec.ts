@@ -266,9 +266,7 @@ describe("Model", () => {
       });
 
       it("returns normalized", () => {
-        expect(model.normalized("surname", "Jane Doe")).toEqual(
-          "Jane Doe normalized"
-        );
+        expect(model.normalized("surname", "Jane Doe")).toEqual("Jane Doe normalized");
       });
     });
 
@@ -278,9 +276,7 @@ describe("Model", () => {
       });
 
       it("returns normalized", () => {
-        expect(model.normalized("name", "John Doe")).toEqual(
-          "camelCase normalized John Doe"
-        );
+        expect(model.normalized("name", "John Doe")).toEqual("camelCase normalized John Doe");
       });
     });
 
@@ -548,11 +544,7 @@ describe("Model", () => {
     it("calls .belongsToMany and returns its promise", () => {
       expect(model.belongsToMany(ForeignModel, options)).toBe(promise);
       expect(model.foreignKey).toHaveBeenCalledWith(ForeignModel);
-      expect(model.self.belongsToMany).toHaveBeenCalledWith(
-        ForeignModel,
-        "fk",
-        options
-      );
+      expect(model.self.belongsToMany).toHaveBeenCalledWith(ForeignModel, "fk", options);
     });
   });
 
@@ -575,11 +567,7 @@ describe("Model", () => {
 
     it("calls .hasOne and returns its promise", () => {
       expect(model.hasOne(ForeignModel, options)).toBe(promise);
-      expect(model.self.hasOne).toHaveBeenCalledWith(
-        ForeignModel,
-        "uid",
-        options
-      );
+      expect(model.self.hasOne).toHaveBeenCalledWith(ForeignModel, "uid", options);
     });
   });
 
@@ -590,11 +578,7 @@ describe("Model", () => {
 
     it("calls Store#foreign", () => {
       Model.hasOne(ForeignModel, "uid", options);
-      expect(Model.store.foreign).toHaveBeenCalledWith(
-        ForeignModel,
-        "uid",
-        options
-      );
+      expect(Model.store.foreign).toHaveBeenCalledWith(ForeignModel, "uid", options);
     });
 
     context("with at least one element in the response array", () => {
@@ -606,9 +590,7 @@ describe("Model", () => {
       });
 
       it("returns first element of the array", () => {
-        expect(Model.hasOne(ForeignModel, "uid", options)).resolves.toEqual(
-          "having many"
-        );
+        expect(Model.hasOne(ForeignModel, "uid", options)).resolves.toEqual("having many");
       });
     });
 
@@ -634,11 +616,7 @@ describe("Model", () => {
 
     it("calls .hasMany and returns its promise", () => {
       expect(model.hasMany(ForeignModel, options)).toBe(promise);
-      expect(model.self.hasMany).toHaveBeenCalledWith(
-        ForeignModel,
-        "uid",
-        options
-      );
+      expect(model.self.hasMany).toHaveBeenCalledWith(ForeignModel, "uid", options);
     });
   });
 
@@ -649,11 +627,7 @@ describe("Model", () => {
 
     it("calls Store#hasMany and returns its promise", () => {
       expect(Model.hasMany(ForeignModel, "uid", options)).toBe(promise);
-      expect(Model.store.foreign).toHaveBeenCalledWith(
-        ForeignModel,
-        "uid",
-        options
-      );
+      expect(Model.store.foreign).toHaveBeenCalledWith(ForeignModel, "uid", options);
     });
   });
 

@@ -9,10 +9,7 @@ export default class StoreFetch<T extends Model> {
     this.store = store;
   }
 
-  fetch = async (
-    url: string,
-    callback?: Callback
-  ): Promise<ModelResponse<T>> => {
+  fetch = async (url: string, callback?: Callback): Promise<ModelResponse<T>> => {
     const response = await this.store.http.get(url);
     return new ModelResponse<T>(this.store.model, response, callback);
   };

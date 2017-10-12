@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
-    "prettier": "prettier --write \"{src,test}/**/*.{js,ts}\"",
+    "prettier": "prettier --print-width 120 --write \"{src,test}/**/*.{js,ts}\"",
     "pretest": "npm run prettier",
     "test": "jest --coverage",
     "test:watch": "jest --watch",

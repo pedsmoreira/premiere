@@ -70,22 +70,13 @@ export default class Store<T extends Model> extends Api {
 
   async create(values: Hash<any>, options: Options = {}): Promise<T> {
     const response = await this.http.post(buildUrl(options), values);
-    const instance = new ModelResponse<T>(
-      this.model,
-      response,
-      options.callback
-    ).asInstance;
-
+    const instance = new ModelResponse<T>(this.model, response, options.callback).asInstance;
     return this.cache.objects.set(instance.key, instance);
   }
 
   async update(key: any, values: Hash<any>, options: Options = {}): Promise<T> {
     const response = await this.http.put(buildUrl(options, key), values);
-    const modelResponse = new ModelResponse<T>(
-      this.model,
-      response,
-      options.callback
-    );
+    const modelResponse = new ModelResponse<T>(this.model, response, options.callback);
     return this.cache.objects.set(key, modelResponse.asInstance);
   }
 
@@ -94,19 +85,11 @@ export default class Store<T extends Model> extends Api {
     this.cache.objects.destroy(key);
   }
 
-  by(
-    model: typeof Model,
-    key: any,
-    options: FetchListOptions = {}
-  ): Promise<T[]> {
-    return model.store.foreign(this.model, model.key(key), options) as any;
+  by(model: typeof Model, key: any, options: FetchListOptions = {}): Promise<T[]> {
+    return model.store.foreign(this.model, model.key(key), options);
   }
 
-  foreign(
-    model: typeof Model,
-    key: any,
-    options: FetchListOptions = {}
-  ): Promise<T[]> {
+  foreign(model: typeof Model, key: any, options: FetchListOptions = {}): Promise<T[]> {
     const url = buildUrl(options, model.key(key) + "/" + model.reflector.path);
     const cacheName = `foreign/${url}`;
 

@@ -18,10 +18,7 @@ export default class StoreCacheCascade<T extends Model> extends PromiseCascade {
     this.cache = cache;
   }
 
-  protected promiseCallback(
-    key: string,
-    callback: PromiseFunction
-  ): Promise<T | T[]> {
+  protected promiseCallback(key: string, callback: PromiseFunction): Promise<T | T[]> {
     const cached = this.cache.promises.get(key);
     if (cached) {
       return cached;
@@ -34,11 +31,7 @@ export default class StoreCacheCascade<T extends Model> extends PromiseCascade {
     return this.push(this.promiseCallback.bind(this), key);
   }
 
-  protected async objectCallback(
-    key: any,
-    options: StoreCascadeOptions,
-    callback: PromiseFunction
-  ): Promise<T> {
+  protected async objectCallback(key: any, options: StoreCascadeOptions, callback: PromiseFunction): Promise<T> {
     const cached = this.cache.objects.get(key);
     if (!options.ignoreCache && cached) {
       return cached;
@@ -52,11 +45,7 @@ export default class StoreCacheCascade<T extends Model> extends PromiseCascade {
     return this.push(this.objectCallback.bind(this), key, options);
   }
 
-  protected async listCallback(
-    key: string,
-    options: StoreCascadeListOptions,
-    callback: PromiseFunction
-  ): Promise<T[]> {
+  protected async listCallback(key: string, options: StoreCascadeListOptions, callback: PromiseFunction): Promise<T[]> {
     if (!options.ignoreCache) {
       const cached = this.cache.lists.get(key);
       if (cached) {

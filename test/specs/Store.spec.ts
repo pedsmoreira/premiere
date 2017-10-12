@@ -5,26 +5,20 @@ import Store from "../../src/premiere/Store";
 import Model from "../../src/premiere/Model";
 
 class SpecStore extends Store<Model> {
-  get http(): any {
-    return {
-      get: jest.fn(),
-      put: jest.fn(),
-      post: jest.fn(),
-      delete: jest.fn()
-    };
-  }
+  httpMock = {
+    get: jest.fn(),
+    put: jest.fn(),
+    post: jest.fn(),
+    delete: jest.fn()
+  };
 
-  mockCascade() {
-    const cascadeMock = jest.fn(this.cache.cascade as any);
-    Object.defineProperty(this.cache, "cascade", { get: () => cascadeMock });
-    return cascadeMock;
+  get http(): any {
+    return this.httpMock;
   }
 }
 
 describe("Store", () => {
   let store: SpecStore;
-  const options = jest.fn() as any;
-  const promise = jest.fn() as any;
 
   (buildUrl as jest.Mock<any>).mockReturnValue("url");
 
@@ -67,22 +61,165 @@ describe("Store", () => {
   });
 
   describe("#index", () => {
-    it("cascades");
+    const response = { data: [{ id: "id#0" }] };
+
+    beforeEach(() => {
+      store.http.get.mockReturnValue(Promise.resolve(response));
+    });
+
+    it("returns a list of model instances", async () => {
+      const result = await store.index();
+      expect(result).toBeInstanceOf(Array);
+      expect(result[0]).toBeInstanceOf(Model);
+      expect(result[0].key).toEqual("id#0");
+    });
+
+    it("build url", () => {
+      const options = jest.fn() as any;
+      store.index(options);
+      expect(buildUrl).toHaveBeenCalledWith(options);
+    });
   });
 
-  describe("#get", () => {});
+  describe("#get", () => {
+    const response = { data: { id: "id#0" } };
 
-  describe("#where", () => {});
+    beforeEach(() => {
+      store.http.get.mockReturnValue(Promise.resolve(response));
+    });
 
-  describe("#create", () => {});
+    it("returns a model instance", async () => {
+      const result = await store.get("id");
+      expect(result).toBeInstanceOf(Model);
+      expect(result.key).toEqual("id#0");
+    });
 
-  describe("#update", () => {});
+    it("build url", () => {
+      const options = jest.fn() as any;
+      store.get("id", options);
+      expect(buildUrl).toHaveBeenCalledWith(options, "id");
+    });
+  });
 
-  describe("#destroy", () => {});
+  describe("#create", () => {
+    beforeEach(() => {
+      store.http.post.mockReturnValue(Promise.resolve({ data: { id: "id#0" } }));
+    });
 
-  describe("#by", () => {});
+    it("returns a model instance", async () => {
+      const result = await store.create({});
+      expect(result).toBeInstanceOf(Model);
+      expect(result.key).toBe("id#0");
+    });
 
-  describe("#foreign", () => {});
+    it("sets result to cache", async () => {
+      await store.create({});
+      expect(store.cache.objects.get("id#0")).toBeInstanceOf(Model);
+    });
 
-  describe("#act", () => {});
+    it("builds url", () => {
+      const options = jest.fn() as any;
+      store.create({}, options);
+      expect(buildUrl).toHaveBeenCalledWith(options);
+    });
+  });
+
+  describe("#update", () => {
+    beforeEach(() => {
+      store.http.put.mockReturnValue(Promise.resolve({ data: { id: "id#0" } }));
+    });
+
+    it("returns a model instance", async () => {
+      const result = await store.update("id#0", {});
+      expect(result).toBeInstanceOf(Model);
+      expect(result.key).toBe("id#0");
+    });
+
+    it("sets result to cache", async () => {
+      await store.update("id#0", {});
+      expect(store.cache.objects.get("id#0")).toBeInstanceOf(Model);
+    });
+
+    it("builds url", () => {
+      const options = jest.fn() as any;
+      store.update("id", {}, options);
+      expect(buildUrl).toHaveBeenCalledWith(options, "id");
+    });
+  });
+
+  describe("#destroy", () => {
+    beforeEach(() => {
+      store.http.delete.mockReturnValue(Promise.resolve({}));
+    });
+
+    it("deletes cached data", async () => {
+      store.cache.objects.set("id#0", {} as any);
+      await store.destroy("id#0");
+      expect(store.cache.objects.get("id#0")).toBeUndefined();
+    });
+
+    it("builds url", () => {
+      const options = jest.fn() as any;
+      store.destroy("id", options);
+      expect(buildUrl).toHaveBeenCalledWith(options, "id");
+    });
+  });
+
+  describe("#by", () => {
+    const model = {
+      store: { foreign: jest.fn() },
+      key: jest.fn().mockReturnValue("key")
+    } as any;
+
+    it("returns result from model foreign", () => {
+      const options = jest.fn() as any;
+      store.by(model, "key", options);
+      expect(model.store.foreign).toHaveBeenCalledWith(store.model, "key", options);
+    });
+
+    it("works without providing options", () => {
+      store.by(model, "key");
+    });
+  });
+
+  describe("#foreign", () => {
+    const response = { data: [{ id: "id#0" }] };
+
+    beforeEach(() => {
+      store.http.get.mockReturnValue(Promise.resolve(response));
+    });
+
+    it("returns a list of model instances", async () => {
+      const result = await store.foreign(Model, "id");
+      expect(result).toBeInstanceOf(Array);
+      expect(result[0]).toBeInstanceOf(Model);
+      expect(result[0].key).toEqual("id#0");
+    });
+
+    it("builds url", () => {
+      const options = jest.fn() as any;
+      store.foreign(Model, "id", options);
+      expect(buildUrl).toHaveBeenCalledWith(options, "id/specs");
+    });
+  });
+
+  describe("#act", () => {
+    it("calls requested method with given url", () => {
+      const options = { url: "url", data: { key: "value" }, method: "delete" };
+      store.act(options);
+      expect(store.http.delete).toHaveBeenCalledWith("url", { key: "value" });
+    });
+
+    it("returns promise from http call", () => {
+      const result = jest.fn();
+      store.http.post.mockReturnValue(result);
+      expect(store.act()).toBe(result);
+    });
+
+    it("builds url", () => {
+      const options = jest.fn() as any;
+      store.act(options);
+      expect(buildUrl).toHaveBeenCalledWith(options);
+    });
+  });
 });

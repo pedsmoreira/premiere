@@ -1,9 +1,6 @@
 import StoreCache from "../../src/premiere/StoreCache";
 import Model from "../../src/premiere/Model";
-import {
-  StoreCascadeListOptions,
-  StoreCascadeOptions
-} from "../../src/premiere/StoreCacheCascade";
+import { StoreCascadeListOptions, StoreCascadeOptions } from "../../src/premiere/StoreCacheCascade";
 
 const cacheKey = "specKey";
 
@@ -68,9 +65,7 @@ describe("StoreCacheCascade", () => {
 
       context("with ignoreCache option", () => {
         it("returns a new result", () => {
-          return expect(pushAndPlayObject({ ignoreCache: true })).resolves.toBe(
-            defaultResponse
-          );
+          return expect(pushAndPlayObject({ ignoreCache: true })).resolves.toBe(defaultResponse);
         });
       });
     });
@@ -122,9 +117,7 @@ describe("StoreCacheCascade", () => {
 
       context("with ignoreCache option", () => {
         it("returns new result", () => {
-          return expect(pushAndPlayList({ ignoreCache: true })).resolves.toBe(
-            defaultResponse
-          );
+          return expect(pushAndPlayList({ ignoreCache: true })).resolves.toBe(defaultResponse);
         });
       });
     });

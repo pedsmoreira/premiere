@@ -1,8 +1,4 @@
-import {
-  buildEncodedQueryParams,
-  buildUrl,
-  trailUrl
-} from "../../../src/premiere/helpers/UrlHelper";
+import { buildEncodedQueryParams, buildUrl, trailUrl } from "../../../src/premiere/helpers/UrlHelper";
 
 describe("#buildUrl", () => {
   context("with url option", () => {
@@ -36,17 +32,13 @@ describe("#buildUrl", () => {
   context("with queryParams option", () => {
     context("with url option", () => {
       it("appends query params to url", () => {
-        expect(buildUrl({ url: "url", queryParams: "extra" })).toEqual(
-          "url?extra"
-        );
+        expect(buildUrl({ url: "url", queryParams: "extra" })).toEqual("url?extra");
       });
     });
 
     context("with defaultUrl", () => {
       it("appends query params to url", () => {
-        expect(buildUrl({ queryParams: "extra" }, "defaultUrl")).toEqual(
-          "defaultUrl?extra"
-        );
+        expect(buildUrl({ queryParams: "extra" }, "defaultUrl")).toEqual("defaultUrl?extra");
       });
     });
   });

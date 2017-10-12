@@ -1,9 +1,4 @@
-import Store, {
-  FetchOptions,
-  FetchListOptions,
-  Options,
-  ActOptions
-} from "./Store";
+import Store, { FetchOptions, FetchListOptions, Options, ActOptions } from "./Store";
 import Hash from "./Hash";
 import { camelize } from "./helpers/StringHelper";
 
@@ -43,8 +38,7 @@ export default class Model implements IModel {
   }
 
   static get store(): Store<Model> {
-    return (this._store =
-      this._store || new Store<Model>(this, this.storeProperties));
+    return (this._store = this._store || new Store<Model>(this, this.storeProperties));
   }
 
   static set store(value: Store<Model>) {
@@ -102,11 +96,7 @@ export default class Model implements IModel {
 
   private mappingFor(attribute: string): any {
     let value = (this as any)[attribute];
-    if (
-      typeof value === "object" ||
-      typeof value === "function" ||
-      this.self.reflector.hasOwnProperty(attribute)
-    ) {
+    if (typeof value === "object" || typeof value === "function" || this.self.reflector.hasOwnProperty(attribute)) {
       return null;
     }
 
@@ -184,11 +174,7 @@ export default class Model implements IModel {
     return this.self.update(this.key, this.map, options) as Promise<this>;
   }
 
-  static update(
-    key: any,
-    values: Hash<any>,
-    options?: Options
-  ): Promise<Model> {
+  static update(key: any, values: Hash<any>, options?: Options): Promise<Model> {
     return this.store.update(key, values, options);
   }
 
@@ -212,60 +198,32 @@ export default class Model implements IModel {
     return this.store.destroy(key, options) as Promise<any>;
   }
 
-  belongsTo(
-    foreignModel: typeof Model,
-    options?: FetchOptions
-  ): Promise<Model> {
+  belongsTo(foreignModel: typeof Model, options?: FetchOptions): Promise<Model> {
     return foreignModel.find(this.foreignKey(foreignModel), options);
   }
 
-  belongsToMany(
-    foreignModel: typeof Model,
-    options?: FetchListOptions
-  ): Promise<Model[]> {
-    return this.self.belongsToMany(
-      foreignModel,
-      this.foreignKey(foreignModel),
-      options
-    );
+  belongsToMany(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model[]> {
+    return this.self.belongsToMany(foreignModel, this.foreignKey(foreignModel), options);
   }
 
-  static belongsToMany(
-    foreignModel: typeof Model,
-    value: any,
-    options?: FetchListOptions
-  ): Promise<Model[]> {
+  static belongsToMany(foreignModel: typeof Model, value: any, options?: FetchListOptions): Promise<Model[]> {
     return foreignModel.hasMany(this, value, options);
   }
 
-  hasOne(
-    foreignModel: typeof Model,
-    options?: FetchListOptions
-  ): Promise<Model> {
+  hasOne(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model> {
     return this.self.hasOne(foreignModel, this.key, options);
   }
 
-  static async hasOne(
-    foreignModel: typeof Model,
-    key: any,
-    options?: FetchListOptions
-  ): Promise<Model | null> {
+  static async hasOne(foreignModel: typeof Model, key: any, options?: FetchListOptions): Promise<Model | null> {
     const items = await this.hasMany(foreignModel, key, options);
     return items.length ? items[0] : null;
   }
 
-  hasMany(
-    foreignModel: typeof Model,
-    options?: FetchListOptions
-  ): Promise<Model[]> {
+  hasMany(foreignModel: typeof Model, options?: FetchListOptions): Promise<Model[]> {
     return this.self.hasMany(foreignModel, this.key, options);
   }
 
-  static hasMany(
-    foreignModel: typeof Model,
-    key: any,
-    options?: FetchListOptions
-  ): Promise<Model[]> {
+  static hasMany(foreignModel: typeof Model, key: any, options?: FetchListOptions): Promise<Model[]> {
     return this.store.foreign(foreignModel, key, options);
   }
 

@@ -1,9 +1,8 @@
 import Hash from "../Hash";
 
-export function buildUrl(
-  options: { url?: string; queryParams?: string | Hash<any> },
-  defaultUrl: string = ""
-): string {
+export type buildUrlOptions = { url?: string; queryParams?: string | Hash<any> };
+
+export function buildUrl(options: buildUrlOptions, defaultUrl: string = ""): string {
   let url = options.url || defaultUrl;
 
   if (options.queryParams) {
@@ -19,10 +18,7 @@ export function buildEncodedQueryParams(queryParams: string | Hash<any>) {
   }
 
   return Object.keys(queryParams)
-    .map(
-      key =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`
-    )
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
     .join("&");
 }
 
