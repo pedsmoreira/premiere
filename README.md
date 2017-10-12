@@ -109,9 +109,16 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 - [Contributing Guide](./CONTRIBUTING.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 
+- The logo was created by Yannick Lung and can be found [here](https://www.iconfinder.com/icons/183243/cover_flow_icon).
+
 ### Articles
-- https://medium.com/@pedsmoreira/consuming-restful-apis-with-premiere-ae712d1bc935#.ki5e8biu3
-- https://medium.com/@pedsmoreira/from-0-to-100-coverage-real-quick-d71dda7069e5#.sceucnhmf
+
+- V0.1
+    - https://medium.com/@pedsmoreira/consuming-restful-apis-with-premiere-ae712d1bc935#.ki5e8biu3
+    - https://medium.com/@pedsmoreira/from-0-to-100-coverage-real-quick-d71dda7069e5#.sceucnhmf
+    
+- V0.2
+    
 
 ## Motivation
 
