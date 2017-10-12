@@ -11,7 +11,7 @@
     "test:watch": "jest --watch",
     "build": "tsc && webpack",
     "preversion": "npm test",
-    "version": "npm run build && git add -A documentation && git add package.json",
+    "version": "npm run build && git add package.json",
     "postversion": "git push && git push --tags"
   },
   "repository": {
