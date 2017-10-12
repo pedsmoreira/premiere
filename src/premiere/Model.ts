@@ -151,7 +151,7 @@ export default class Model implements IModel {
   }
 
   reload(): Promise<this> {
-    return this.self.find(this.key);
+    return this.self.find(this.key) as Promise<this>;
   }
 
   static find(key: any, options?: FetchOptions): Promise<Model> {

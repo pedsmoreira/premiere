@@ -24,7 +24,7 @@ export default class StoreFetch<T extends Model> {
     return response.asInstance;
   };
 
-  foreign = async (url: string, callback?: Callback): Promise<T[]> => {
+  foreign = async (url: string, callback?: Callback): Promise<Model[]> => {
     const response = await this.fetch(url, callback);
     return response.asArray;
   };

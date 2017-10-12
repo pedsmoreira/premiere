@@ -86,10 +86,10 @@ export default class Store<T extends Model> extends Api {
   }
 
   by(model: typeof Model, key: any, options: FetchListOptions = {}): Promise<T[]> {
-    return model.store.foreign(this.model, model.key(key), options);
+    return model.store.foreign(this.model, model.key(key), options) as Promise<T[]>;
   }
 
-  foreign(model: typeof Model, key: any, options: FetchListOptions = {}): Promise<T[]> {
+  foreign(model: typeof Model, key: any, options: FetchListOptions = {}): Promise<Model[]> {
     const url = buildUrl(options, model.key(key) + "/" + model.reflector.path);
     const cacheName = `foreign/${url}`;
 
