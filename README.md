@@ -1,4 +1,4 @@
-# Premiere
+# ![Premiere](./assets/logo.png)
 
 [![npm version](https://img.shields.io/npm/v/premiere.svg)](https://www.npmjs.org/package/premiere)
 [![Build Status](https://travis-ci.org/pedsmoreira/premiere.svg?branch=master)](https://travis-ci.org/pedsmoreira/premiere)
