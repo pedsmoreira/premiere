@@ -1,11 +1,11 @@
-# Working with models
+## Working with models
 
 Lets take for example a Todo Model. It's gonna have three fields, `name`, `checked` and `date`.
 
 The `date` field is a `Date` but is sent and received from the Api as a timestamp number, so we are going to normalize and denormalize it. 
 
 ```typescript
-import {Model} from 'premiere';
+import { Model } from 'premiere';
 
 class Todo extends Model {
   static path: string = 'todos'
@@ -14,17 +14,19 @@ class Todo extends Model {
   checked: boolean = false;
   date: Date = new Date();
   
+  // The normaliztion method can be snake_case
   static normalize_date(timestamp: number): Date {
       return new Date(timestamp);
   }
   
-  static denormalize_date(date: Date): number {
+  // It can be camelCase as well
+  static denormalizeDate(date: Date): number {
       return date.getTime();
   }
 }
 ```
 
-Fetching todos
+### Fetching todos
 
 ```typescript
 // GET todos/
@@ -33,7 +35,7 @@ Todo.all().then((todos: Todo[]) => {
 })
 ```
 
-Fetching todo
+### Fetching todo
 
 ```typescript
 // GET todos/:id
@@ -42,7 +44,7 @@ Todo.find(1).then((todo: Todo) => {
 })
 ```
 
-Fetching a todo by parameter
+### Fetching a todo by parameter
 
 ```typescript
 // GET todos/name/Item
@@ -51,7 +53,7 @@ Todo.where('name', 'Item').then((todo: Todo) => {
 })
 ```
 
-Creating a new todo
+### Creating a new todo
 
 ```typescript
 // POST todos/
@@ -68,7 +70,7 @@ Todo.save({name: 'My own todo'}).then((todo: Todo) => {
 );
 ```
 
-Updating a todo
+### Updating a todo
 
 ```typescript
 // PUT todos/:id
@@ -78,7 +80,7 @@ todo.save().then((todo: Todo) => {
 );
 ```
 
-Deleting a todo
+### Deleting a todo
 
 ```typescript
 // DELETE todos/:id
@@ -87,7 +89,7 @@ todo.destroy(() => {
 });
 ```
 
-Reloading a todo
+### Reloading a todo
 
 ```typescript
 // GET todos/:id
@@ -97,7 +99,7 @@ todo.reload((todo: Todo) => {
 });
 ```
 
-Custom action
+### Custom action
 
 ```typesript
 // POST todos/deleteAll 

@@ -1,16 +1,9 @@
-# Dependencies
-node_modules/
+**/*.log
 
-# Testing
 coverage/
-
-# Build
 build/
 dist/
+node_modules/
 
-# Misc
 .DS_Store
-.env
 .idea
-npm-debug.log
-yarn.lock

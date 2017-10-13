@@ -1,28 +1,12 @@
-# Dependencies
-node_modules/
-yarn.lock
+**/.*
 
-# Testing
 coverage/
+node_modules/
+src/
+test/
+typings/
 
-# Documents
+CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 
-# Website
-_layouts/
-assets/
-documentation/
-examples/
-tutorials/
-
-# Lib
-lib/
-
-# Settings
-tslint.json
 tsconfig.json
-webpack.config.js
-
-# Misc
-**/.*
-*.yml

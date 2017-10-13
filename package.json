@@ -1,19 +1,18 @@
 {
   "name": "premiere",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Javascript ORM for consuming Restful APIs",
   "main": "build/index.js",
   "typings": "./build/index.d.ts",
   "scripts": {
-    "lint": "tslint 'lib/**/*.ts'",
-    "pretest": "npm run lint",
-    "test": "jest --coverage --no-cache ${1}",
-    "test-watch": "jest ${1} --watch",
+    "prettier": "prettier --print-width 120 --write \"{src,test}/**/*.{js,ts}\"",
+    "pretest": "npm run prettier",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
     "build": "tsc && webpack",
     "preversion": "npm test",
-    "version": "npm run build && npm run documentation && git add -A documentation && git add package.json",
-    "postversion": "git push && git push --tags",
-    "documentation": "typedoc --mode file --module commonjs --readme none --out documentation lib/index.ts --ignoreCompilerErrors --name 'Premiere'"
+    "version": "npm run build && git add package.json",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -35,19 +34,23 @@
   },
   "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
-    "axios": "^0.15.3"
+    "axios": "^0.15.3",
+    "prettier": "^1.7.4",
+    "promise-cascade": "^0.1.2"
   },
   "devDependencies": {
-    "@types/jest": "^16.0.2",
-    "jest": "^18.0.0",
-    "ts-jest": "^18.0.0",
-    "tslint": "^4.1.1",
-    "typedoc": "^0.5.1",
-    "typescript": "^2.1.4",
+    "@types/jest": "^20.0.8",
+    "@types/moxios": "^0.4.5",
+    "axios-mock-adapter": "^1.9.0",
+    "jest": "^21.0.2",
+    "jest-plugin-context": "^2.2.3",
+    "ts-jest": "^21.0.0",
+    "typescript": "^2.5.2",
     "unminified-webpack-plugin": "^1.2.0",
-    "webpack": "^1.14.0"
+    "webpack": "^3.5.6"
   },
   "jest": {
+    "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -55,14 +58,9 @@
     "transform": {
       "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "lib/.*\\.spec.(ts|js)$",
-    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
-    "globals": {
-      "__TS_CONFIG__": {
-        "target": "es6",
-        "module": "commonjs",
-        "moduleResolution": "node"
-      }
-    }
+    "testRegex": "test/specs/.*\\.spec.(ts|js)$",
+    "setupFiles": [
+      "jest-plugin-context/setup"
+    ]
   }
 }

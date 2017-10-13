@@ -4,6 +4,6 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "lib/**/*.ts"
+  - "src/**/*.ts"
 exclude_paths:
 - dist/

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "target": "es5",
+    "outDir": "build",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true
+  },
+  "include": [
+    "**/*.spec.ts",
+    "../typings/global.d.ts"
+  ]
+}
