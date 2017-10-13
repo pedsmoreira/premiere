@@ -5,80 +5,113 @@
 [![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
 [![Test Coverage](https://codeclimate.com/github/pedsmoreira/premiere/badges/coverage.svg)](https://codeclimate.com/github/pedsmoreira/premiere/coverage)
 
-Javascript ORM for consuming Restful APIs.
+A simple way to consume APIs with Javascript.
 
-Premiere is standalone _(independent of framework)_, so you can use it with your favorite library/framework, be it
-[MobX](https://mobxjs.github.io/mobx/)
-[React](https://facebook.github.io/react/),
-[Angular](https://angularjs.org/),
-[VueJS](https://vuejs.org/),
-[jQuery](https://jquery.com/),
-[Redux](http://redux.js.org/). You name it!
+Premiere helps you reducing the amount of boilerplate necessary to consume APIs. Here's an example of how it looks like:
 
-We recommend the use with [TypeScript](http://typescriptlang.org/) or ECMAScript 6 (ES6).
+```typescript
+const todoList = new TodoList();
+todoList.title = 'Daily routine';
+todoList.save();
 
-## Website
-For a better experience, please checkout the [Website](http://pedsmoreira.github.io/premiere)
+// Get user by todo list
+const user = await todoList.user;
+
+// Get items from todo list
+const items = await todoList.items;
+
+// List all todo lists by user
+const lists = TodoList.byUser(1);
+```
+
+- Friendly syntax, inspired by [Eloquent](https://laravel.com/docs/master/eloquent) (Laravel) and [ActiveRecord](http://guides.rubyonrails.org/active_record_basics.html) (Rails)
+- Normalization
+    - Normalize data coming from the API
+    - Denormalize data before sending to the API
+- Smart Caching to speed up your app
+    - Automatic request and result caching
+    - Automatic cache removal (for lists) upon saving a record  
+- Support to Foreign keys
+- Support to HTTP Header settings
+    - JWT token helper
+    - CSRF token helper
 
 ## Workflow
 ![Workflow](assets/workflow.png)
 
 ** For more about how promises work, check out [Dave Atchley's article](http://www.datchley.name/es6-promises/)
 
-## Features
-- 100% Unit Tested
-- Normalization
-- Smart Caching
-- Support to Foreign keys
-- HTTP Header support _(frequently used with Authorization and CSRF token)_
-
 ## Installation
 
-Using [npm](http://npmjs.com/):
+Using npm:
 
 ```bash
 npm install premiere --save
 ```
 
-Using cdn:
+## Getting Started
 
-```html
-<script src="https://unpkg.com/premiere/dist/premiere.min.js"></script>
-```
-
-**Note:** You'll need a ES6 [polyfill](https://babeljs.io/docs/usage/polyfill/) on your build pipeline.
-
-## Setup
-
-This code is written in [TypeScript](http://typescriptlang.org/).
+### Setting API url
 
 ```typescript
-import {Api, api, Model} from 'premiere';
+import { api };
+api.base = 'http://api.com'
+ ```
 
-Api.base = 'http://rest.learncode.academy/api/YOUR_NAME_HERE/';
+### Creating a new model
 
-/*
- * Using API directly
- */
+```typescript
+import { api, Model } from 'premiere';
+import User from './User';
+import TodoItem from './TodoItem';
 
-api.http().get('albums'); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
-api.http().post('albums'); // POST http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
+// Set your api base
+api.base = 'http://my-api.com';
 
-/*
- * Using Models
- */
-
-class Album extends Model {
-    static path = 'albums';
-    
-    id: number;
-    name: string;
+// Define your model
+export default class TodoList extends Model {
+  path = 'todo-item';
+  
+  user_id: number;
+  title: string;
+  created_at: Date;
+  
+  get user(): Promise<User> {
+    return this.belongsTo(User);
+  }
+  
+  static byUser(key: number) {
+    return this.belongsTo(User, key);
+  }
+  
+  get items(): Promise<TodoItem> {
+    return this.hasMany(TodoItem);
+  }
+  
+  normalizeCreatedAt(value: string): Date {
+    return new Date(value);
+  }
+  
+  denormalizeCreatedAt(value: Date): string {
+    return value.toISOString();
+  }
 }
 
-Album.all(); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
-Album.find(1); // GET http://rest.learncode.academy/api/YOUR_NAME_HERE/albums/1
-Album.save({name: 'new album'});// POST http://rest.learncode.academy/api/YOUR_NAME_HERE/albums
-``` 
+// Create new todo list
+const todoList = new TodoList();
+todoList.user_id = 1;
+todoList.title = 'Daily routine';
+todoList.save();
+
+// Get user by todo list
+const user = await todoList.user;
+
+// Get items from todo list
+const items = await todoList.items;
+
+// List all todo lists by user
+const lists = TodoList.byUser(1);
+```
 
 ## Tutorials
 
@@ -86,19 +119,6 @@ The tutorials are written in [TypeScript](http://typescriptlang.org/).
 
 - [Working with Models](./tutorials/model.md)
 - [Working with Foreign Keys](./tutorials/model-fk.md)
-- [Customizing Stores](./tutorials/store.md)
-- [Working with Cache](./tutorials/cache.md)
-- [APIs without Models](./tutorials/api.md)
-
-## Documentation
-
-Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documentation).
-
-## Examples
-- [Book List](http://jsfiddle.net/pedsmoreira/fqLuvjr1/) _(ES6 - JSFiddle)_
-
-## Projects
-- [Premiere Player](https://github.com/pedsmoreira/premiere-player) _(ES6 + React + MobX)_
 
 ## Dependencies
 
@@ -116,8 +136,6 @@ Check out the full [Documentation](http://pedsmoreira.github.io/premiere/documen
 - V0.1
     - https://medium.com/@pedsmoreira/consuming-restful-apis-with-premiere-ae712d1bc935#.ki5e8biu3
     - https://medium.com/@pedsmoreira/from-0-to-100-coverage-real-quick-d71dda7069e5#.sceucnhmf
-    
-- V0.2
     
 
 ## Motivation
