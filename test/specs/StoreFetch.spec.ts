@@ -17,17 +17,27 @@ describe("StoreFetch", () => {
   });
 
   describe("#fetch", () => {
-    it("requests store http get", () => {
-      storeFetch.fetch("url");
-      expect(httpMock.get).toHaveBeenCalledWith("url");
-    });
-
     it("returns a model response with model, response and callback", async () => {
       const result: ModelResponse<Model> = await storeFetch.fetch("url", callbackMock);
 
       expect(result.model).toBe(Model);
       expect(result.response).toBe(httpResult);
       expect(result.callback).toBe(callbackMock);
+    });
+
+    context("given a store", () => {
+      it("requests store http get", () => {
+        const store = { get: jest.fn() };
+        storeFetch.fetch("url", null, store);
+        expect(store.get).toHaveBeenCalledWith("url");
+      });
+    });
+
+    context("with default store", () => {
+      it("requests store http get", () => {
+        storeFetch.fetch("url");
+        expect(httpMock.get).toHaveBeenCalledWith("url");
+      });
     });
   });
 
@@ -48,10 +58,12 @@ describe("StoreFetch", () => {
   });
 
   describe("#foreign", () => {
-    it("calls #fetch with url and callback", () => {
+    it("calls #fetch with store, url and callback", () => {
       storeFetch.fetch = jest.fn().mockReturnValue({ asArray: jest.fn() });
-      storeFetch.foreign("url", callbackMock);
-      expect(storeFetch.fetch).toHaveBeenCalledWith("url", callbackMock);
+      const store = jest.fn();
+
+      storeFetch.foreign(store, "url", callbackMock);
+      expect(storeFetch.fetch).toHaveBeenCalledWith(store, "url", callbackMock);
     });
   });
 });

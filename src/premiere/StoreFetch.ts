@@ -9,8 +9,8 @@ export default class StoreFetch<T extends Model> {
     this.store = store;
   }
 
-  fetch = async (url: string, callback?: Callback): Promise<ModelResponse<T>> => {
-    const response = await this.store.http.get(url);
+  fetch = async (url: string, callback?: Callback, store: Store<Model> = this.store): Promise<ModelResponse<T>> => {
+    const response = await store.http.get(url);
     return new ModelResponse<T>(this.store.model, response, callback);
   };
 
@@ -24,8 +24,8 @@ export default class StoreFetch<T extends Model> {
     return response.asInstance;
   };
 
-  foreign = async (url: string, callback?: Callback): Promise<Model[]> => {
-    const response = await this.fetch(url, callback);
+  foreign = async (store: Store<Model>, url: string, callback?: Callback): Promise<Model[]> => {
+    const response = await this.fetch(url, callback, store);
     return response.asArray;
   };
 }

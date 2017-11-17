@@ -93,10 +93,11 @@ export default class Store<T extends Model> extends Api {
     const url = buildUrl(options, model.key(key) + "/" + model.reflector.path);
     const cacheName = `foreign/${url}`;
 
-    return this.cache.cascade
+    const store = model.store;
+    return store.cache.cascade
       .promise(cacheName)
       .list(cacheName, options)
-      .push(this.fetch.foreign, url, options.callback)
+      .push(store.fetch.foreign, this, url, options.callback)
       .play();
   }
 
