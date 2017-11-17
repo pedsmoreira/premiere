@@ -43,9 +43,9 @@ describe("Store", () => {
     });
 
     it("does not override model store", () => {
-      Model.store = "old store" as any;
-      const store = new Store<Model>(Model);
-      expect(Model.store).toBe("old store");
+      const oldStore = Model.store;
+      new Store<Model>(Model);
+      expect(Model.store).toBe(oldStore);
     });
 
     it("does not throw exception with null model", () => {
@@ -178,7 +178,7 @@ describe("Store", () => {
     });
 
     it("works without providing options", () => {
-      store.by(model, "key");
+      expect(() => store.by(model, "key")).not.toThrow();
     });
   });
 

@@ -27,9 +27,9 @@ describe("StoreFetch", () => {
 
     context("given a store", () => {
       it("requests store http get", () => {
-        const store = { get: jest.fn() };
+        const store = { http: { get: jest.fn() } };
         storeFetch.fetch("url", null, store);
-        expect(store.get).toHaveBeenCalledWith("url");
+        expect(store.http.get).toHaveBeenCalledWith("url");
       });
     });
 
@@ -63,7 +63,7 @@ describe("StoreFetch", () => {
       const store = jest.fn();
 
       storeFetch.foreign(store, "url", callbackMock);
-      expect(storeFetch.fetch).toHaveBeenCalledWith(store, "url", callbackMock);
+      expect(storeFetch.fetch).toHaveBeenCalledWith("url", callbackMock, store);
     });
   });
 });
