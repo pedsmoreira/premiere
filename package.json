@@ -35,7 +35,6 @@
   "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
     "axios": "^0.15.3",
-    "prettier": "^1.7.4",
     "promise-cascade": "^0.1.2"
   },
   "devDependencies": {
@@ -44,6 +43,7 @@
     "axios-mock-adapter": "^1.9.0",
     "jest": "^21.0.2",
     "jest-plugin-context": "^2.2.3",
+    "prettier": "^1.8.2",
     "ts-jest": "^21.0.0",
     "typescript": "^2.5.2",
     "unminified-webpack-plugin": "^1.2.0",
