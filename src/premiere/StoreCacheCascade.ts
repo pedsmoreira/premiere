@@ -55,7 +55,9 @@ export default class StoreCacheCascade<T extends Model> extends PromiseCascade {
 
     const list: T[] = await callback();
     if (options.completeItems) {
-      list.forEach(object => this.cache.objects.set(object.key, object));
+      list.forEach(object => {
+        this.cache.objects.values[object.key] = object;
+      });
     }
 
     return this.cache.lists.set(key, list);

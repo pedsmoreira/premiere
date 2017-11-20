@@ -12,8 +12,8 @@ describe("StoreCacheCascade", () => {
   });
 
   describe("#promise", () => {
-    const defaultResponse = new Promise(jest.fn());
-    const cachedResponse = new Promise(jest.fn());
+    const defaultResponse = new Promise(jest.fn()) as any;
+    const cachedResponse = new Promise(jest.fn()) as any;
 
     const pushAndPlayPromise = () => {
       return storeCache.cascade
@@ -137,6 +137,14 @@ describe("StoreCacheCascade", () => {
           await pushAndPlayList({ completeItems: true });
           expect(storeCache.objects.get("key#0")).toBe(object0);
           expect(storeCache.objects.get("key#1")).toBe(object1);
+        });
+
+        it("does not clear lists", async () => {
+          const list = jest.fn() as any;
+          storeCache.lists.set("listKey#0", list);
+
+          await pushAndPlayList({ completeItems: true });
+          expect(storeCache.lists.get("listKey#0")).toBe(list);
         });
       });
 
