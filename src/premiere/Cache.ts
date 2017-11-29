@@ -1,11 +1,12 @@
 import Hash from "./Hash";
 
-export type ChangeListener<T> = (key: any, value: T) => any;
+export type Listener<T> = (key: any, value: T) => any;
 
 export default class Cache<T> {
   enabled: boolean = true;
   values: Hash<T> = {};
-  changeListeners: ChangeListener<T>[] = [];
+  changeListeners: Listener<T>[] = [];
+  destroyListeners: Listener<T>[] = [];
 
   get(key: string): T {
     return this.values[key];
@@ -22,7 +23,7 @@ export default class Cache<T> {
   destroy(key: string): void {
     if (this.enabled && typeof this.values[key] !== "undefined") {
       delete this.values[key];
-      this.emitChange(key, undefined);
+      this.emitDestroy(key);
     }
   }
 
@@ -30,11 +31,19 @@ export default class Cache<T> {
     this.values = {};
   }
 
-  onChange(callback: ChangeListener<T>): void {
+  onChange(callback: Listener<T>): void {
     this.changeListeners.push(callback);
   }
 
   protected emitChange(key: string, value: T): void {
     this.changeListeners.forEach((callback: Function) => callback(key, value));
+  }
+
+  onDestroy(callback: Listener<T>): void {
+    this.destroyListeners.push(callback);
+  }
+
+  protected emitDestroy(key: string): void {
+    this.destroyListeners.forEach((callback: Function) => callback(key));
   }
 }

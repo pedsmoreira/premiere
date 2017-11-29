@@ -26,6 +26,14 @@ describe("StoreCache", () => {
     expect(storeCache.lists.get("listKey")).toBeUndefined();
   });
 
+  it("clears lists on objects cache destroyed", () => {
+    const value = jest.fn();
+    storeCache.lists.set("listKey", value);
+    storeCache.objects.set("listKey", value);
+    storeCache.objects.destroy("listKey");
+    expect(storeCache.lists.get("listKey")).toBeUndefined();
+  });
+
   it("deletes promise once it is done", async () => {
     let resolvePromise;
     const promise = new Promise(resolve => {

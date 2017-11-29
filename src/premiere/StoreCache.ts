@@ -21,7 +21,9 @@ export default class StoreCache<T extends Model> {
   }
 
   private bindListClearance(): void {
-    this.objects.onChange(this.clearLists.bind(this));
+    const boundClearLists = this.clearLists.bind(this);
+    this.objects.onChange(boundClearLists);
+    this.objects.onDestroy(boundClearLists);
   }
 
   private schedulePromiseDeletion(key: any, promise: Promise<any>): void {

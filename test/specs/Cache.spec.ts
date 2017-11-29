@@ -61,9 +61,9 @@ describe("Cache", () => {
         cache.enabled = false;
       });
 
-      it("does not emit change", () => {
+      it("does not emit destroy", () => {
         const fn = jest.fn();
-        cache.onChange(fn);
+        cache.onDestroy(fn);
 
         cache.values["specKey"] = true;
         cache.destroy("specKey");
@@ -87,9 +87,9 @@ describe("Cache", () => {
         expect(() => cache.destroy("inexistingSpecKey")).not.toThrow();
       });
 
-      it("does not emit change", () => {
+      it("does not emit destroy", () => {
         const fn = jest.fn();
-        cache.onChange(fn);
+        cache.onDestroy(fn);
 
         cache.destroy("specKey");
         expect(fn).not.toHaveBeenCalled();
