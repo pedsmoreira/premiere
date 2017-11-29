@@ -20,7 +20,10 @@ export default class Cache<T> {
   }
 
   destroy(key: string): void {
-    delete this.values[key];
+    if (this.enabled && typeof this.values[key] !== "undefined") {
+      delete this.values[key];
+      this.emitChange(key, undefined);
+    }
   }
 
   clear(): void {

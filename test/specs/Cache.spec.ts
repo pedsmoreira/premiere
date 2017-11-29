@@ -41,7 +41,7 @@ describe("Cache", () => {
         expect(cache.get("specKey")).toBeUndefined();
       });
 
-      it("does not emit changes", () => {
+      it("does not emit change", () => {
         const fn = jest.fn();
         cache.onChange(fn);
 
@@ -56,6 +56,21 @@ describe("Cache", () => {
   });
 
   describe("#destroy", () => {
+    context("not enabled", () => {
+      beforeEach(() => {
+        cache.enabled = false;
+      });
+
+      it("does not emit change", () => {
+        const fn = jest.fn();
+        cache.onChange(fn);
+
+        cache.values["specKey"] = true;
+        cache.destroy("specKey");
+        expect(fn).not.toHaveBeenCalled();
+      });
+    });
+
     context("given an existing key", () => {
       beforeEach(() => {
         cache.set("specKey", value);
@@ -70,6 +85,14 @@ describe("Cache", () => {
     context("given a non existing key", () => {
       it("does not throw", () => {
         expect(() => cache.destroy("inexistingSpecKey")).not.toThrow();
+      });
+
+      it("does not emit change", () => {
+        const fn = jest.fn();
+        cache.onChange(fn);
+
+        cache.destroy("specKey");
+        expect(fn).not.toHaveBeenCalled();
       });
     });
   });
