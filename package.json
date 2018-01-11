@@ -34,7 +34,7 @@
   },
   "homepage": "https://pedsmoreira.github.io/premiere",
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.17.1",
     "promise-cascade": "^0.1.2"
   },
   "devDependencies": {

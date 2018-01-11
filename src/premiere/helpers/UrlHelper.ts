@@ -4,6 +4,7 @@ export type buildUrlOptions = { url?: string; queryParams?: string | Hash<any> }
 
 export function buildUrl(options: buildUrlOptions, defaultUrl: string = ""): string {
   let url = (options.url || defaultUrl).toString();
+  if (url.length) url = "/" + url;
 
   if (options.queryParams) {
     url += "?" + buildEncodedQueryParams(options.queryParams);

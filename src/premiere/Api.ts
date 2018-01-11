@@ -28,8 +28,7 @@ export class Api {
   }
 
   get baseUrl(): string {
-    const path = this.path.length ? trailUrl(this.path) : "";
-    return trailUrl(this.base) + path;
+    return this.base + (this.path.length ? "/" : "") + this.path;
   }
 
   get jwtToken(): string | null {

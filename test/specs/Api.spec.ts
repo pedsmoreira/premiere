@@ -53,14 +53,14 @@ describe("Api", () => {
       it("returns trailed base and path", () => {
         specApi.base = "base";
         Object.defineProperty(specApi, "path", { get: () => "path" });
-        expect(specApi.baseUrl).toEqual("base/path/");
+        expect(specApi.baseUrl).toEqual("base/path");
       });
     });
 
     context("without path", () => {
-      it("returns trailed base", () => {
+      it("returns base", () => {
         specApi.base = "base";
-        expect(specApi.baseUrl).toEqual("base/");
+        expect(specApi.baseUrl).toEqual("base");
       });
     });
   });
@@ -115,7 +115,7 @@ describe("Api", () => {
       (axios.create as jest.Mock<any>).mockReturnValue("http");
       expect(specApi.http).toEqual("http");
       expect(axios.create).toHaveBeenCalledWith({
-        baseURL: "base/",
+        baseURL: "base",
         headers: { name: "John", surname: "Doe" }
       });
     });
