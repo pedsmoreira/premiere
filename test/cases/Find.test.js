@@ -4,6 +4,10 @@ import Model from '../../src/Model';
 describe('Find', () => {
   class User extends Model {
     static basename = 'user';
+
+    normalizeName(name) {
+      return name.toLowerCase();
+    }
   }
 
   const axiosAdapter = new MockAdapter(User.api.http);
@@ -12,12 +16,15 @@ describe('Find', () => {
     axiosAdapter.reset();
   });
 
-  it('finds a Model', async () => {
+  it('finds a model', async () => {
     axiosAdapter.onGet('users/1').reply(200, { id: 1, name: 'John Doe' });
 
     const user = await User.find(1);
-    expect(user instanceof User).toBeTruthy();
-    expect(user.id).toEqual(1);
-    expect(user.name).toEqual('John Doe');
+    expect(user).toBeInstanceOf(User);
+
+    expect(user).toEqual({
+      id: 1,
+      name: 'john doe'
+    });
   });
 });

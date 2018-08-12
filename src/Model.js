@@ -15,6 +15,13 @@ export default class Model {
   static identifier: string = 'id';
   static basename: string = '';
 
+  _relationshipCache: { [string]: $Subtype<Relationship<Model>> };
+
+  get relationshipCache() {
+    if (!this._relationshipCache) Object.defineProperty(this, '_relationshipCache', { value: {}, enumerable: false });
+    return this._relationshipCache;
+  }
+
   get primaryKey(): any {
     // $FlowFixMe
     return this[this.constructor.primaryKey];
@@ -173,6 +180,10 @@ export default class Model {
     model: typeof Model,
     options?: Object
   ): $Subtype<Relationship<Model>> {
-    return new relationship(this, model, options);
+    // $FlowFixMe
+    const cacheName = new Error().stack.match(/at (\S+)/g)[3].slice(3);
+    if (!this.relationshipCache[cacheName]) this.relationshipCache[cacheName] = new relationship(this, model, options);
+
+    return this.relationshipCache[cacheName];
   }
 }

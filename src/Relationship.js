@@ -30,7 +30,7 @@ export default class Relationship<T: any> {
   }
 
   set data(data: T) {
-    this.data = data;
+    this._data = data;
   }
 
   get foreignKey(): string {
