@@ -1,0 +1,23 @@
+{
+  "env": {
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": ["last 2 versions", "safari >= 7"]
+            },
+            "modules": false
+          }
+        ],
+        "flow"
+      ],
+      "plugins": ["transform-class-properties"]
+    },
+    "test": {
+      "presets": ["es2015", "flow"],
+      "plugins": ["transform-class-properties"]
+    }
+  }
+}

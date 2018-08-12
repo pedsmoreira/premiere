@@ -1,12 +1,16 @@
+sudo: false
 language: node_js
+script: npm run test:ci
 node_js:
-  - node
-email:
-  on_failure: change
-  on_success: never
+  - 8
+
 after_success:
   - npm install -g codeclimate-test-reporter
   - codeclimate-test-reporter < coverage/lcov.info
+
 addons:
   code_climate:
     repo_token: b6e7fa1a85471ad7dbbe10afb57f95a5bbd491dc68676dc4413bbf6489fa8add
+
+notifications:
+  email: false

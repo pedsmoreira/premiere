@@ -1,9 +1,11 @@
-**/*.log
+packages/*/cjs
+packages/*/es
+packages/*/umd
 
-coverage/
-build/
-dist/
-node_modules/
+node_modules
+coverage
+
+npm-debug.log
+yarn-error.log
 
 .DS_Store
-.idea
