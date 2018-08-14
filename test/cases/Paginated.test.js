@@ -5,10 +5,8 @@ describe('PaginagedAll', () => {
   class User extends Model {
     static basename = 'user';
 
-    static async paginated(page, metaCallback: Function) {
-      const { data } = await this.api.http.get(`${this.pluralPath}?page=${page}`);
-      metaCallback(data.meta);
-      return this.makeArray(data.users);
+    static get all() {
+      return super.all.before(data => data.users);
     }
 
     normalizeName(name) {
@@ -35,13 +33,21 @@ describe('PaginagedAll', () => {
 
     const metaFn = jest.fn();
 
-    const firstPageUsers = await User.paginated(1, metaFn);
+    const firstPageUsers = await User.all
+      .query({ page: 1 })
+      .after((data, rawData) => metaFn(rawData.meta))
+      .fetch();
+
     expect(firstPageUsers.length).toEqual(2);
     expect(firstPageUsers[0]).toBeInstanceOf(User);
     expect(firstPageUsers).toEqual([{ id: 1, name: 'john doe' }, { id: 2, name: 'jane doe' }]);
     expect(metaFn).toHaveBeenCalledWith({ current_page: 1, total_pages: 2 });
 
-    const secondPageUsers = await User.paginated(2, metaFn);
+    const secondPageUsers = await User.all
+      .query({ page: 2 })
+      .after((data, rawData) => metaFn(rawData.meta))
+      .fetch();
+
     expect(secondPageUsers.length).toEqual(2);
     expect(secondPageUsers[0]).toBeInstanceOf(User);
     expect(secondPageUsers).toEqual([{ id: 3, name: 'bob vence' }, { id: 2, name: 'vence refrigeration' }]);

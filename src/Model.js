@@ -9,6 +9,7 @@ import Relationship, { type RelationshipOptions } from './Relationship';
 import HasMany from './Relationships/HasMany';
 import BelongsTo from './Relationships/BelongsTo';
 import HasOne from './Relationships/HasOne';
+import FetchRequest from './FetchRequest';
 
 export default class Model {
   static primaryKey: string = 'id';
@@ -96,33 +97,37 @@ export default class Model {
     return newInstance;
   }
 
+  static get fetchRequest(): FetchRequest<Model> {
+    return new FetchRequest().target(this);
+  }
+
   static make(data: Object): this {
     return new this().set(data);
   }
 
-  static makeArray(dataArray: Object[]): Model[] {
+  static makeArray(dataArray: Object[]): self[] {
     return dataArray.map(data => this.make(data));
   }
 
-  reload(): Promise<this> {
-    return this.constructor.find(this.primaryKey);
+  async reload(): Promise<void> {
+    const data = await this.constructor.find(this.primaryKey);
+    this.set(data);
   }
 
-  static async find(key: any): Promise<this> {
-    const { data } = await this.api.http.get(`${this.pluralPath}/${key}`);
-    return this.make(data);
+  static find(key: any): FetchRequest<self> {
+    return this.fetchRequest.url(`${this.pluralPath}/${key}`).transform(this.make);
   }
 
-  static async all(): Promise<self[]> {
-    const { data } = await this.api.http.get(this.pluralPath);
-    return this.makeArray(data);
+  static get all(): FetchRequest<self[]> {
+    // $FlowFixMe
+    return this.fetchRequest.url(this.pluralPath).transform(this.makeArray);
   }
 
   create(data?: Object): Promise<this> {
     return this.constructor.create(data || this.persistenceObject);
   }
 
-  static async create(data: Object) {
+  static async create(data: Object): Promise<this> {
     const response = await this.api.http.post(this.pluralPath, data);
     return this.make(response.data);
   }

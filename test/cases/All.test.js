@@ -19,7 +19,7 @@ describe('All', () => {
   it('finds all models', async () => {
     axiosAdapter.onGet('users').reply(200, [{ id: 1, name: 'John Doe' }, { id: 2, name: 'Jane Doe' }]);
 
-    const users = await User.all();
+    const users = await User.all.fetch();
     expect(users.length).toEqual(2);
     expect(users[0]).toBeInstanceOf(User);
 

@@ -1,6 +1,7 @@
 // @flow
 
 import Model from './Model';
+import FetchRequest from './FetchRequest';
 
 export type RelationshipOptions = {
   key?: string,
@@ -15,8 +16,6 @@ export default class Relationship<T: any> {
   instance: Model;
   foreignModel: typeof Model;
   options: RelationshipOptions;
-
-  makeArray: boolean = false;
 
   constructor(instance: Model, foreignModel: typeof Model, options?: RelationshipOptions = {}) {
     this.instance = instance;
@@ -51,12 +50,21 @@ export default class Relationship<T: any> {
     return this.instance.constructor;
   }
 
-  async fetch() {
+  get request(): FetchRequest<T> {
+    return new FetchRequest().url(this.path).unboundTransform(rawData => {
+      // $FlowFixMe
+      return Array.isArray(rawData) ? this.model.makeArray(rawData) : rawData;
+    });
+  }
+
+  async fetch(): Promise<T> {
     const { data } = await this.foreignModel.api.http.get(this.path);
     this.data = this.transformRawData(data);
 
     const { after } = this.options;
     if (after) after(this.data);
+
+    return this.data;
   }
 
   transformRawData(rawData: Object): any {

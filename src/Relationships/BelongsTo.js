@@ -4,9 +4,10 @@ import Relationship from '../Relationship';
 import Model from '../Model';
 
 export default class BelongsTo<T> extends Relationship<T> {
-  async fetch() {
+  async fetch(): Promise<T> {
     // $FlowFixMe
     this.data = await this.foreignModel.find(this.value);
+    return this.data;
   }
 
   get guessedKey() {

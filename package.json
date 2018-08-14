@@ -31,7 +31,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "casex": "^2.0.0",
-    "pluralize": "^7.0.0"
+    "pluralize": "^7.0.0",
+    "query-string": "^6.1.0"
   },
   "license": "MIT",
   "homepage": "https://pedsmoreira.github.io/premiere",
