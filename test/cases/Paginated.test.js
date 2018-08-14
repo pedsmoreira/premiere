@@ -20,7 +20,7 @@ describe('PaginagedAll', () => {
     axiosAdapter.reset();
   });
 
-  it('finds all models', async () => {
+  it('finds paginated models', async () => {
     axiosAdapter.onGet('users?page=1').reply(200, {
       users: [{ id: 1, name: 'John Doe' }, { id: 2, name: 'Jane Doe' }],
       meta: { current_page: 1, total_pages: 2 }
@@ -44,7 +44,7 @@ describe('PaginagedAll', () => {
     expect(metaFn).toHaveBeenCalledWith({ current_page: 1, total_pages: 2 });
 
     const secondPageUsers = await User.all
-      .query({ page: 2 })
+      .query('page=2')
       .after((data, rawData) => metaFn(rawData.meta))
       .fetch();
 
