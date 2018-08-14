@@ -4,8 +4,8 @@ import Relationship from '../Relationship';
 import Model from '../Model';
 
 export default class HasMany<T> extends Relationship<T[]> {
-  get path() {
-    return `${this.model.basename}/${this.instance.identifier}/${this.foreignModel.basename}`;
+  setup() {
+    this.url(`${this.originModel.basename}/${this.instance.identifier}/${this.foreignModel.basename}`);
   }
 
   // async create(data: Object): Promise<T> {

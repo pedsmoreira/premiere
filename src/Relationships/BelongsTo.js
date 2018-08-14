@@ -4,14 +4,8 @@ import Relationship from '../Relationship';
 import Model from '../Model';
 
 export default class BelongsTo<T> extends Relationship<T> {
-  async fetch(): Promise<T> {
-    // $FlowFixMe
-    this.data = await this.foreignModel.find(this.value);
-    return this.data;
-  }
-
-  get guessedKey() {
-    return this.instance.identifier;
+  setup() {
+    this.url(this.foreignModel.find(this.foreignKeyValue).props.url);
   }
 
   get foreignKey() {
@@ -19,15 +13,8 @@ export default class BelongsTo<T> extends Relationship<T> {
   }
 
   get stub(): Model {
-    // $FlowFixMe
-    const primaryKey = this.instance[this.foreignKey];
-
-    const stub = new this.foreignModel();
-
-    // $FlowFixMe
-    stub[this.foreignModel.primaryKey] = primaryKey;
-
-    // $FlowFixMe
+    const stub: any = new this.foreignModel();
+    stub[this.foreignModel.primaryKey] = this.foreignKeyValue;
     return stub;
   }
 

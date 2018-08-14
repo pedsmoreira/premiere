@@ -4,28 +4,47 @@ import Model from './Model';
 import FetchRequest from './FetchRequest';
 
 export type RelationshipOptions = {
-  key?: string,
-  before?: any => any,
-  after?: any => any,
-  through?: typeof Model
+  foreignKey?: string
 };
 
-export default class Relationship<T: any> {
+export default class Relationship<T: any> extends FetchRequest<T> {
   _data: ?T;
 
   instance: Model;
-  foreignModel: typeof Model;
   options: RelationshipOptions;
 
   constructor(instance: Model, foreignModel: typeof Model, options?: RelationshipOptions = {}) {
+    super();
     this.instance = instance;
-    this.foreignModel = foreignModel;
     this.options = options;
+
+    this.target(foreignModel).unboundTransform(this.transformModel);
+    this.setup();
+  }
+
+  setup() {}
+
+  transformModel = (rawData: any): T => {
+    const model = this.foreignModel;
+    // $FlowFixMe
+    return Array.isArray(rawData) ? model.makeArray(rawData) : model.make(rawData);
+  };
+
+  get foreignModel(): typeof Model {
+    // $FlowFixMe
+    return this.props.target;
+  }
+
+  checkDataValidity(data: T): boolean {
+    return true;
   }
 
   get data(): T {
-    if (!this._data) throw new Error(`[premiere] "data" unavailable for ${this.model.name}`);
-    return this._data;
+    const data = this._data;
+    if (!data) throw new Error(`[premiere] "data" unavailable for ${this.originModel.name}`);
+    if (!this.checkDataValidity(data)) throw new Error('[premiere] invalid data');
+
+    return data;
   }
 
   set data(data: T) {
@@ -33,46 +52,21 @@ export default class Relationship<T: any> {
   }
 
   get foreignKey(): string {
-    return this.throwNotImplemented('foreignKey');
+    return this.options.foreignKey || this.defualtForeignKey;
   }
 
-  get value(): any {
+  get defualtForeignKey(): string {
+    return this.throwNotImplemented('defaultForeignKey');
+  }
+
+  get foreignKeyValue(): any {
     // $FlowFixMe
     const value = this.instance[this.foreignKey];
     return value || this.throwUndefinedProperty(this.foreignKey);
   }
 
-  get path(): string {
-    return this.throwNotImplemented('path');
-  }
-
-  get model(): typeof Model {
+  get originModel(): typeof Model {
     return this.instance.constructor;
-  }
-
-  get request(): FetchRequest<T> {
-    return new FetchRequest().url(this.path).unboundTransform(rawData => {
-      // $FlowFixMe
-      return Array.isArray(rawData) ? this.model.makeArray(rawData) : rawData;
-    });
-  }
-
-  async fetch(): Promise<T> {
-    const { data } = await this.foreignModel.api.http.get(this.path);
-    this.data = this.transformRawData(data);
-
-    const { after } = this.options;
-    if (after) after(this.data);
-
-    return this.data;
-  }
-
-  transformRawData(rawData: Object): any {
-    const { before } = this.options;
-    const data = before ? before(rawData) : rawData;
-
-    // $FlowFixMe
-    return this.makeArray ? this.foreignModel.makeArray(data) : this.foreignModel.make(data);
   }
 
   throwNotImplemented(method: string): any {
@@ -82,7 +76,7 @@ export default class Relationship<T: any> {
 
   throwUndefinedProperty(property: string): any {
     const name = this.constructor.name;
-    const modelName = this.model.name;
+    const modelName = this.originModel.name;
     throw new Error(`[premiere] Undefined property "${property}" in ${name} relationship for ${modelName}`);
   }
 }

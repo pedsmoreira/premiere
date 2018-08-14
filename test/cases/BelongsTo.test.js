@@ -32,24 +32,28 @@ describe('Find', () => {
     axiosAdapter.reset();
   });
 
-  it('finds a model', async () => {
+  it('fetches model', async () => {
     axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
     axiosAdapter.onGet('roles/20').reply(200, { id: 20, name: 'Admin' });
 
     const user = new User().set({ company_id: 10, role_id: 20 });
-    await user.company.fetch();
-    await user.role.fetch();
+    const company = await user.company.fetch();
+    const role = await user.role.fetch();
 
-    expect(user.company.data).toBeInstanceOf(Company);
-
-    expect(user.company.data).toEqual({
+    expect(company).toBeInstanceOf(Company);
+    expect(() => user.company.data).toThrowError();
+    expect(company).toEqual({
       id: 10,
       name: 'business a'
     });
 
-    expect(user.role.data).toEqual({
+    expect(role).toBeInstanceOf(Role);
+    expect(() => user.role.data).toThrowError();
+    expect(role).toEqual({
       id: 20,
       name: 'Admin'
     });
   });
+
+  it('loads model', async () => {});
 });
