@@ -23,7 +23,7 @@ export default class BelongsTo<T> extends Relationship<T> {
   }
 
   get nestedUpdateUrl(): string {
-    return this.nestedUpdateUrl;
+    return `${this.nestedUrl}/${this.foreignKeyValue}`;
   }
 
   create(data: Object): Request<T> {
@@ -34,7 +34,9 @@ export default class BelongsTo<T> extends Relationship<T> {
     });
 
     if (this.props.nested) {
-      request.url(this.nestedUrl).body(Object.assign({}, { [this.model.foreignKey]: this.instance.primaryKey }, data));
+      request.url(this.nestedUrl);
+    } else {
+      request.body(Object.assign({}, { [this.model.foreignKey]: this.instance.primaryKey }, data));
     }
 
     return request;

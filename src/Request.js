@@ -33,6 +33,8 @@ export default class Request<T> {
   static _cache: { [any]: Request<*>[] } = {};
 
   static cached(target: any, request: Request<*>) {
+    if (request.props.method !== 'get') return request;
+
     if (!this._cache[target]) this._cache[target] = [];
     const targetCache = this._cache[target];
 

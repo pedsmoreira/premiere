@@ -12,19 +12,21 @@ describe('Find', () => {
 
   class User extends Model {
     static basename = 'user';
+    static identifier = 'slug';
 
     get company() {
       return this.belongsTo(Company);
     }
   }
 
-  class CustomUser extends User {
-    static identifier = 'slug';
-  }
-
   const axiosAdapter = new MockAdapter(Company.api.http);
   axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
-  axiosAdapter.onPost('companies', { name: 'Brand New Business' }).reply(200, { id: 11, name: 'Brand New Business' });
+  axiosAdapter
+    .onPost('companies', { name: 'Brand New Business', user_id: 1 })
+    .reply(200, { id: 11, name: 'Brand New Business' });
+  axiosAdapter
+    .onPut('companies/10', { name: 'Updated Business Name' })
+    .reply(200, { id: 10, name: 'Updated Business Name' });
 
   function expectExistingCompany(company) {
     expect(company).toBeInstanceOf(Company);
@@ -42,6 +44,14 @@ describe('Find', () => {
     });
   }
 
+  function expectUpdatedCompany(company) {
+    expect(company).toBeInstanceOf(Company);
+    expect(company).toEqual({
+      id: 10,
+      name: 'updated business name'
+    });
+  }
+
   describe('with the default foreignKey', () => {
     it('fetches model', async () => {
       const user = new User().set({ company_id: 10, role_id: 20 });
@@ -56,6 +66,15 @@ describe('Find', () => {
       const company = await user.company.create({ name: 'Brand New Business' }).fetch();
 
       expectNewCompany(company);
+      expect(user.company_id).toEqual(company.id);
+      expect(user.company.data).toBe(company);
+    });
+
+    it('updates foreign dependency', async () => {
+      const user = new User().set({ company_id: 10 });
+      const company = await user.company.update({ name: 'Updated Business Name' }).fetch();
+
+      expectUpdatedCompany(company);
       expect(user.company_id).toEqual(company.id);
       expect(user.company.data).toBe(company);
     });
@@ -84,16 +103,23 @@ describe('Find', () => {
   });
 
   describe('nested', () => {
-    it('builds model fetch url properly', () => {
-      const user = new User().set({ id: 1 });
-      expect(user.company.nested().path).toEqual('users/1/company');
+    it('builds model url properly', () => {
+      const user = new User().set({ slug: 'doe' });
+      expect(user.company.nested().path).toEqual('users/doe/company');
     });
 
-    describe('with custom identifier', () => {
-      it('sets url properly for creating foreign dependency', () => {
-        const user = new CustomUser().set({ slug: 'doe' });
-        expect(user.company.nested().create({}).path).toEqual('users/doe/company');
-      });
+    it('builds model create url properly', () => {
+      const user = new User().set({ slug: 'doe' });
+      const request = user.company.nested().create({ name: 'Name' });
+      expect(request.path).toEqual('users/doe/company');
+      expect(request.props.body).toEqual({ name: 'Name' });
+    });
+
+    it('build model update url properly', () => {
+      const user = new User().set({ slug: 'doe', company_id: 10 });
+      const request = user.company.nested().update({ name: 'Name' });
+      expect(request.path).toEqual('users/doe/company/10');
+      expect(request.props.body).toEqual({ name: 'Name' });
     });
   });
 });
