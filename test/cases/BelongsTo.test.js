@@ -56,4 +56,20 @@ describe('Find', () => {
   });
 
   it('loads model', async () => {});
+
+  it('creates foreign dependency', async () => {
+    axiosAdapter
+      .onPost('users/1/companies', { name: 'Brand New Business' })
+      .reply(200, { id: 10, name: 'Brand New Business' });
+
+    const user = new User().set({ id: 1 });
+    const company = await user.company.create({ name: 'Brand New Business' }).fetch();
+
+    expect(user.company.data).toBe(company);
+    expect(company).toBeInstanceOf(Company);
+    expect(company).toEqual({
+      id: 10,
+      name: 'brand new business'
+    });
+  });
 });

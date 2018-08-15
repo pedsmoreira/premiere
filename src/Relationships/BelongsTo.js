@@ -2,30 +2,38 @@
 
 import Relationship from '../Relationship';
 import Model from '../Model';
+import Request from '../Request';
 
 export default class BelongsTo<T> extends Relationship<T> {
-  setup() {
-    this.url(this.foreignModel.find(this.foreignKeyValue).props.url);
+  get defaultUrl() {
+    return this.foreignModel.find(this.foreignKeyValue).props.url;
   }
 
-  get foreignKey() {
+  get defaultForeignKey() {
     return this.foreignModel.foreignKey;
   }
 
-  get stub(): Model {
-    const stub: any = new this.foreignModel();
-    stub[this.foreignModel.primaryKey] = this.foreignKeyValue;
-    return stub;
-  }
+  create(data: Object): Request<T> {
+    // const path = `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
+    // const response = await this.foreignModel.api.http.post(path, data);
+    // const foreignInstance: any = this.foreignModel.make(response.data);
 
-  async create(data: Object): Promise<T> {
-    const foreignInstance = await this.foreignModel.create(data);
+    // this.data = foreignInstance;
+    // return foreignInstance;
+
+    const url = `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
+
+    const request = this.foreignModel
+      .create(data)
+      .url(url)
+      .after((foreignInstance: T) => {
+        // $FlowFixMe
+        this.instance[this.foreignKey] = foreignInstance.primaryKey;
+        this.data = foreignInstance;
+      });
 
     // $FlowFixMe
-    this.instance[this.foreignKey] = foreignInstance.primaryKey;
-
-    this.data = foreignInstance;
-    return foreignInstance;
+    return request;
   }
 
   async update(data: Object): Promise<T> {

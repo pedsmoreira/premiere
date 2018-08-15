@@ -1,13 +1,13 @@
 // @flow
 
 import Model from './Model';
-import FetchRequest from './FetchRequest';
+import Request from './Request';
 
 export type RelationshipOptions = {
   foreignKey?: string
 };
 
-export default class Relationship<T: any> extends FetchRequest<T> {
+export default class Relationship<T: any> extends Request<T> {
   _data: ?T;
 
   instance: Model;
@@ -19,10 +19,7 @@ export default class Relationship<T: any> extends FetchRequest<T> {
     this.options = options;
 
     this.target(foreignModel).unboundTransform(this.transformModel);
-    this.setup();
   }
-
-  setup() {}
 
   transformModel = (rawData: any): T => {
     const model = this.foreignModel;
@@ -52,17 +49,16 @@ export default class Relationship<T: any> extends FetchRequest<T> {
   }
 
   get foreignKey(): string {
-    return this.options.foreignKey || this.defualtForeignKey;
+    return this.options.foreignKey || this.defaultForeignKey;
   }
 
-  get defualtForeignKey(): string {
+  get defaultForeignKey(): string {
     return this.throwNotImplemented('defaultForeignKey');
   }
 
   get foreignKeyValue(): any {
     // $FlowFixMe
-    const value = this.instance[this.foreignKey];
-    return value || this.throwUndefinedProperty(this.foreignKey);
+    return this.instance[this.foreignKey];
   }
 
   get originModel(): typeof Model {

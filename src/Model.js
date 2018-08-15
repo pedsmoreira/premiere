@@ -9,7 +9,7 @@ import Relationship, { type RelationshipOptions } from './Relationship';
 import HasMany from './Relationships/HasMany';
 import BelongsTo from './Relationships/BelongsTo';
 import HasOne from './Relationships/HasOne';
-import FetchRequest from './FetchRequest';
+import Request from './Request';
 
 export default class Model {
   static primaryKey: string = 'id';
@@ -97,8 +97,8 @@ export default class Model {
     return newInstance;
   }
 
-  static get fetchRequest(): FetchRequest<Model> {
-    return new FetchRequest().target(this);
+  static get request(): Request<Model> {
+    return new Request().target(this);
   }
 
   static make(data: Object): this {
@@ -114,22 +114,25 @@ export default class Model {
     this.set(data);
   }
 
-  static find(key: any): FetchRequest<self> {
-    return this.fetchRequest.url(`${this.pluralPath}/${key}`).transform(this.make);
+  static find(key: any): Request<self> {
+    return this.request.url(`${this.pluralPath}/${key}`).transform(this.make);
   }
 
-  static get all(): FetchRequest<self[]> {
+  static get all(): Request<self[]> {
     // $FlowFixMe
-    return this.fetchRequest.url(this.pluralPath).transform(this.makeArray);
+    return this.request.url(this.pluralPath).transform(this.makeArray);
   }
 
   create(data?: Object): Promise<this> {
     return this.constructor.create(data || this.persistenceObject);
   }
 
-  static async create(data: Object): Promise<this> {
-    const response = await this.api.http.post(this.pluralPath, data);
-    return this.make(response.data);
+  static create(data: Object): Request<self> {
+    return this.request
+      .transform(this.make)
+      .method('post')
+      .body(data)
+      .url(this.pluralPath);
   }
 
   update(data?: Object): Promise<this> {

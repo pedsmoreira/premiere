@@ -5,8 +5,12 @@ import queryString from 'query-string';
 import Model from './Model';
 import Api, { api } from './Api';
 
-type FetchRequestProps<T> = {
+type RequestMethod = 'get' | 'post' | 'put' | 'delete';
+
+type RequestProps<T> = {
   url: string,
+  method: RequestMethod,
+  body?: any,
   api: Api,
   target?: any,
   query?: string,
@@ -16,17 +20,18 @@ type FetchRequestProps<T> = {
   after?: (T, ?any) => any
 };
 
-export default class FetchRequest<T> {
+export default class Request<T> {
   httpRequestCache: ?Promise<*>;
 
-  props: FetchRequestProps<T> = {
+  props: RequestProps<T> = {
     url: '',
+    method: 'get',
     api
   };
 
-  static _cache: { [any]: FetchRequest<*>[] } = {};
+  static _cache: { [any]: Request<*>[] } = {};
 
-  static cached(target: any, request: FetchRequest<*>) {
+  static cached(target: any, request: Request<*>) {
     if (!this._cache[target]) this._cache[target] = [];
     const targetCache = this._cache[target];
 
@@ -42,11 +47,25 @@ export default class FetchRequest<T> {
 
   get path(): string {
     const { url, query } = this.props;
-    return url + (query ? `?${query}` : '');
+    return (url || this.defaultUrl) + (query ? `?${query}` : '');
+  }
+
+  get defaultUrl(): string {
+    return '';
   }
 
   url(url: string): this {
     this.props.url = url;
+    return this;
+  }
+
+  method(method: RequestMethod): this {
+    this.props.method = method;
+    return this;
+  }
+
+  body(body: any): this {
+    this.props.body = body;
     return this;
   }
 
@@ -97,11 +116,12 @@ export default class FetchRequest<T> {
   }
 
   get httpRequest(): Promise<*> {
-    if (!this.httpRequestCache) this.httpRequestCache = this.props.api.http.get(this.path);
+    const { method, body } = this.props;
+    if (!this.httpRequestCache) this.httpRequestCache = this.props.api.http[method](this.path, body);
     return this.httpRequestCache;
   }
 
-  get cachedTargetRequest(): FetchRequest<T> {
+  get cachedTargetRequest(): Request<T> {
     const { skipCache, target } = this.props;
     const shouldCache = target && !skipCache;
 
