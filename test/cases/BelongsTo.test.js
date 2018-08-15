@@ -10,66 +10,88 @@ describe('Find', () => {
     }
   }
 
-  class Role extends Model {
-    static basename = 'roles';
-  }
-
   class User extends Model {
     static basename = 'user';
 
     get company() {
       return this.belongsTo(Company);
     }
+  }
 
-    get role() {
-      return this.belongsTo(Role);
-    }
+  class CustomUser extends User {
+    static identifier = 'slug';
   }
 
   const axiosAdapter = new MockAdapter(Company.api.http);
+  axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
+  axiosAdapter.onGet('roles/20').reply(200, { id: 20, name: 'Admin' });
+  axiosAdapter
+    .onPost('users/1/companies', { name: 'Brand New Business' })
+    .reply(200, { id: 11, name: 'Brand New Business' });
 
-  afterEach(() => {
-    axiosAdapter.reset();
-  });
-
-  it('fetches model', async () => {
-    axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
-    axiosAdapter.onGet('roles/20').reply(200, { id: 20, name: 'Admin' });
-
-    const user = new User().set({ company_id: 10, role_id: 20 });
-    const company = await user.company.fetch();
-    const role = await user.role.fetch();
-
+  function expectExistingCompany(company) {
     expect(company).toBeInstanceOf(Company);
-    expect(() => user.company.data).toThrowError();
     expect(company).toEqual({
       id: 10,
       name: 'business a'
     });
+  }
 
-    expect(role).toBeInstanceOf(Role);
-    expect(() => user.role.data).toThrowError();
-    expect(role).toEqual({
-      id: 20,
-      name: 'Admin'
+  function expectNewCompany(company) {
+    expect(company).toBeInstanceOf(Company);
+    expect(company).toEqual({
+      id: 11,
+      name: 'brand new business'
+    });
+  }
+
+  describe('with the default foreignKey', () => {
+    it('fetches model', async () => {
+      const user = new User().set({ company_id: 10, role_id: 20 });
+      const company = await user.company.fetch();
+
+      expectExistingCompany(company);
+      expect(() => user.company.data).toThrowError();
+    });
+
+    it('creates foreign dependency', async () => {
+      const user = new User().set({ id: 1 });
+      const company = await user.company.create({ name: 'Brand New Business' }).fetch();
+
+      expectNewCompany(company);
+      expect(user.company_id).toEqual(company.id);
+      expect(user.company.data).toBe(company);
     });
   });
 
-  it('loads model', async () => {});
+  describe('with a custom foreignKey', () => {
+    it('fetches model', async () => {
+      axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
 
-  it('creates foreign dependency', async () => {
-    axiosAdapter
-      .onPost('users/1/companies', { name: 'Brand New Business' })
-      .reply(200, { id: 10, name: 'Brand New Business' });
+      const user = new User().set({ custom_company_key: 10 });
+      const company = await user.company.foreignKey('custom_company_key').fetch();
 
-    const user = new User().set({ id: 1 });
-    const company = await user.company.create({ name: 'Brand New Business' }).fetch();
+      expectExistingCompany(company);
+      expect(() => user.company.data).toThrowError();
+    });
 
-    expect(user.company.data).toBe(company);
-    expect(company).toBeInstanceOf(Company);
-    expect(company).toEqual({
-      id: 10,
-      name: 'brand new business'
+    it('creates foreign dependency', async () => {
+      const user = new User().set({ id: 1 });
+      const company = await user.company
+        .foreignKey('custom_company_key')
+        .create({ name: 'Brand New Business' })
+        .fetch();
+
+      expectNewCompany(company);
+      expect(user.custom_company_key).toEqual(company.id);
+      expect(user.company.data).toBe(company);
+    });
+  });
+
+  describe('with custom identifier', () => {
+    it('sets url properly creating foreign dependency', async () => {
+      const user = new CustomUser().set({ slug: 'doe' });
+      expect(user.company.create({}).path).toEqual('users/doe/companies');
     });
   });
 });

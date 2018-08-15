@@ -4,7 +4,7 @@ import casex from 'casex';
 import pluralize from 'pluralize';
 
 import Api, { api } from './Api';
-import Relationship, { type RelationshipOptions } from './Relationship';
+import Relationship from './Relationship';
 
 import HasMany from './Relationships/HasMany';
 import BelongsTo from './Relationships/BelongsTo';
@@ -170,30 +170,26 @@ export default class Model {
     return this.request.method('delete').url(`${this.pluralPath}/${identifier}`);
   }
 
-  belongsTo(model: typeof Model, options: RelationshipOptions): BelongsTo<Model> {
-    return this.relationship(BelongsTo, model, options);
+  belongsTo(model: typeof Model): BelongsTo<Model> {
+    return this.relationship(BelongsTo, model);
   }
 
-  belongsToMany(model: typeof Model, options: RelationshipOptions): HasMany<Model> {
-    return this.hasMany(model, options);
+  belongsToMany(model: typeof Model): HasMany<Model> {
+    return this.hasMany(model);
   }
 
-  hasOne<Model>(model: typeof Model, options: RelationshipOptions): HasOne<Model> {
-    return this.relationship(HasOne, model, options);
+  hasOne<Model>(model: typeof Model): HasOne<Model> {
+    return this.relationship(HasOne, model);
   }
 
-  hasMany(model: typeof Model, options: RelationshipOptions): HasMany<Model> {
-    return this.relationship(HasMany, model, options);
+  hasMany(model: typeof Model): HasMany<Model> {
+    return this.relationship(HasMany, model);
   }
 
-  relationship(
-    relationship: typeof Relationship,
-    model: typeof Model,
-    options?: Object
-  ): $Subtype<Relationship<Model>> {
+  relationship(relationship: typeof Relationship, model: typeof Model): $Subtype<Relationship<Model>> {
     // $FlowFixMe
     const cacheName = new Error().stack.match(/at (\S+)/g)[3].slice(3);
-    if (!this.relationshipCache[cacheName]) this.relationshipCache[cacheName] = new relationship(this, model, options);
+    if (!this.relationshipCache[cacheName]) this.relationshipCache[cacheName] = new relationship(this, model);
 
     return this.relationshipCache[cacheName];
   }

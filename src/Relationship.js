@@ -3,20 +3,14 @@
 import Model from './Model';
 import Request from './Request';
 
-export type RelationshipOptions = {
-  foreignKey?: string
-};
-
 export default class Relationship<T: any> extends Request<T> {
   _data: ?T;
 
   instance: Model;
-  options: RelationshipOptions;
 
-  constructor(instance: Model, foreignModel: typeof Model, options?: RelationshipOptions = {}) {
+  constructor(instance: Model, foreignModel: typeof Model) {
     super();
     this.instance = instance;
-    this.options = options;
 
     this.target(foreignModel).unboundTransform(this.transformModel);
   }
@@ -38,7 +32,7 @@ export default class Relationship<T: any> extends Request<T> {
 
   get data(): T {
     const data = this._data;
-    if (!data) throw new Error(`[premiere] "data" unavailable for ${this.originModel.name}`);
+    if (!data) throw new Error(`[premiere] "data" unavailable for ${this.model.name}`);
     if (!this.checkDataValidity(data)) throw new Error('[premiere] invalid data');
 
     return data;
@@ -48,20 +42,25 @@ export default class Relationship<T: any> extends Request<T> {
     this._data = data;
   }
 
-  get foreignKey(): string {
-    return this.options.foreignKey || this.defaultForeignKey;
+  foreignKey(foreignKey: string): this {
+    this.props.foreignKey = foreignKey;
+    return this;
   }
 
-  get defaultForeignKey(): string {
+  get foreignKeyName(): string {
+    return this.props.foreignKey || this.defaultForeignKeyName;
+  }
+
+  get defaultForeignKeyName(): string {
     return this.throwNotImplemented('defaultForeignKey');
   }
 
   get foreignKeyValue(): any {
     // $FlowFixMe
-    return this.instance[this.foreignKey];
+    return this.instance[this.foreignKeyName];
   }
 
-  get originModel(): typeof Model {
+  get model(): typeof Model {
     return this.instance.constructor;
   }
 
@@ -72,7 +71,7 @@ export default class Relationship<T: any> extends Request<T> {
 
   throwUndefinedProperty(property: string): any {
     const name = this.constructor.name;
-    const modelName = this.originModel.name;
+    const modelName = this.model.name;
     throw new Error(`[premiere] Undefined property "${property}" in ${name} relationship for ${modelName}`);
   }
 }

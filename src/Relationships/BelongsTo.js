@@ -9,12 +9,12 @@ export default class BelongsTo<T> extends Relationship<T> {
     return this.foreignModel.find(this.foreignKeyValue).props.url;
   }
 
-  get defaultForeignKey() {
+  get defaultForeignKeyName() {
     return this.foreignModel.foreignKey;
   }
 
   get nestedUrl(): string {
-    return `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
+    return `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
   }
 
   create(data: Object): Request<T> {
@@ -23,7 +23,7 @@ export default class BelongsTo<T> extends Relationship<T> {
       .url(this.nestedUrl)
       .after(foreignInstance => {
         // $FlowFixMe
-        this.instance[this.foreignKey] = foreignInstance.primaryKey;
+        this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
         this.data = foreignInstance;
       });
   }
@@ -34,7 +34,7 @@ export default class BelongsTo<T> extends Relationship<T> {
       .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
       .after(foreignInstance => {
         // $FlowFixMe
-        this.instance[this.foreignKey] = foreignInstance.primaryKey;
+        this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
         this.data = foreignInstance;
       });
   }
@@ -45,7 +45,7 @@ export default class BelongsTo<T> extends Relationship<T> {
       .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
       .after(foreignInstance => {
         // $FlowFixMe
-        this.instance[this.foreignKey] = null;
+        this.instance[this.foreignKeyName] = null;
         delete this.data;
       });
   }

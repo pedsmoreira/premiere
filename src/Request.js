@@ -17,7 +17,8 @@ type RequestProps<T> = {
   skipCache?: boolean,
   before?: any => any,
   transform?: any => T,
-  after?: (T, ?any) => any
+  after?: (T, ?any) => any,
+  [string]: any
 };
 
 export default class Request<T> {

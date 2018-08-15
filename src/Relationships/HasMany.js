@@ -1,11 +1,11 @@
 // @flow
 
-import Relationship from '../Relationship';
 import Model from '../Model';
+import Has from './Has';
 
-export default class HasMany<T> extends Relationship<T[]> {
-  setup() {
-    this.url(`${this.originModel.basename}/${this.instance.identifier}/${this.foreignModel.basename}`);
+export default class HasMany<T> extends Has<T[]> {
+  get defaultUrl() {
+    return `${this.model.pluralPath}/${this.foreignKeyValue}/${this.foreignModel.pluralPath}`;
   }
 
   // async create(data: Object): Promise<T> {
