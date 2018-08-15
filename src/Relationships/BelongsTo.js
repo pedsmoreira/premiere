@@ -6,9 +6,11 @@ import Request from '../Request';
 
 export default class BelongsTo<T> extends Relationship<T> {
   get defaultUrl() {
-    return this.props.nested
-      ? `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.singularPath}`
-      : this.foreignModel.find(this.foreignKeyValue).props.url;
+    return this.props.nested ? this.nestedUrl : this.foreignModel.find(this.foreignKeyValue).props.url;
+  }
+
+  get nestedUrl(): string {
+    return `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.singularPath}`;
   }
 
   get defaultForeignKeyName() {
@@ -20,40 +22,43 @@ export default class BelongsTo<T> extends Relationship<T> {
     return this;
   }
 
-  get nestedUrl(): string {
-    return `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.singularPath}`;
+  get nestedUpdateUrl(): string {
+    return this.nestedUpdateUrl;
   }
 
   create(data: Object): Request<T> {
-    return this.foreignModel
-      .create(data)
-      .url(this.nestedUrl)
-      .after(foreignInstance => {
-        // $FlowFixMe
-        this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
-        this.data = foreignInstance;
-      });
+    const request = this.foreignModel.create(data).after(foreignInstance => {
+      // $FlowFixMe
+      this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
+      this.data = foreignInstance;
+    });
+
+    if (this.props.nested) {
+      request.url(this.nestedUrl).body(Object.assign({}, { [this.model.foreignKey]: this.instance.primaryKey }, data));
+    }
+
+    return request;
   }
 
   update(data: Object): Request<T> {
-    return this.foreignModel
-      .update(this.foreignKeyValue, data)
-      .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
-      .after(foreignInstance => {
-        // $FlowFixMe
-        this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
-        this.data = foreignInstance;
-      });
+    const request = this.foreignModel.update(this.foreignKeyValue, data).after(foreignInstance => {
+      // $FlowFixMe
+      this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
+      this.data = foreignInstance;
+    });
+
+    if (this.props.nested) request.url(this.nestedUpdateUrl);
+    return request;
   }
 
   destroy(): Request<T> {
-    return this.foreignModel
-      .destroy(this.foreignKeyValue)
-      .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
-      .after(foreignInstance => {
-        // $FlowFixMe
-        this.instance[this.foreignKeyName] = null;
-        delete this.data;
-      });
+    const request = this.foreignModel.destroy(this.foreignKeyValue).after(foreignInstance => {
+      // $FlowFixMe
+      this.instance[this.foreignKeyName] = null;
+      delete this.data;
+    });
+
+    if (this.props.nested) request.url(this.nestedUpdateUrl);
+    return request;
   }
 }

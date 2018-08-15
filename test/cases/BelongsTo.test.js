@@ -24,9 +24,7 @@ describe('Find', () => {
 
   const axiosAdapter = new MockAdapter(Company.api.http);
   axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
-  axiosAdapter
-    .onPost('users/1/company', { name: 'Brand New Business' })
-    .reply(200, { id: 11, name: 'Brand New Business' });
+  axiosAdapter.onPost('companies', { name: 'Brand New Business' }).reply(200, { id: 11, name: 'Brand New Business' });
 
   function expectExistingCompany(company) {
     expect(company).toBeInstanceOf(Company);
@@ -85,17 +83,17 @@ describe('Find', () => {
     });
   });
 
-  describe('with nested flagged as true', () => {
+  describe('nested', () => {
     it('builds model fetch url properly', () => {
       const user = new User().set({ id: 1 });
       expect(user.company.nested().path).toEqual('users/1/company');
     });
-  });
 
-  describe('with custom identifier', () => {
-    it('sets url properly for creating foreign dependency', () => {
-      const user = new CustomUser().set({ slug: 'doe' });
-      expect(user.company.create({}).path).toEqual('users/doe/company');
+    describe('with custom identifier', () => {
+      it('sets url properly for creating foreign dependency', () => {
+        const user = new CustomUser().set({ slug: 'doe' });
+        expect(user.company.nested().create({}).path).toEqual('users/doe/company');
+      });
     });
   });
 });
