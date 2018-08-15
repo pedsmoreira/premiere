@@ -21,9 +21,7 @@ describe('Find', () => {
 
   const axiosAdapter = new MockAdapter(Company.api.http);
   axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
-  axiosAdapter
-    .onPost('companies', { name: 'Brand New Business', user_id: 1 })
-    .reply(200, { id: 11, name: 'Brand New Business' });
+  axiosAdapter.onPost('companies', { name: 'Brand New Business' }).reply(200, { id: 11, name: 'Brand New Business' });
   axiosAdapter
     .onPut('companies/10', { name: 'Updated Business Name' })
     .reply(200, { id: 10, name: 'Updated Business Name' });
@@ -115,7 +113,14 @@ describe('Find', () => {
       expect(request.props.body).toEqual({ name: 'Name' });
     });
 
-    it('build model update url properly', () => {
+    it('builds model update url properly', () => {
+      const user = new User().set({ slug: 'doe', company_id: 10 });
+      const request = user.company.nested().update({ name: 'Name' });
+      expect(request.path).toEqual('users/doe/company/10');
+      expect(request.props.body).toEqual({ name: 'Name' });
+    });
+
+    it('builds model destroy url properly', () => {
       const user = new User().set({ slug: 'doe', company_id: 10 });
       const request = user.company.nested().update({ name: 'Name' });
       expect(request.path).toEqual('users/doe/company/10');

@@ -33,12 +33,7 @@ export default class BelongsTo<T> extends Relationship<T> {
       this.data = foreignInstance;
     });
 
-    if (this.props.nested) {
-      request.url(this.nestedUrl);
-    } else {
-      request.body(Object.assign({}, { [this.model.foreignKey]: this.instance.primaryKey }, data));
-    }
-
+    if (this.props.nested) request.url(this.nestedUrl);
     return request;
   }
 
