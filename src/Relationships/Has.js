@@ -5,7 +5,7 @@ import BelongsTo from './BelongsTo';
 
 export default class Has<T> extends Relationship<T> {
   get model() {
-    const { through } = this;
+    const { through } = this.props;
     return through ? through.foreignModel : super.model;
   }
 
@@ -14,7 +14,7 @@ export default class Has<T> extends Relationship<T> {
   }
 
   get defaultForeignKeyName() {
-    const { through } = this;
-    return through ? through.foreignModel.foreignKey : this.instance.constructor.identifier;
+    const { through } = this.props;
+    return through ? through.foreignKeyName : this.model.identifier;
   }
 }

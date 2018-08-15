@@ -6,15 +6,22 @@ import Request from '../Request';
 
 export default class BelongsTo<T> extends Relationship<T> {
   get defaultUrl() {
-    return this.foreignModel.find(this.foreignKeyValue).props.url;
+    return this.props.nested
+      ? `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.singularPath}`
+      : this.foreignModel.find(this.foreignKeyValue).props.url;
   }
 
   get defaultForeignKeyName() {
     return this.foreignModel.foreignKey;
   }
 
+  nested(): this {
+    this.props.nested = true;
+    return this;
+  }
+
   get nestedUrl(): string {
-    return `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
+    return `${this.model.pluralPath}/${this.instance.identifier}/${this.foreignModel.singularPath}`;
   }
 
   create(data: Object): Request<T> {
