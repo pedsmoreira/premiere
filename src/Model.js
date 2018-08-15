@@ -123,7 +123,7 @@ export default class Model {
     return this.request.url(this.pluralPath).transform(this.makeArray);
   }
 
-  create(data?: Object): Promise<this> {
+  create(data?: Object): Request<self> {
     return this.constructor.create(data || this.persistenceObject);
   }
 
@@ -135,7 +135,7 @@ export default class Model {
       .url(this.pluralPath);
   }
 
-  update(data?: Object): Promise<this> {
+  update(data?: Object): Request<self> {
     if (data) {
       this.set(data);
     } else {
@@ -145,26 +145,29 @@ export default class Model {
     return this.constructor.update(this.identifier, data);
   }
 
-  static async update(identifier: any, data: Object): Promise<this> {
-    const response = await this.api.http.post(`${this.basename}/${identifier}`);
-    return this.make(response.data);
+  static update(identifier: any, data: Object): Request<self> {
+    return this.request
+      .transform(this.make)
+      .method('put')
+      .body(data)
+      .url(`${this.pluralPath}/${identifier}`);
   }
 
-  save(data?: Object): Promise<this> {
+  save(data?: Object): Request<self> {
     return this.constructor.save(data || this.persistenceObject);
   }
 
-  static save(data: Object): Promise<this> {
+  static save(data: Object): Request<self> {
     const key = data[this.primaryKey];
     return key ? this.update(key, data) : this.create(data);
   }
 
-  destroy(): Promise<void> {
+  destroy(): Request<self> {
     return this.constructor.destroy(this.identifier);
   }
 
-  static async destroy(identifier: any): Promise<void> {
-    await this.api.http.destroy(`${this.basename}/${identifier}`);
+  static destroy(identifier: any): Request<self> {
+    return this.request.method('delete').url(`${this.pluralPath}/${identifier}`);
   }
 
   belongsTo(model: typeof Model, options: RelationshipOptions): BelongsTo<Model> {

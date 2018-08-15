@@ -13,42 +13,40 @@ export default class BelongsTo<T> extends Relationship<T> {
     return this.foreignModel.foreignKey;
   }
 
+  get nestedUrl(): string {
+    return `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
+  }
+
   create(data: Object): Request<T> {
-    // const path = `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
-    // const response = await this.foreignModel.api.http.post(path, data);
-    // const foreignInstance: any = this.foreignModel.make(response.data);
-
-    // this.data = foreignInstance;
-    // return foreignInstance;
-
-    const url = `${this.originModel.pluralPath}/${this.instance.identifier}/${this.foreignModel.pluralPath}`;
-
-    const request = this.foreignModel
+    return this.foreignModel
       .create(data)
-      .url(url)
-      .after((foreignInstance: T) => {
+      .url(this.nestedUrl)
+      .after(foreignInstance => {
         // $FlowFixMe
         this.instance[this.foreignKey] = foreignInstance.primaryKey;
         this.data = foreignInstance;
       });
-
-    // $FlowFixMe
-    return request;
   }
 
-  async update(data: Object): Promise<T> {
-    const foreignInstance = await this.stub.update(data);
-    // $FlowFixMe
-    this.data = foreignInstance;
-
-    return this.data;
+  update(data: Object): Request<T> {
+    return this.foreignModel
+      .update(this.foreignKeyValue, data)
+      .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
+      .after(foreignInstance => {
+        // $FlowFixMe
+        this.instance[this.foreignKey] = foreignInstance.primaryKey;
+        this.data = foreignInstance;
+      });
   }
 
-  async destroy(): Promise<void> {
-    await this.stub.destroy();
-
-    // $FlowFixMe
-    this.instance[this.foreignKey] = null;
-    delete this.data;
+  destroy(): Request<T> {
+    return this.foreignModel
+      .destroy(this.foreignKeyValue)
+      .url(`${this.nestedUrl}/${this.foreignKeyValue}`)
+      .after(foreignInstance => {
+        // $FlowFixMe
+        this.instance[this.foreignKey] = null;
+        delete this.data;
+      });
   }
 }
