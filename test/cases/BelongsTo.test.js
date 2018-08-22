@@ -22,7 +22,7 @@ describe('Find', () => {
   const axiosAdapter = new MockAdapter(Company.api.http);
   axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
   axiosAdapter
-    .onPost('users/1/companies', { name: 'Brand New Business' })
+    .onPost('users/1/company', { name: 'Brand New Business' })
     .reply(200, { id: 11, name: 'Brand New Business' });
   axiosAdapter
     .onPut('companies/10', { name: 'Updated Business Name' })
@@ -54,16 +54,16 @@ describe('Find', () => {
 
   describe('with the default foreignKey', () => {
     it('fetches model', async () => {
-      const user = new User().set({ company_id: 10, role_id: 20 });
-      const company = await user.company.fetch();
+      const user = User.new({ company_id: 10, role_id: 20 });
+      const company = await user.company;
 
       expectExistingCompany(company);
       expect(() => user.company.data).toThrowError();
     });
 
-    it.only('creates foreign dependency', async () => {
-      const user = new User().set({ id: 1 });
-      const company = await user.company.create({ name: 'Brand New Business' }).fetch();
+    it('creates foreign dependency', async () => {
+      const user = User.new({ id: 1 });
+      const company = await user.company.create({ name: 'Brand New Business' });
 
       expectNewCompany(company);
       expect(user.company_id).toEqual(company.id);
@@ -71,8 +71,8 @@ describe('Find', () => {
     });
 
     it('updates foreign dependency', async () => {
-      const user = new User().set({ company_id: 10 });
-      const company = await user.company.update({ name: 'Updated Business Name' }).fetch();
+      const user = User.new({ company_id: 10 });
+      const company = await user.company.update({ name: 'Updated Business Name' });
 
       expectUpdatedCompany(company);
       expect(user.company_id).toEqual(company.id);
@@ -82,19 +82,16 @@ describe('Find', () => {
 
   describe('with a custom foreignKey', () => {
     it('fetches model', async () => {
-      const user = new User().set({ custom_company_key: 10 });
-      const company = await user.company.foreignKey('custom_company_key').fetch();
+      const user = User.new({ custom_company_key: 10 });
+      const company = await user.company.foreignKey('custom_company_key');
 
       expectExistingCompany(company);
       expect(() => user.company.data).toThrowError();
     });
 
     it('creates foreign dependency', async () => {
-      const user = new User().set({ id: 1 });
-      const company = await user.company
-        .foreignKey('custom_company_key')
-        .create({ name: 'Brand New Business' })
-        .fetch();
+      const user = User.new({ id: 1 });
+      const company = await user.company.foreignKey('custom_company_key').create({ name: 'Brand New Business' });
 
       expectNewCompany(company);
       expect(user.custom_company_key).toEqual(company.id);

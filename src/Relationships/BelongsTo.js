@@ -16,7 +16,7 @@ export default class BelongsTo<T> extends Relationship<T> {
   create(data: Object): Request<T> {
     return this.foreignModel
       .create(data)
-      .url(`${this.model.pluralPath}/${this.foreignModel.singularPath}`)
+      .url(`${this.model.pluralPath}/${this.instance.primaryKey}/${this.foreignModel.singularPath}`)
       .after(request => {
         const foreignInstance = request.transformedData;
 
@@ -27,7 +27,7 @@ export default class BelongsTo<T> extends Relationship<T> {
   }
 
   update(data: Object): Request<T> {
-    return this.foreignModel.update(this.foreignKeyValue, data).after(request => {
+    return this.foreignModel.update(data, this.foreignKeyValue).after(request => {
       const foreignInstance = request.transformedData;
 
       // $FlowFixMe

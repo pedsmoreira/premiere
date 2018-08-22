@@ -12,7 +12,7 @@ export default class Relationship<T: any> extends Request<T> {
     super();
     this.instance = instance;
 
-    this.target(foreignModel).unboundTransform(this.transformModel);
+    this.target(foreignModel).transform(this.transformModel);
   }
 
   transformModel = (rawData: any): T => {

@@ -130,7 +130,7 @@ export default class Model {
     return new Request().target(this);
   }
 
-  static new(data: Object): self {
+  static new(data: Object = {}): self {
     return new this().set(data);
   }
 
@@ -144,35 +144,35 @@ export default class Model {
   }
 
   static find(key: any): Request<self> {
-    return this.request.url(`${this.pluralPath}/${key}`).transform(this.new);
+    return this.request.url(`${this.pluralPath}/${key}`).transform(this.new.bind(this));
   }
 
   static get all(): Request<self[]> {
     // $FlowFixMe
-    return this.request.url(this.pluralPath).transform(this.newArray);
+    return this.request.url(this.pluralPath).transform(this.newArray.bind(this));
   }
 
-  create(): Request<self> {
+  create(data?: Object): Request<self> {
     if (this.hasPrimaryKey)
       throw new Error(`[premiere] Attempting to create a ${this.constructor.name} instance that already has a key.`);
 
     return this.constructor.request
-      .transform(this.set)
+      .transform(this.set.bind(this))
       .method('post')
-      .body(this.persistenceObject)
+      .body(data || this.persistenceObject)
       .url(this.constructor.pluralPath);
   }
 
   static create(data: Object): Request<self> {
-    return this.new(data).create();
+    return this.new().create(data);
   }
 
-  update(): Request<self> {
+  update(data?: Object, identifier?: any): Request<self> {
     return this.constructor.request
-      .transform(this.set)
+      .transform(this.set.bind(this))
       .method('put')
-      .body(this.persistenceObject)
-      .url(`${this.constructor.pluralPath}/${this.primaryKey}`);
+      .body(data || this.persistenceObject)
+      .url(`${this.constructor.pluralPath}/${identifier || this.primaryKey}`);
   }
 
   updateChanges(): Request<self> {
@@ -180,8 +180,7 @@ export default class Model {
   }
 
   static update(data: Object, identifier?: any): Request<self> {
-    if (identifier) data[this.primaryKey] = identifier;
-    return this.new(data).update(data);
+    return this.new().update(data, identifier);
   }
 
   save(): Request<self> {

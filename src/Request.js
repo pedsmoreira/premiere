@@ -102,13 +102,9 @@ export default class Request<T> {
     return this;
   }
 
-  unboundTransform(transform: any => T): this {
+  transform(transform: any => T): this {
     this.props.transform = transform;
     return this;
-  }
-
-  transform(transform: any => T): this {
-    return this.unboundTransform(transform.bind(this.props.target));
   }
 
   after(after: (Request<*>) => any): this {
@@ -139,7 +135,7 @@ export default class Request<T> {
     return !!target && !skipCache;
   }
 
-  then(resolve: Function, reject: Function) {
+  then(resolve: T => any, reject: any => any) {
     return this.fetch().then(resolve, reject);
   }
 }
