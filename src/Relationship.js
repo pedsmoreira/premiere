@@ -12,14 +12,14 @@ export default class Relationship<T: any> extends Request<T> {
     super();
     this.instance = instance;
 
-    this.target(foreignModel).transform(this.transformModel);
+    this.target(foreignModel).transform(this.transformModel.bind(this));
   }
 
-  transformModel = (rawData: any): T => {
+  transformModel(rawData: any): T {
     const model = this.foreignModel;
     // $FlowFixMe
-    return Array.isArray(rawData) ? model.newArray(rawData) : model.new(rawData);
-  };
+    return (this.data = Array.isArray(rawData) ? model.newArray(rawData) : model.new(rawData));
+  }
 
   get foreignModel(): typeof Model {
     // $FlowFixMe
@@ -27,20 +27,24 @@ export default class Relationship<T: any> extends Request<T> {
   }
 
   validateData(data: T): boolean {
-    return this.hasData;
+    return true;
   }
 
   get hasData(): boolean {
     return !!this._data;
   }
 
+  get hasValidData(): boolean {
+    // $FlowFixMe
+    return this.hasData && this.validateData(this._data);
+  }
+
   get data(): T {
-    if (!this.hasData) throw new Error(`[premiere] "data" unavailable for ${this.model.name}`);
+    if (!this.hasData) throw new Error(`[premiere] "data" unavailable for ${(this.props.target || {}).name}`);
+    if (!this.hasValidData) throw new Error('[premiere] invalid data');
 
-    const data: any = this._data;
-    if (!this.validateData(data)) throw new Error('[premiere] invalid data');
-
-    return data;
+    // $FlowFixMe
+    return this._data;
   }
 
   set data(data: T) {

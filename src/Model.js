@@ -121,6 +121,10 @@ export default class Model {
     return this;
   }
 
+  restore(): this {
+    return this.set(this._original || {});
+  }
+
   get duplicate(): this {
     // $FlowFixMe
     return Object.assign(new this.constructor(), this).unset(this.constructor.primaryKey);

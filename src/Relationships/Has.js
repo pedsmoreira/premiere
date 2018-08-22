@@ -15,6 +15,6 @@ export default class Has<T> extends Relationship<T> {
 
   get defaultForeignKeyName() {
     const { through } = this.props;
-    return through ? through.foreignKeyName : this.model.identifier;
+    return through ? through.foreignKeyName : this.model.primaryKey;
   }
 }

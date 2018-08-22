@@ -19,7 +19,7 @@ describe('HasMany', () => {
   }
 
   class CustomUser extends User {
-    static identifier = 'slug';
+    static primaryKey = 'slug';
   }
 
   const axiosAdapter = new MockAdapter(Company.api.http);
@@ -34,34 +34,42 @@ describe('HasMany', () => {
     expect(companies).toEqual([{ id: 9, name: 'business a' }, { id: 10, name: 'business b' }]);
   }
 
+  describe('without skipCache', () => {
+    it('caches model', async () => {
+      const user = User.new({ id: 1 });
+      expect(await user.companies).toBe(await user.companies);
+    });
+  });
+
+  describe('with skipCache', () => {
+    it('does not caches model', async () => {
+      const user = User.new({ id: 1 });
+      expect(await user.companies.skipCache()).not.toBe(await user.companies);
+    });
+  });
+
   describe('with the default foreignKey', () => {
     it('fetches models', async () => {
-      const user = new User().set({ id: 1 });
-      const companies = await user.companies;
-
-      expectExistingCompanies(companies);
-      expect(() => user.companies.data).toThrowError();
+      const user = User.new({ id: 1 });
+      expectExistingCompanies(await user.companies);
     });
   });
 
   describe('with a custom foreignKey', () => {
     it('fetches models', async () => {
-      const user = new User().set({ id: 1 });
-      const companies = await user.companies;
-
-      expectExistingCompanies(companies);
-      expect(() => user.companies.data).toThrowError();
+      const user = User.new({ id: 1 });
+      expectExistingCompanies(await user.companies);
     });
   });
 
-  describe('with a custom identifier', () => {
+  describe('with a custom primaryKey', () => {
     it('builds path properly', () => {
-      const user = new CustomUser().set({ slug: 'doe' });
+      const user = CustomUser.new({ slug: 'doe' });
       expect(user.companies.path).toEqual('users/doe/companies');
     });
 
     it('builds create path properly', () => {
-      const user = new CustomUser().set({ slug: 'doe' });
+      const user = CustomUser.new({ slug: 'doe' });
       expect(user.companies.create({}).path).toEqual('users/doe/companies');
     });
   });

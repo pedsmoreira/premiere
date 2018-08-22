@@ -52,13 +52,27 @@ describe('Find', () => {
     });
   }
 
+  describe('without skipCache', () => {
+    it('caches model', async () => {
+      const user = User.new({ company_id: 10 });
+      expect(await user.company).toBe(await user.company);
+    });
+  });
+
+  describe('with skipCache', () => {
+    it('does not caches model', async () => {
+      const user = User.new({ company_id: 10 });
+      expect(await user.company.skipCache()).not.toBe(await user.company);
+    });
+  });
+
   describe('with the default foreignKey', () => {
     it('fetches model', async () => {
-      const user = User.new({ company_id: 10, role_id: 20 });
+      const user = User.new({ company_id: 10 });
       const company = await user.company;
 
       expectExistingCompany(company);
-      expect(() => user.company.data).toThrowError();
+      expect(user.company.data).toBe(company);
     });
 
     it('creates foreign dependency', async () => {
