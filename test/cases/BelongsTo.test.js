@@ -12,7 +12,6 @@ describe('Find', () => {
 
   class User extends Model {
     static basename = 'user';
-    static identifier = 'slug';
 
     get company() {
       return this.belongsTo(Company);

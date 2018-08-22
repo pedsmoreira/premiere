@@ -13,7 +13,7 @@ import Request from './Request';
 
 export default class Model {
   static primaryKey: string = 'id';
-  static identifier: string = 'id';
+  static friendlyKey: string = 'slug';
   static basename: string = '';
 
   _original: ?Object;
@@ -46,9 +46,9 @@ export default class Model {
     return this[this.constructor.primaryKey];
   }
 
-  get identifier(): any {
+  get friendlyKey(): any {
     // $FlowFixMe
-    return this[this.constructor.identifier];
+    return this[this.constructor.friendlyKey];
   }
 
   static get api(): Api {
@@ -171,20 +171,20 @@ export default class Model {
     return this.new().create(data);
   }
 
-  update(data?: Object, identifier?: any): Request<self> {
+  update(data?: Object, key?: any): Request<self> {
     return this.constructor.request
       .transform(this.set.bind(this))
       .method('put')
       .body(data || this.persistenceObject)
-      .url(`${this.constructor.pluralPath}/${identifier || this.primaryKey}`);
+      .url(`${this.constructor.pluralPath}/${key || this.primaryKey}`);
   }
 
   updateChanges(): Request<self> {
     return this.update().body(this.changePersistenceObject);
   }
 
-  static update(data: Object, identifier?: any): Request<self> {
-    return this.new().update(data, identifier);
+  static update(data: Object, key?: any): Request<self> {
+    return this.new().update(data, key);
   }
 
   save(): Request<self> {
@@ -196,11 +196,11 @@ export default class Model {
   }
 
   destroy(): Request<self> {
-    return this.constructor.destroy(this.identifier);
+    return this.constructor.destroy(this.primaryKey);
   }
 
-  static destroy(identifier: any): Request<self> {
-    return this.request.method('delete').url(`${this.pluralPath}/${identifier}`);
+  static destroy(key: any): Request<self> {
+    return this.request.method('delete').url(`${this.pluralPath}/${key}`);
   }
 
   belongsTo(model: typeof Model): BelongsTo<Model> {

@@ -17,6 +17,7 @@ export default class Relationship<T: any> extends Request<T> {
 
   transformModel(rawData: any): T {
     const model = this.foreignModel;
+
     // $FlowFixMe
     return (this.data = Array.isArray(rawData) ? model.newArray(rawData) : model.new(rawData));
   }
