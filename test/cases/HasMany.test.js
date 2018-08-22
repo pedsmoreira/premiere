@@ -37,7 +37,7 @@ describe('HasMany', () => {
   describe('with the default foreignKey', () => {
     it('fetches models', async () => {
       const user = new User().set({ id: 1 });
-      const companies = await user.companies.fetch();
+      const companies = await user.companies;
 
       expectExistingCompanies(companies);
       expect(() => user.companies.data).toThrowError();
@@ -47,7 +47,7 @@ describe('HasMany', () => {
   describe('with a custom foreignKey', () => {
     it('fetches models', async () => {
       const user = new User().set({ id: 1 });
-      const companies = await user.companies.fetch();
+      const companies = await user.companies;
 
       expectExistingCompanies(companies);
       expect(() => user.companies.data).toThrowError();
