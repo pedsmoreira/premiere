@@ -17,14 +17,14 @@ type RequestProps<T> = {
   target?: any,
   query?: string,
   skipCache?: boolean,
-  cacheModel?: boolean,
   before?: any => any,
   transform?: any => T,
-  after: ((T, ?any) => any)[],
+  after: ((Request<*>) => any)[],
   [string]: any
 };
 
 export default class Request<T> {
+  _rawData: ?Object;
   httpRequestCache: ?Promise<*>;
 
   props: RequestProps<T> = {
@@ -35,6 +35,21 @@ export default class Request<T> {
   };
 
   static cache: RequestCache = new RequestCache();
+
+  get rawData(): any {
+    if (!this._rawData) throw new Error(`[premiere] Attempting to get null rawData.`);
+    return this._rawData;
+  }
+
+  get transformedData(): T {
+    const { before, transform } = this.props;
+    let data = this.rawData;
+
+    if (before) data = before(data);
+    if (transform) data = transform(data);
+
+    return data;
+  }
 
   get cache(): ModelCache {
     const { target } = this.props;
@@ -96,23 +111,21 @@ export default class Request<T> {
     return this.unboundTransform(transform.bind(this.props.target));
   }
 
-  after(after: (T, ?any) => any): this {
+  after(after: (Request<*>) => any): this {
     this.props.after.push(after);
+    if (this._rawData) after(this);
+
     return this;
   }
 
   async fetch(): Promise<T> {
-    const { before, transform, after, cacheModel } = this.props;
+    const { before, transform, after } = this.props;
 
-    const request = this.shouldCache ? this.cache.put(this, { model: !!cacheModel }) : this;
-    const response = await request.httpRequest;
+    const request = this.shouldCache ? this.cache.put(this) : this;
+    this._rawData = (await request.httpRequest).data;
 
-    let transformedData = response.data;
-    if (before) transformedData = before(transformedData);
-    if (transform) transformedData = transform(transformedData);
-    this.props.after.forEach(fn => fn(transformedData, response.data));
-
-    return transformedData;
+    this.props.after.forEach(fn => fn(this));
+    return this.transformedData;
   }
 
   get httpRequest(): Promise<*> {
@@ -126,8 +139,7 @@ export default class Request<T> {
     return !!target && !skipCache;
   }
 
-  cacheModel(): this {
-    this.props.cacheModel = true;
-    return this;
+  then(resolve: Function, reject: Function) {
+    return this.fetch().then(resolve, reject);
   }
 }

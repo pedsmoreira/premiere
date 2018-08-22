@@ -21,7 +21,9 @@ describe('Find', () => {
 
   const axiosAdapter = new MockAdapter(Company.api.http);
   axiosAdapter.onGet('companies/10').reply(200, { id: 10, name: 'Business A' });
-  axiosAdapter.onPost('companies', { name: 'Brand New Business' }).reply(200, { id: 11, name: 'Brand New Business' });
+  axiosAdapter
+    .onPost('users/1/companies', { name: 'Brand New Business' })
+    .reply(200, { id: 11, name: 'Brand New Business' });
   axiosAdapter
     .onPut('companies/10', { name: 'Updated Business Name' })
     .reply(200, { id: 10, name: 'Updated Business Name' });
@@ -59,7 +61,7 @@ describe('Find', () => {
       expect(() => user.company.data).toThrowError();
     });
 
-    it('creates foreign dependency', async () => {
+    it.only('creates foreign dependency', async () => {
       const user = new User().set({ id: 1 });
       const company = await user.company.create({ name: 'Brand New Business' }).fetch();
 

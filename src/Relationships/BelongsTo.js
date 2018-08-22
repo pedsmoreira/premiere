@@ -14,15 +14,22 @@ export default class BelongsTo<T> extends Relationship<T> {
   }
 
   create(data: Object): Request<T> {
-    return this.foreignModel.create(data).after(foreignInstance => {
-      // $FlowFixMe
-      this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
-      this.data = foreignInstance;
-    });
+    return this.foreignModel
+      .create(data)
+      .url(`${this.model.pluralPath}/${this.foreignModel.singularPath}`)
+      .after(request => {
+        const foreignInstance = request.transformedData;
+
+        // $FlowFixMe
+        this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
+        this.data = foreignInstance;
+      });
   }
 
   update(data: Object): Request<T> {
-    return this.foreignModel.update(this.foreignKeyValue, data).after(foreignInstance => {
+    return this.foreignModel.update(this.foreignKeyValue, data).after(request => {
+      const foreignInstance = request.transformedData;
+
       // $FlowFixMe
       this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
       this.data = foreignInstance;

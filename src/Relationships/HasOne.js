@@ -14,11 +14,11 @@ export default class HasOne<T> extends Has<T> {
     return this.foreignModel
       .create(data)
       .url(this.defaultUrl)
-      .after(foreignInstance => (this.data = foreignInstance));
+      .after(request => (this.data = request.transformedData));
   }
 
   update(data: Object): Request<T> {
-    return this.foreignModel.update(this.foreignKeyValue, data).after(foreignInstance => (this.data = foreignInstance));
+    return this.foreignModel.update(this.foreignKeyValue, data).after(request => (this.data = request.transformedData));
   }
 
   destroy(): Request<T> {

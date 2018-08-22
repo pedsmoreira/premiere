@@ -51,10 +51,6 @@ export default class Model {
     return this[this.constructor.identifier];
   }
 
-  static new(data: Object): self {
-    return new this.constructor().set(data);
-  }
-
   static get api(): Api {
     return api;
   }
@@ -134,12 +130,12 @@ export default class Model {
     return new Request().target(this);
   }
 
-  static make(data: Object): this {
+  static new(data: Object): self {
     return new this().set(data);
   }
 
-  static makeArray(dataArray: Object[]): self[] {
-    return dataArray.map(data => this.make(data));
+  static newArray(dataArray: Object[]): self[] {
+    return dataArray.map(data => this.new(data));
   }
 
   async reload(): Promise<void> {
@@ -148,12 +144,12 @@ export default class Model {
   }
 
   static find(key: any): Request<self> {
-    return this.request.url(`${this.pluralPath}/${key}`).transform(this.make);
+    return this.request.url(`${this.pluralPath}/${key}`).transform(this.new);
   }
 
   static get all(): Request<self[]> {
     // $FlowFixMe
-    return this.request.url(this.pluralPath).transform(this.makeArray);
+    return this.request.url(this.pluralPath).transform(this.newArray);
   }
 
   create(): Request<self> {

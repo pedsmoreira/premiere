@@ -19,7 +19,7 @@ describe('Find', () => {
   it('finds a model', async () => {
     axiosAdapter.onGet('users/1').reply(200, { id: 1, name: 'John Doe' });
 
-    const user = await User.find(1).fetch();
+    const user = await User.find(1);
     expect(user).toBeInstanceOf(User);
 
     expect(user).toEqual({
