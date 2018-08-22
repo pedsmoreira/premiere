@@ -11,25 +11,18 @@ export default class HasOne<T> extends Has<T> {
   }
 
   create(data: Object): Request<T> {
-    return this.foreignModel.create(data).after(foreignInstance => {
-      // $FlowFixMe
-      this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
-      this.data = foreignInstance;
-    });
+    return this.foreignModel
+      .create(data)
+      .url(this.defaultUrl)
+      .after(foreignInstance => (this.data = foreignInstance));
   }
 
   update(data: Object): Request<T> {
-    return this.foreignModel.update(this.foreignKeyValue, data).after(foreignInstance => {
-      // $FlowFixMe
-      this.instance[this.foreignKeyName] = foreignInstance.primaryKey;
-      this.data = foreignInstance;
-    });
+    return this.foreignModel.update(this.foreignKeyValue, data).after(foreignInstance => (this.data = foreignInstance));
   }
 
   destroy(): Request<T> {
     return this.foreignModel.destroy(this.foreignKeyValue).after(foreignInstance => {
-      // $FlowFixMe
-      this.instance[this.foreignKeyName] = null;
       delete this.data;
     });
   }

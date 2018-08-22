@@ -4,6 +4,8 @@ import queryString from 'query-string';
 
 import Model from './Model';
 import Api, { api } from './Api';
+import ModelCache from './ModelCache';
+import RequestCache from './RequestCache';
 
 type RequestMethod = 'get' | 'post' | 'put' | 'delete';
 
@@ -15,9 +17,10 @@ type RequestProps<T> = {
   target?: any,
   query?: string,
   skipCache?: boolean,
+  cacheModel?: boolean,
   before?: any => any,
   transform?: any => T,
-  after?: (T, ?any) => any,
+  after: ((T, ?any) => any)[],
   [string]: any
 };
 
@@ -27,25 +30,17 @@ export default class Request<T> {
   props: RequestProps<T> = {
     url: '',
     method: 'get',
+    after: [],
     api
   };
 
-  static _cache: { [any]: Request<*>[] } = {};
+  static cache: RequestCache = new RequestCache();
 
-  static cached(target: any, request: Request<*>) {
-    if (request.props.method !== 'get') return request;
+  get cache(): ModelCache {
+    const { target } = this.props;
+    if (!target) throw new Error(`[premiere] Attemptin to get cache for request without cache.`);
 
-    if (!this._cache[target]) this._cache[target] = [];
-    const targetCache = this._cache[target];
-
-    const existingCache = targetCache.find(req => req.path === request.path);
-    if (!existingCache) targetCache.push(request);
-
-    return existingCache || request;
-  }
-
-  static clearCache(target: any) {
-    this._cache[target] = [];
+    return this.constructor.cache.get(target);
   }
 
   get path(): string {
@@ -102,20 +97,22 @@ export default class Request<T> {
   }
 
   after(after: (T, ?any) => any): this {
-    this.props.after = after;
+    this.props.after.push(after);
     return this;
   }
 
   async fetch(): Promise<T> {
-    const { before, transform, after } = this.props;
-    let { data: rawData } = await this.cachedTargetRequest.httpRequest;
+    const { before, transform, after, cacheModel } = this.props;
 
-    let data = rawData;
-    if (before) data = before(data);
-    if (transform) data = transform(data);
-    if (after) after(data, rawData);
+    const request = this.shouldCache ? this.cache.put(this, { model: !!cacheModel }) : this;
+    const response = await request.httpRequest;
 
-    return data;
+    let transformedData = response.data;
+    if (before) transformedData = before(transformedData);
+    if (transform) transformedData = transform(transformedData);
+    this.props.after.forEach(fn => fn(transformedData, response.data));
+
+    return transformedData;
   }
 
   get httpRequest(): Promise<*> {
@@ -124,11 +121,13 @@ export default class Request<T> {
     return this.httpRequestCache;
   }
 
-  get cachedTargetRequest(): Request<T> {
+  get shouldCache(): boolean {
     const { skipCache, target } = this.props;
-    const shouldCache = target && !skipCache;
+    return !!target && !skipCache;
+  }
 
-    // $FlowFixMe
-    return shouldCache ? this.constructor.cached(target, this) : this;
+  cacheModel(): this {
+    this.props.cacheModel = true;
+    return this;
   }
 }

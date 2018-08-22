@@ -16,11 +16,29 @@ export default class Model {
   static identifier: string = 'id';
   static basename: string = '';
 
+  _original: ?Object;
   _relationshipCache: { [string]: $Subtype<Relationship<Model>> };
+
+  original(): this {
+    this._original = this.persistenceObject;
+    return this;
+  }
+
+  get pristine(): boolean {
+    return !!this._original && JSON.stringify(this._original) === JSON.stringify(this.persistenceObject);
+  }
+
+  get changed() {
+    return !this.pristine;
+  }
 
   get relationshipCache() {
     if (!this._relationshipCache) Object.defineProperty(this, '_relationshipCache', { value: {}, enumerable: false });
     return this._relationshipCache;
+  }
+
+  get hasPrimaryKey(): boolean {
+    return !!this.primaryKey;
   }
 
   get primaryKey(): any {
@@ -68,6 +86,12 @@ export default class Model {
     return result;
   }
 
+  get changePersistenceObject(): Object {
+    if (!this._original) return this.persistenceObject;
+
+    return this.persistenceObject;
+  }
+
   transformed(prefix: string, key: string, value: any): any {
     const underscored: string = `${prefix}_${key}`;
     // $FlowFixMe
@@ -93,12 +117,17 @@ export default class Model {
     return this;
   }
 
-  duplicate(): this {
-    // $FlowFixMe
-    const newInstance: this = Object.assign(new this.constructor(), this);
-    delete this.primaryKey;
+  unset(props: string | string[]): this {
+    if (!Array.isArray(props)) props = [props];
 
-    return newInstance;
+    // $FlowFixMe
+    props.forEach(prop => delete this[prop]);
+    return this;
+  }
+
+  get duplicate(): this {
+    // $FlowFixMe
+    return Object.assign(new this.constructor(), this).unset(this.constructor.primaryKey);
   }
 
   static get request(): Request<Model> {
@@ -127,43 +156,44 @@ export default class Model {
     return this.request.url(this.pluralPath).transform(this.makeArray);
   }
 
-  create(data?: Object): Request<self> {
-    return this.constructor.create(data || this.persistenceObject);
+  create(): Request<self> {
+    if (this.hasPrimaryKey)
+      throw new Error(`[premiere] Attempting to create a ${this.constructor.name} instance that already has a key.`);
+
+    return this.constructor.request
+      .transform(this.set)
+      .method('post')
+      .body(this.persistenceObject)
+      .url(this.constructor.pluralPath);
   }
 
   static create(data: Object): Request<self> {
-    return this.request
-      .transform(this.make)
-      .method('post')
-      .body(data)
-      .url(this.pluralPath);
+    return this.new(data).create();
   }
 
-  update(data?: Object): Request<self> {
-    if (data) {
-      this.set(data);
-    } else {
-      data = this.persistenceObject;
-    }
-
-    return this.constructor.update(this.identifier, data);
-  }
-
-  static update(identifier: any, data: Object): Request<self> {
-    return this.request
-      .transform(this.make)
+  update(): Request<self> {
+    return this.constructor.request
+      .transform(this.set)
       .method('put')
-      .body(data)
-      .url(`${this.pluralPath}/${identifier}`);
+      .body(this.persistenceObject)
+      .url(`${this.constructor.pluralPath}/${this.primaryKey}`);
   }
 
-  save(data?: Object): Request<self> {
-    return this.constructor.save(data || this.persistenceObject);
+  updateChanges(): Request<self> {
+    return this.update().body(this.changePersistenceObject);
   }
 
-  static save(data: Object): Request<self> {
-    const key = data[this.primaryKey];
-    return key ? this.update(key, data) : this.create(data);
+  static update(data: Object, identifier?: any): Request<self> {
+    if (identifier) data[this.primaryKey] = identifier;
+    return this.new(data).update(data);
+  }
+
+  save(): Request<self> {
+    return this.hasPrimaryKey ? this.update() : this.create();
+  }
+
+  saveChanges(): Request<self> {
+    return this.save().body(this.changePersistenceObject);
   }
 
   destroy(): Request<self> {
