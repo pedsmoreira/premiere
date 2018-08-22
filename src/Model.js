@@ -33,6 +33,10 @@ export default class Model {
     return this[this.constructor.identifier];
   }
 
+  static new(data: Object): self {
+    return new this.constructor().set(data);
+  }
+
   static get api(): Api {
     return api;
   }

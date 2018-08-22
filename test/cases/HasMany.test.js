@@ -60,7 +60,7 @@ describe('HasMany', () => {
       expect(user.companies.path).toEqual('users/doe/companies');
     });
 
-    it.skip('builds create path properly', () => {
+    it('builds create path properly', () => {
       const user = new CustomUser().set({ slug: 'doe' });
       expect(user.companies.create({}).path).toEqual('users/doe/companies');
     });

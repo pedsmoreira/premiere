@@ -2,20 +2,21 @@
 
 import Model from '../Model';
 import Has from './Has';
+import Request from '../Request';
 
 export default class HasMany<T> extends Has<T[]> {
   get defaultUrl() {
     return `${this.model.pluralPath}/${this.foreignKeyValue}/${this.foreignModel.pluralPath}`;
   }
 
-  // async create(data: Object): Promise<T> {
-  // const foreignInstance = await this.foreignModel.create({
-  //   [this.model.foreignKey]: this.model.primaryKey,
-  //   ...data
-  // });
-  // // $FlowFixMe
-  // this.instance[this.foreignKey] = foreignInstance.primaryKey;
-  // this.data.push(foreignInstance);
-  // return foreignInstance;
-  // }
+  create(data: Object): Request<T> {
+    return this.foreignModel
+      .create(data)
+      .url(this.defaultUrl)
+      .after(foreignInstance => {
+        // $FlowFixMe
+        const data = this.instance[this.foreignKeyName].data || [];
+        data.push(foreignInstance);
+      });
+  }
 }
