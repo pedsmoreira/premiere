@@ -26,14 +26,19 @@ export default class Relationship<T: any> extends Request<T> {
     return this.props.target;
   }
 
-  checkDataValidity(data: T): boolean {
-    return true;
+  validateData(data: T): boolean {
+    return this.hasData;
+  }
+
+  get hasData(): boolean {
+    return !!this._data;
   }
 
   get data(): T {
-    const data = this._data;
-    if (!data) throw new Error(`[premiere] "data" unavailable for ${this.model.name}`);
-    if (!this.checkDataValidity(data)) throw new Error('[premiere] invalid data');
+    if (!this.hasData) throw new Error(`[premiere] "data" unavailable for ${this.model.name}`);
+
+    const data: any = this._data;
+    if (!this.validateData(data)) throw new Error('[premiere] invalid data');
 
     return data;
   }
@@ -62,6 +67,11 @@ export default class Relationship<T: any> extends Request<T> {
 
   get model(): typeof Model {
     return this.instance.constructor;
+  }
+
+  fetch(): Promise<T> {
+    // $FlowFixMe
+    return this.hasValidData && !this.props.skipCache ? Promise.resolve(this._data) : super.fetch();
   }
 
   throwNotImplemented(method: string): any {
