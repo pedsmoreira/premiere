@@ -1,13 +1,13 @@
 // @flow
 
-import ModelCache from './ModelCache';
+import TargetCache from './TargetCache';
 import Model from './Model';
 
 export default class RequestCache {
-  modelCaches: { [typeof Model]: ModelCache } = {};
+  modelCaches: { [typeof Model]: TargetCache } = {};
 
-  get(model: typeof Model): ModelCache {
-    if (!this.modelCaches[model]) this.modelCaches[model] = new ModelCache();
+  get(model: typeof Model): TargetCache {
+    if (!this.modelCaches[model]) this.modelCaches[model] = new TargetCache();
     return this.modelCaches[model];
   }
 

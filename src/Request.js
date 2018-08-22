@@ -4,7 +4,7 @@ import queryString from 'query-string';
 
 import Model from './Model';
 import Api, { api } from './Api';
-import ModelCache from './ModelCache';
+import TargetCache from './TargetCache';
 import RequestCache from './RequestCache';
 
 type RequestMethod = 'get' | 'post' | 'put' | 'delete';
@@ -51,7 +51,7 @@ export default class Request<T> {
     return data;
   }
 
-  get cache(): ModelCache {
+  get cache(): TargetCache {
     const { target } = this.props;
     if (!target) throw new Error(`[premiere] Attemptin to get cache for request without cache.`);
 
