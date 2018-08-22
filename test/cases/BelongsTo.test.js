@@ -99,32 +99,4 @@ describe('Find', () => {
       expect(user.company.data).toBe(company);
     });
   });
-
-  describe('nested', () => {
-    it('builds model url properly', () => {
-      const user = new User().set({ slug: 'doe' });
-      expect(user.company.nested().path).toEqual('users/doe/company');
-    });
-
-    it('builds model create url properly', () => {
-      const user = new User().set({ slug: 'doe' });
-      const request = user.company.nested().create({ name: 'Name' });
-      expect(request.path).toEqual('users/doe/company');
-      expect(request.props.body).toEqual({ name: 'Name' });
-    });
-
-    it('builds model update url properly', () => {
-      const user = new User().set({ slug: 'doe', company_id: 10 });
-      const request = user.company.nested().update({ name: 'Name' });
-      expect(request.path).toEqual('users/doe/company/10');
-      expect(request.props.body).toEqual({ name: 'Name' });
-    });
-
-    it('builds model destroy url properly', () => {
-      const user = new User().set({ slug: 'doe', company_id: 10 });
-      const request = user.company.nested().update({ name: 'Name' });
-      expect(request.path).toEqual('users/doe/company/10');
-      expect(request.props.body).toEqual({ name: 'Name' });
-    });
-  });
 });
