@@ -33,21 +33,13 @@ describe('PaginagedAll', () => {
 
     const metaFn = jest.fn();
 
-    const firstPageUsers = await User.all
-      .query({ page: 1 })
-      .after((data, rawData) => metaFn(rawData.meta))
-      .fetch();
-
+    const firstPageUsers = await User.all.query({ page: 1 }).after(({ rawData }) => metaFn(rawData.meta));
     expect(firstPageUsers.length).toEqual(2);
     expect(firstPageUsers[0]).toBeInstanceOf(User);
     expect(firstPageUsers).toEqual([{ id: 1, name: 'john doe' }, { id: 2, name: 'jane doe' }]);
     expect(metaFn).toHaveBeenCalledWith({ current_page: 1, total_pages: 2 });
 
-    const secondPageUsers = await User.all
-      .query('page=2')
-      .after((data, rawData) => metaFn(rawData.meta))
-      .fetch();
-
+    const secondPageUsers = await User.all.query('page=2').after(({ rawData }) => metaFn(rawData.meta));
     expect(secondPageUsers.length).toEqual(2);
     expect(secondPageUsers[0]).toBeInstanceOf(User);
     expect(secondPageUsers).toEqual([{ id: 3, name: 'bob vence' }, { id: 2, name: 'vence refrigeration' }]);
