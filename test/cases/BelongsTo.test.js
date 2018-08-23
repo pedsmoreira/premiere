@@ -8,6 +8,10 @@ describe('Find', () => {
     normalizeName(name) {
       return name.toLowerCase();
     }
+
+    jobs() {
+      return this.hasMany(Job);
+    }
   }
 
   class User extends Model {

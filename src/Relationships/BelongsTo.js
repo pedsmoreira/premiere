@@ -40,7 +40,7 @@ export default class BelongsTo<T> extends Relationship<T> {
     return this.foreignModel.destroy(this.foreignKeyValue).after(foreignInstance => {
       // $FlowFixMe
       this.instance[this.foreignKeyName] = null;
-      delete this.data;
+      delete this._data;
     });
   }
 }

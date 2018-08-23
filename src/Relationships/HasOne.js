@@ -23,7 +23,7 @@ export default class HasOne<T> extends Has<T> {
 
   destroy(): Request<T> {
     return this.foreignModel.destroy(this.foreignKeyValue).after(foreignInstance => {
-      delete this.data;
+      delete this._data;
     });
   }
 }
