@@ -5,6 +5,8 @@
 [![Code Climate](https://codeclimate.com/github/pedsmoreira/premiere/badges/gpa.svg)](https://codeclimate.com/github/pedsmoreira/premiere)
 [![Test Coverage](https://codeclimate.com/github/pedsmoreira/premiere/badges/coverage.svg)](https://codeclimate.com/github/pedsmoreira/premiere/coverage)
 
+**This package is no longer maintained. I suggest using Gluegun**
+
 A simple way to consume APIs with Javascript.
 
 Premiere helps you reducing the amount of boilerplate necessary to consume APIs. Here's an example of how it looks like:
